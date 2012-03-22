@@ -115,7 +115,7 @@ if (type && space) {
 				exec('mkdir -p ' + folder.samples, function() { // 创建例子目录
 					exec('cp ' + './model/' + type + '/samples/* ' + folder.samples, function() {
 						fs.readFile(indexFile, config.charset, function(e, data) { // 修正样式和seajs路径
-							fs.writeFile(indexFile, data.replace('{name}', name).replace('{global.css}', parents + '../../../themes/global.css').replace('{style.css}', parents + '../../../themes/default/' + name + '.css').replace('{sea.js}', parents + '../../lib/sea.js'));
+							fs.writeFile(indexFile, data.replace('{name}', name).replace('{global.css}', parents + '../../../themes/global.css').replace('{samples.css}', parents + '../samples.css').replace('{style.css}', parents + '../../../themes/default/' + name + '.css').replace('{sea.js}', parents + '../../lib/sea.js'));
 						});
 						fs.readFile(appFile, config.charset, function(e, data) { // 修正样式和seajs路径
 							fs.writeFile(appFile, data.replace('modName', name).replace('{mod}', parents + '../../lib/' + type + '/' + p + '/' + name + '.js'));

@@ -1,18 +1,18 @@
 define(function(require, exports, module) {
     var $ = require('../../jquery/1.7.1/sea_jquery.js');
-	var r = {
-        isUndefined: function(val) {
+    var r = {
+        isUndefined:function(val) {
             return typeof val == 'undefined';
         },
-        isArray: $.isArray,
-        isFunction: $.isFunction,
+        isArray:$.isArray,
+        isFunction:$.isFunction,
         /**
          * 提供function的继承(利用prototype)
          * @param {Function} subClass 子类
          * @param {Function} superClass 父类
          * @return {undefined}
          */
-        extend: function(subClass, superClass) {
+        extend:function(subClass, superClass) {
             var F = function() {
             };
             F.prototype = superClass.prototype;
@@ -33,12 +33,12 @@ define(function(require, exports, module) {
          * @return {Object}
          *     stop: {Function} 停止并清理定时器
          */
-        timer: function(params) {
+        timer:function(params) {
             var timer;
             var fn = function() {
-                if (params.rule && params.rule.call(params.scope)) {
+                if(params.rule && params.rule.call(params.scope)) {
                     params.fn && params.fn.call(params.scope);
-                    if (params.clear !== false) {
+                    if(params.clear !== false) {
                         clearTimeout(timer);
                     }
                     timer = setTimeout(function() {
@@ -46,17 +46,17 @@ define(function(require, exports, module) {
                     }, (r.isFunction(params.step) ? params.step() : params.step) || 128);
                 } else {
                     clearTimeout(timer);
-					params.end && params.end.call(params.scope);
+                    params.end && params.end.call(params.scope);
                 }
             }
-			params.start && params.start.call(params.scope);
+            params.start && params.start.call(params.scope);
             fn();
             return {
-				stop: function() {
-					clearTimeout(timer);
-					params.end && params.end.call(params.scope);
-				}
-			};
+                stop:function() {
+                    clearTimeout(timer);
+                    params.end && params.end.call(params.scope);
+                }
+            };
         }
     };
     return r;
