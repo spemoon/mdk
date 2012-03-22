@@ -18,20 +18,20 @@
  *     type为cmp时，以name=momo/window为例：
  *     $ ./define.js cmp momo/window
  *     将生成：
- *         mod：模块核心文件 js/lib/cmp/momo/window/mod.js 默认已经require jquery
+ *         mod：模块核心文件 js/lib/cmp/momo/window.js 默认已经require jquery
  *         css：模块所需样式文件 themes/default/momo-window.css
  *         sample: 实例文件夹 js/samples/cmp/momo/window 包含以下文件
  *             页面： index.html 默认引入sea.js，运行app.js，样式三个（global，组件样式和页面样式)
- *             页面业务文件：app.js 默认引入cmp/momo/window/mod.js
+ *             页面业务文件：app.js 默认引入cmp/momo/window.js
  *             页面样式：style.css
  * 
  *     type为util时，以name=momo/api为例：
  *     $ ./define.js util momo/api
  *     将生成：
- *         mod：模块核心文件 js/lib/util/momo/api/mod.js 默认已经require jquery
+ *         mod：模块核心文件 js/lib/util/momo/api.js 默认已经require jquery
  *         sample: 实例文件夹 js/samples/util/momo/api 包含以下文件
  *             页面： index.html 默认引入sea.js，运行app.js，样式两个（global，页面样式)
- *             页面业务文件：app.js 默认引入util/momo/api/mod.js
+ *             页面业务文件：app.js 默认引入util/momo/api.js
  *             页面样式：style.css
  * -----------------------------------------------------
  */
@@ -80,32 +80,32 @@ var space = process.argv[3];
 var isRemove = process.argv[4] == '--remove';
 if (type && space) {
     var root = path.resolve(path.dirname('../../'));
-    var name = space.split('/').pop();
+	var temp = space.split('/');
+    var name = temp.pop();
+	var p = temp.join('/');
     var folder = {
-        js: root + '/js/lib/' + type + '/' + space, // 模块目录
+        js: root + '/js/lib/' + type + '/' + p, // 模块目录
         samples: root + '/js/samples/' + type + '/' + space, // 例子目录
         css: root + '/themes/default' // 模块样式
     };
 	var success = helper.create(type);
 	if (type == 'cmp' || type == 'util') {// 目录初始化
 		if (isRemove) { // 移除
-		    helper.remove(folder.js, true);
+		    helper.remove(folder.js + '/' + name + '.js');
 			helper.remove(folder.samples, true);
 			if (type == 'cmp') {
-				helper.remove(folder.css + '/' + name + '.css');
+				helper.remove(folder.css + '/' + space.split('/').join('-') + '.css');
 			}
 		} else {
-			if (path.existsSync(folder.js)) {
-				process.stdout.write('\n\n' + folder.js + ' exists, please change a name\n\n');
+            var modFile = folder.js + '/' + name + '.js';
+            var indexFile = folder.samples + '/index.html';
+            var appFile = folder.samples + '/app.js';
+			if (path.existsSync(modFile)) {
+				process.stdout.write('\n\n' + modFile + ' exists, please change a name\n\n');
 			} else {
-				var parents = (new Array(space.split('/').length + 2)).join('../');
-				var modFile = folder.js + '/mod.js';
-				var indexFile = folder.samples + '/index.html';
-				var appFile = folder.samples + '/app.js';
-				var cssFile = folder.css + '/' + space.split('/').join('-') + '.css';
-				
+				var parents = (new Array(space.split('/').length + 1)).join('../');
 				exec('mkdir -p ' + folder.js, function() { // 创建模块目录
-					exec('cp ' + './model/' + type + '/mod.js ' + folder.js, function() {
+					exec('cp ' + './model/' + type + '/mod.js ' + modFile, function() {
 						fs.readFile(modFile, config.charset, function(e, data) { // 修正模块引入的jquery路径
 							fs.writeFile(modFile, data.replace('{jquery}', parents + 'jquery/' + config.jquery + '/sea_jquery.js'));
 							success.show(modFile, 'mod');
@@ -115,15 +115,16 @@ if (type && space) {
 				exec('mkdir -p ' + folder.samples, function() { // 创建例子目录
 					exec('cp ' + './model/' + type + '/samples/* ' + folder.samples, function() {
 						fs.readFile(indexFile, config.charset, function(e, data) { // 修正样式和seajs路径
-							fs.writeFile(indexFile, data.replace('{name}', name).replace('{global.css}', parents + '../../themes/global.css').replace('{style.css}', parents + '../../themes/default/' + name + '.css').replace('{sea.js}', parents + '../lib/sea.js'));
+							fs.writeFile(indexFile, data.replace('{name}', name).replace('{global.css}', parents + '../../../themes/global.css').replace('{style.css}', parents + '../../../themes/default/' + name + '.css').replace('{sea.js}', parents + '../../lib/sea.js'));
 						});
 						fs.readFile(appFile, config.charset, function(e, data) { // 修正样式和seajs路径
-							fs.writeFile(appFile, data.replace('{mod}', parents + '../lib/' + type + '/' + space + '/mod.js'));
+							fs.writeFile(appFile, data.replace('modName', name).replace('{mod}', parents + '../../lib/' + type + '/' + p + '/' + name + '.js'));
 						});
 						success.show(folder.samples, 'sample');
 					});
 				});
 				if (type == 'cmp') {
+					var cssFile = folder.css + '/' + space.split('/').join('-') + '.css';
 					exec('touch ' + cssFile, function() {
 						fs.writeFile(cssFile, '@charset "utf-8";');
 						success.show(cssFile, 'css');

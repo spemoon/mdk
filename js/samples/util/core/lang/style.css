@@ -1,0 +1,7 @@
+@charset "utf-8";
+#result{
+	width: 600px;
+	height:400px;
+	border:1px solid #ddd;
+	overflow:auto;
+}
