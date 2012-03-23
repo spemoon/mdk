@@ -1,0 +1,144 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>lang sample</title>
+        <link href="../../../../../themes/global.css" rel="stylesheet" type="text/css" />
+        <link href="../../../api_page.css" rel="stylesheet" type="text/css" />
+        <link href="style.css" rel="stylesheet" type="text/css" />
+        <script src="../../../../lib/sea.js" data-main="./app.js">
+        </script>
+    </head>
+    <body>
+    	<!------------------------------------------------------------------------------------------------->
+    	<div class="modual">
+            <h2>lang.isUndefined</h2>
+			<div class="content">
+	            <div class="introduce">
+	                <em>说明</em>
+	                <p>判断参数是否为undefined</p>
+	            </div>
+	            <div class="usage">
+	                <em>用法</em>
+	                <pre class="brush: js;">
+	                    lang.isUndefined(someVar);
+	                </pre>
+	            </div>
+			</div>
+        </div>
+		
+		<!------------------------------------------------------------------------------------------------->
+		<div class="modual">
+            <h2>lang.isArray</h2>
+			<div class="content">
+	            <div class="introduce">
+	                <em>说明</em>
+	                <p>判断参数是否为Array</p>
+	            </div>
+	            <div class="usage">
+	                <em>用法</em>
+	                <pre class="brush: js;">
+	                    lang.isArray(someVar);
+	                </pre>
+	            </div>
+			</div>
+        </div>
+		
+		<!------------------------------------------------------------------------------------------------->
+		<div class="modual">
+            <h2>lang.isFunction</h2>
+			<div class="content">
+	            <div class="introduce">
+	                <em>说明</em>
+	                <p>判断参数是否为Function</p>
+	            </div>
+	            <div class="usage">
+	                <em>用法</em>
+	                <pre class="brush: js;">
+	                    lang.isFunction(someVar);
+	                </pre>
+	            </div>
+			</div>
+        </div>
+		
+		<!------------------------------------------------------------------------------------------------->
+		<div class="modual">
+            <h2>lang.extend</h2>
+			<div class="content">
+	            <div class="introduce">
+	                <em>说明</em>
+	                <p>prototype继承机制，子类将继承父类的原型链，同时可以通过superClass访问父类的原型链</p>
+	            </div>
+	            <div class="usage">
+	                <em>用法</em>
+	                <pre class="brush: js;">
+	                	lang.extend(S, P); // S是子类，P是父类
+	                </pre>
+	            </div>
+				<div class="example">
+	                <em>示例1</em>
+	                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+	                <div class="demo">
+	                    <input type="button" id="btn1" value="继承的例子" />
+	                    <div class="result" id="result1">
+	                    </div>
+	                </div>
+	            </div>
+			</div>
+        </div>
+		
+		<!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>lang.timer</h2>
+			<div class="content">
+	            <div class="introduce">
+	                <em>说明</em>
+	                <p>定时器加强</p>
+	            </div>
+	            <div class="usage">
+	                <em>用法</em>
+	                <pre class="brush: js;">
+	                	// 声明定时器:
+			            var timer = lang.timer({
+			                fn:function() {
+			                    // 每个节拍运行的代码
+			                },
+			                rule:function() {
+			                    // 运行每个节拍前的规则，true则继续，false则停止
+			                },
+			                step:function() {
+			                    // 节拍间隔，可选，默认128ms，可以是一个毫秒级别常数，也可以是个function返回毫秒数达到不等间隔节拍
+			                },
+			                start: function() {
+							    // 节拍开始前的callback
+							},
+			                end: function() {
+	                            // 节拍结束后的callback
+	                        }
+			            });
+						
+						// 终止定时器：
+						timer.stop();
+			        </pre>
+	            </div>
+	            <div class="example">
+	                <em>示例2</em>
+					<span>越来越慢显示(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+	                <div class="demo">
+	                    <input type="button" id="btn2" value="开始定时器功能" />
+						<input type="button" id="btn3" value="停止" />
+	                    <div class="result" id="result2"></div>
+	                </div>
+	            </div>
+				<div class="example">
+                    <em>示例3</em>
+                    <span>按钮倒计时(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                    <div class="demo">
+                    	<input type="button" id="btn4" value="点击开始倒计时" />
+						<div class="result" id="result3"></div>
+                    </div>
+                </div>
+	        </div>
+		</div>
+    </body>
+</html>
