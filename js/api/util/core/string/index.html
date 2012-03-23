@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>string sample</title>
+		<link href="../../../../../themes/global.css" rel="stylesheet" type="text/css"/>
+        <link href="../../../api_page.css" rel="stylesheet" type="text/css"/>
+		<link href="style.css" rel="stylesheet" type="text/css"/>
+        <script src="../../../../lib/sea.js" data-main="./app.js"></script>
+    </head>
+    <body>
+    	<!------------------------------------------------------------------------------------------------->
+	    <div class="modual">
+	        <h2>string.trim</h2>
+	        <div class="introduce">
+	            <em>说明</em>
+	            <p>去除字符串两边的空格</p>
+	        </div>
+	        <div class="usage">
+	            <em>用法</em>
+	            <pre class="brush: js;">string.trim(strVar);</pre>
+	        </div>
+	    </div>
+		
+		<!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>string.serialize</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>将JSON转化为URL的参数格式</p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+                <pre class="brush: js;">string.serialize(strVar);</pre>
+            </div>
+			<div class="example">
+                <em>示例</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                	<input type="button" id="btn1" value="把{name:'John', sex: 1, some: [1, 2, 3]}序列化" />
+                    <div class="result" id="result1">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+		
+		<!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>string.parseJSON</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>将字符串转化为JSON对象</p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+                <pre class="brush: js;">string.parseJSON(strVar);</pre>
+            </div>
+        </div>
+    </body>
+</html>
