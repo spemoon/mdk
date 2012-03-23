@@ -118,7 +118,7 @@ if (type && space) {
 							fs.writeFile(indexFile, data.replace('{name}', name).replace('{global.css}', parents + '../../../themes/global.css').replace('{samples.css}', parents + '../samples.css').replace('{style.css}', parents + '../../../themes/default/' + name + '.css').replace('{sea.js}', parents + '../../lib/sea.js'));
 						});
 						fs.readFile(appFile, config.charset, function(e, data) { // 修正样式和seajs路径
-							fs.writeFile(appFile, data.replace('modName', name).replace('{mod}', parents + '../../lib/' + type + '/' + p + '/' + name + '.js'));
+							fs.writeFile(appFile, data.replace('{jquery}', parents + '../../lib/jquery/' + config.jquery + '/sea_jquery.js').replace('modName', name).replace('{mod}', parents + '../../lib/' + type + '/' + p + '/' + name + '.js').replace('{highlighter}', parents + '../../lib/external/syntaxHighlighter/shBrushJScript.js'));
 						});
 						success.show(folder.samples, 'sample');
 					});

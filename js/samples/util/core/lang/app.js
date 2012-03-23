@@ -3,6 +3,7 @@ define(function(require, exports, module) {
     var lang = require('../../../../lib/util/core/lang.js');
 
     $(function() {
+		// 实例代码
         var box = $('#result');
         var btn1 = $('#btn1');
         var btn2 = $('#btn2');
@@ -48,7 +49,9 @@ define(function(require, exports, module) {
             }
         });
 
-        seajs.use('../../../../lib/syntaxHighlighter/shBrushJScript.js', function(SyntaxHighlighter) {
+        // 语法高亮
+        seajs.use('../../../../lib/external/syntaxHighlighter/shBrushJScript.js', function(highlighter) {
+            highlighter.highlight();
         });
     });
 });

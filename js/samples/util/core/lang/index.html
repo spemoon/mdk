@@ -1,36 +1,59 @@
 <!DOCTYPE HTML>
 <html>
-<head>
-    <meta charset="UTF-8">
-    <title>lang sample</title>
-    <link href="../../../../../themes/global.css" rel="stylesheet" type="text/css" />
-    <link href="../../../samples.css" rel="stylesheet" type="text/css" />
-    <link href="style.css" rel="stylesheet" type="text/css" />
-    <script src="../../../../lib/sea.js" data-main="./app.js"></script>
-</head>
-<body>
-<div class="modual">
-    <h2>lang.timer</h2>
-    <div class="introduce">
-        <em>说明</em>
-        <p>定时器加强</p>
-    </div>
-    <div class="usage">
-        <em>用法</em>
-        <pre class="brush: js;">
-            lang.timer({
-                fn: function() {}
-            });
-        </pre>
-    </div>
-    <div class="example">
-        <em>示例</em>
-        <div class="demo">
-            <input type="button" id="btn1" value="开始定时器功能" />
-            <input type="button" id="btn2" value="停止" />
-            <div id="result"></div>
+    <head>
+        <meta charset="UTF-8">
+        <title>lang sample</title>
+        <link href="../../../../../themes/global.css" rel="stylesheet" type="text/css" />
+        <link href="../../../samples.css" rel="stylesheet" type="text/css" />
+        <link href="style.css" rel="stylesheet" type="text/css" />
+        <script src="../../../../lib/sea.js" data-main="./app.js">
+        </script>
+    </head>
+    <body>
+        <div class="modual">
+            <h2>lang.timer</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>
+                    定时器加强
+                </p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+                <pre class="brush: js;">
+                	// 声明定时器:
+		            var timer = lang.timer({
+		                fn:function() {
+		                    // 每个节拍运行的代码
+		                },
+		                rule:function() {
+		                    // 运行每个节拍前的规则，true则继续，false则停止
+		                },
+		                step:function() {
+		                    // 节拍间隔，可选，默认128ms，可以是一个毫秒级别常数，也可以是个function返回毫秒数达到不等间隔节拍
+		                },
+		                start: function() {
+						    // 节拍开始前的callback
+						},
+		                end: function() {
+                            // 节拍结束后的callback
+                        }
+		            });
+					
+					// 终止定时器：
+					timer.stop();
+		        </pre>
+            </div>
+            <div class="example">
+                <em>示例</em>
+				<span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <input type="button" id="btn1" value="开始定时器功能" />
+					<input type="button" id="btn2" value="停止" />
+                    <div id="result">
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-</body>
+    </body>
 </html>
