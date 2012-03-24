@@ -18,7 +18,14 @@
 	        </div>
 	        <div class="usage">
 	            <em>用法</em>
-	            <pre class="brush: js;">string.trim(strVar);</pre>
+	            <pre class="brush: js;">
+                    /**
+                     * 去掉字符串两侧的空白
+                     * @param {String} str 待处理的字符串
+                     * @return {String}
+                     */
+                    string.trim(strVar);
+                </pre>
 	        </div>
 	    </div>
 		
@@ -31,7 +38,14 @@
             </div>
             <div class="usage">
                 <em>用法</em>
-                <pre class="brush: js;">string.serialize(strVar);</pre>
+                <pre class="brush: js;">
+                    /**
+                     * 将对象转化成url格式的字符串(序列化)
+                     * @param {Object} obj 待序列化的对象
+                     * @return {String} 序列化的字符串
+                     */
+                    string.serialize(strVar);
+                </pre>
             </div>
 			<div class="example">
                 <em>示例</em>
@@ -54,7 +68,14 @@
             </div>
             <div class="usage">
                 <em>用法</em>
-                <pre class="brush: js;">string.parseJSON(strVar);</pre>
+                <pre class="brush: js;">
+                    /**
+                     * 将字符串转化为JSON
+                     * @param {String} 待处理的字符串
+                     * @return {Object}
+                     */
+                    string.parseJSON(strVar);
+                </pre>
             </div>
         </div>
     </body>

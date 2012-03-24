@@ -1,10 +1,25 @@
 define(function(require, exports, module) {
     var $ = require('../../jquery/1.7.1/sea_jquery.js');
     var r = {
+        /**
+         * 判断变量是否undefined
+         * @param {Mix} val
+         * @return {Boolean}
+         */
         isUndefined:function(val) {
             return typeof val == 'undefined';
         },
+        /**
+         * 判断变量是否是数组
+         * @param {Mix} val
+         * @return {Boolean}
+         */
         isArray:$.isArray,
+        /**
+         * 判断变量是否是函数
+         * @param {Mix} val
+         * @return {Boolean}
+         */
         isFunction:$.isFunction,
         /**
          * 提供function的继承(利用prototype)
