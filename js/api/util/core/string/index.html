@@ -48,7 +48,7 @@
                 </pre>
             </div>
 			<div class="example">
-                <em>示例</em>
+                <em>示例1</em>
                 <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
                 <div class="demo">
                 	<input type="button" id="btn1" value="把{name:'John', sex: 1, some: [1, 2, 3]}序列化" />
@@ -76,6 +76,97 @@
                      */
                     string.parseJSON(strVar);
                 </pre>
+            </div>
+        </div>
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>string.blength</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>计算字符串的长度,全角字符算两个长度</p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+                <pre class="brush: js;">
+                    /**
+                     * 返回字符串的长度,全角字符算两个长度
+                     * @param {String} string 需要计算长度的字符串
+                     */
+                    string.blength(strVar);
+                </pre>
+            </div>
+            <div class="example">
+                <em>示例2</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <input type="button" id="btn2" value="计算下面容器内的文字长度" />
+                    <div class="result" id="result2">ok，这个容器内的文字长度将会被计算，全角算2个字符，总长度是：65个</div>
+                </div>
+            </div>
+        </div>
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>string.cut</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>从字符串中截取指定长度的部分</p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+            <pre class="brush: js;">
+                /**
+                 * 从字符串的左边或者右边截取需要长度的字符串(默认左边)
+                 * @param {String} string 被操作的字符串
+                 * @param {Integer} n 截取的长度
+                 * @param {Object} params 附加参数
+                 *         fullSharp {Boolean} string中的全角字符算作两个长度
+                 *         pad {String} 默认中左边开始截取,取值为right则从右边开始截取
+                 * @return {String} 截取得到的字符串
+                 */
+                string.cut(strVar, n, params);
+            </pre>
+            </div>
+            <div class="example">
+                <em>示例3</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <input type="button" id="btn3" value="从下面容器截取长度为35的字符串" />
+                    <input type="button" id="btn4" value="从下面容器截取长度为58的字符串" />
+                    <input type="button" id="btn5" value="从下面容器截取长度为35的字符串（全角算2个字符）" />
+                    <input type="button" id="btn6" value="从下面容器截取长度为35的字符串（从右往左截取，全角算2个字符）" />
+                    <div class="result" id="result3">ok，这个容器内的文字长度将会被计算，全角算2个字符时总长度是：102个，所有字符都算一个字符时长度是：54个</div>
+                </div>
+            </div>
+        </div>
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>string.code</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>将html标签的字符串转义或者反转义</p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+            <pre class="brush: js;">
+                /**
+                 * 将html标签的字符串转义(或者将转义后的转回来)
+                 * @param {String} string 被操作的字符串
+                 * @param {Boolean} isDecode 反转义,默认是转义，无需该参数
+                 */
+                string.code(strVar, isDecode);
+            </pre>
+            </div>
+            <div class="example">
+                <em>示例4</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <input type="button" id="btn7" value="将下面容器内容转义" />
+                    <input type="button" id="btn8" value="将下面容器内容反转义" />
+                    <div class="result" id="result4"><a href="#"><span>hello</span></a>，你好，<em>jerry</em>！</div>
+                </div>
             </div>
         </div>
     </body>
