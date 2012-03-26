@@ -68,7 +68,7 @@ define(function(require, exports, module) {
                         box2.html('<p>' + time + 'btn2，结果是：no permission</p>');
                     },
                     success: function(data) {
-                        box2.html('<p>' + time + 'success: btn2' + data.data + '，结果是：success</p>');
+                        box2.html('<p>' + time + 'success: btn2，结果是：success</p>');
                     }
                 });
             });
@@ -89,7 +89,7 @@ define(function(require, exports, module) {
                         box2.html('<p>' + time + 'btn3，结果是：no permission</p>');
                     },
                     success: function(data) {
-                        box2.html('<p>' + time + 'btn3 ' + data.data + '，结果是：success</p>');
+                        box2.html('<p>' + time + 'btn3，结果是：success</p>');
                     }
                 });
             });
@@ -110,27 +110,26 @@ define(function(require, exports, module) {
             var ap = ajax.pool('test', 3, 5); // 声明一个连接池，名字test，最大并发数3，优先级一共分为5个
             var id = 0;
             var action = function(priority) {
-                var time = helper.getTime();
 				var qid = ++id;
                 ap.add({
                     url: 'data.php',
 					before: function() {
-						box4.append('<p>' + time + '发出：' + qid + '，优先级为 -- ' + priority + '</p>');
+						box4.append('<p>' + qid + '：' + helper.getTime() + '，优先级为 -- ' + priority + '</p>');
 					},
                     error: function(xhr, status) {
-                        box5.append('<p>' + time + '结果：' + qid + '，优先级为 -- ' + priority + '，结果是：error</p>');
+                        box5.append('<p>' + qid + '：' + helper.getTime() + '，优先级为 -- ' + priority + '，结果是：error</p>');
                     },
                     failure: function(data) {
-                        box5.append('<p>' + time + '结果：' + qid + '，优先级为 -- ' + priority + '，结果是：failure</p>');
+                        box5.append('<p>' + qid + '：' + helper.getTime() + '，优先级为 -- ' + priority + '，结果是：failure</p>');
                     },
                     permission: function(data) {
-                        box5.append('<p>' + time + '结果：' + qid + '，优先级为 -- ' + priority + '，结果是：no permission</p>');
+                        box5.append('<p>' + qid + '：' + helper.getTime() + '，优先级为 -- ' + priority + '，结果是：no permission</p>');
                     },
                     success: function(data) {
-                        box5.append('<p>' + time + '结果：' + qid + '，优先级为 -- ' + priority + '，结果是：success</p>');
+                        box5.append('<p>' + qid + '：' + helper.getTime() + '，优先级为 -- ' + priority + '，结果是：success</p>');
                     }
                 }, priority);
-				box3.append('<p>插入：' + qid + '，优先级为 -- ' + priority + '</p>');
+				box3.append('<p>' + qid + '：优先级为 -- ' + priority + '</p>');
             };
             btn4.click(function() {
                 action(1);

@@ -1,8 +1,7 @@
 <?php 
-    sleep(rand(1, 3));
 	$code = rand() % 4;
 	if($code == 3) {
-	    header('HTTP/1.1 500 error');
+	    header('HTTP/1.1 500 error ');
 		exit; 
 	}
 ?>
