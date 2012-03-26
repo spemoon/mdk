@@ -8,8 +8,19 @@ define(function(require, exports, module) {
         noPermissionAction:function() {
             location.href = config.loginPage;
         },
+		errorAction: function(xhr, status) {
+			
+		},
         type:'GET'
     };
+	
+	// 防止ESC键导致终端AJAX请求,这种情况下AJAX的状态值是error
+	$(document).keydown(function(e) {
+		if(e.keyCode == 27) {
+			return false;
+		}
+	});
+	
     var r = {
         /**
          * 设置登录页面的URL，该方法最多调用一次
@@ -27,6 +38,10 @@ define(function(require, exports, module) {
             config.noPermissionAction = callback;
             r.setNoPermissionAction = null;
         },
+		setErrorAction: function(callback) {
+			config.setErrorAction = callback;
+            r.setErrorAction = null;
+		},
         /**
          * 设置默认AJAX的请求类型，该方法最多调用一次
          * @param type
@@ -46,9 +61,11 @@ define(function(require, exports, module) {
          *     type：请求的类型，默认为GET，若是POST，则需设置该参数为POST
          *     cache：是否使用缓存，默认true缓存, false不缓存
          *     data：请求参数，一般使用一个object
-         *     error：server异常时候的回调（非服务端代码级别返回，而是服务器直接返回，比如超时，请求放弃，服务器异常等）
+         *     before：发起ajax请求之前的回调
+         *     error：server异常时候的回调（非服务端代码级别返回，而是服务器直接返回，比如超时，请求放弃，服务器异常等）,如果没有设定，将调用全局的异常处理，全局默认不处理，是个空函数，可调用setErrorAction来设置全局异常处理动作
          *     success：服务端正确处理后的返回状态码200的回调函数
-         *     failure：服务端正确处理后的返回状态码400的回调函数
+         *     failure：服务端正确处理后的返回状态码400的回调函数，标识处理失败
+         *     permission：服务端正确处理后的返回状态码是401的回调函数，标识无权限，如果没有设定，将调用全局的无权限处理，全局默认跳转到网站根目录，可调用setNoPermissionAction来设置全局无权限处理动作
          *     complete：服务端正确处理后无论状态码返回什么都触发的回调函数
          * @return {Object} XMLHttpRequrest对象
          */
@@ -56,6 +73,7 @@ define(function(require, exports, module) {
             var obj = {};
             params = params || {};
             obj.url = params.url;
+			obj.data = params.data;
             obj.dataType = 'json';
             obj.type = params.type || config.type;
             obj.success = function(data) {
@@ -63,25 +81,21 @@ define(function(require, exports, module) {
                     if(data.code == 200) { // 成功
                         params.success && params.success(data);
                     } else if(data.code == 401) { // 无权限
-                        config.noPermissionAction();
+                        params.permission ? params.permission(data) : config.noPermissionAction();
                     } else { // 服务端判定失败
                         params.failure && params.failure(data);
                     }
                 }
             };
             obj.error = function(xhr, status) {
-                /**
-                 * 一般就超时才处理
-                 * ajax请求还没回来用户刷新或者按esc倒是abort也是触发error，但此时不应该做异常处理
-                 * 如果要处理应该提示用户是否离开页面，以及离开页面的后果
-                 */
-                if(status == 'timeout') {
-                    params.error && params.error();
-                }
+				if (status != 'abort') { // 主动放弃，这种一般是程序控制，不应该抛出error
+					params.error ? params.error(xhr, status) : config.errorAction(xhr, status);
+				}
             };
             obj.complete = function(xhr, status) {
                 params.complete && params.complete(xhr, status);
             }
+			params.before && params.before();
             return $.ajax(obj);
         },
         /**
@@ -191,7 +205,7 @@ define(function(require, exports, module) {
                  * @return {undefined}
                  */
                 send:function(params) {
-                    var flag = params.url == single[name].url;
+                    var flag = single[name].url && (params.url == single[name].url);
                     if(flag) { // 请求URL相同
                         for(var i in params.data) {
                             if(params.data[i] != single[name].data[i]) { // 请求的数据也相同，则认为是发起同一个请求
@@ -203,11 +217,11 @@ define(function(require, exports, module) {
                     if(flag) { // 请求的URL和参数相同则保留上一个
                         return;
                     } else { // 不相同则放弃前一个请求
-                        single[name].xhr.abort();
+                        single[name].xhr && single[name].xhr.abort();
                     }
                     var completeFn = params.complete;
                     params.complete = function(xhr, status) {
-                        single[name] = null; // 完成后清理
+                        single[name] = {}; // 完成后清理
                         completeFn && completeFn(xhr, status);
                     };
                     single[name] = {
@@ -229,4 +243,5 @@ define(function(require, exports, module) {
             return actions;
         }
     };
+	return r;
 });

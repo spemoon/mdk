@@ -11,22 +11,133 @@
     <body>
     	<!------------------------------------------------------------------------------------------------->
 	    <div class="modual">
-	        <h2>package.name</h2>
+	        <h2>ajax.base</h2>
 	        <div class="introduce">
 	            <em>说明</em>
-	            <p>some introductions</p>
+	            <p>AJAX基础功能</p>
 	        </div>
 	        <div class="usage">
 	            <em>用法</em>
-	            <pre class="brush: js;">//code</pre>
+	            <pre class="brush: js;">
+	            	/**
+			         * 基类ajax，要求服务端返回的结果格式必须是以下格式的JSON：
+			         * {
+			         *     code: 状态码，一般就以下三个：200成功/400失败/401无权限
+			         *     data: 返回的数据源
+			         * }
+			         * @param {Object} params
+			         *     url：请求的URL
+			         *     type：请求的类型，默认为GET，若是POST，则需设置该参数为POST
+			         *     cache：是否使用缓存，默认true缓存, false不缓存
+			         *     data：请求参数，一般使用一个object
+			         *     error：server异常时候的回调（非服务端代码级别返回，而是服务器直接返回，比如超时，请求放弃，服务器异常等）,如果没有设定，将调用全局的异常处理，全局默认不处理，是个空函数，可调用setErrorAction来设置全局异常处理动作
+			         *     success：服务端正确处理后的返回状态码200的回调函数
+			         *     failure：服务端正确处理后的返回状态码400的回调函数，标识处理失败
+			         *     permission：服务端正确处理后的返回状态码是401的回调函数，标识无权限，如果没有设定，将调用全局的无权限处理，全局默认跳转到网站根目录，可调用setNoPermissionAction来设置全局无权限处理动作
+			         *     complete：服务端正确处理后无论状态码返回什么都触发的回调函数
+			         * @return {Object} XMLHttpRequrest对象
+			         */
+	            	ajax.base(params);
+	            </pre>
 	        </div>
 	        <div class="example">
-	            <em>示例</em>
+	            <em>示例1</em>
 				<span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
 	            <div class="demo">
+	            	<p>
+	            		下面按钮发起一个GET请求，服务端处理时间为1-3秒，随机发生error，success，failure和无权限四种情况
+	            	</p>
+	            	<input type="button" value="发起请求" id="btn1"/>
+	            	<div id="result1" class="result"></div>
 	            </div>
 	        </div>
 	    </div>
 		
+		<!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>ajax.single</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>AJAX单例模式：如果请求资源和上一次相同，则放弃后来的请求；如果请求资源和上一次不同，则中断之前的请求，使用后面的请求</p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+                <pre class="brush: js;">
+                    /**
+			         * @param {String} name 单例命名空间
+			         * @return {Object} 返回对创建的单例的操作方法：发起请求，放弃请求
+			         */
+                    var as = ajax.single(name);
+					as.send(params); // 发送一个单例请求，参数同base参数
+					as.abort(); // 中断一个单例请求
+                </pre>
+            </div>
+            <div class="example">
+                <em>示例2</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <p>
+                        下面按钮发起一个GET请求，服务端处理时间为1-3秒，随机发生error，success，failure和无权限四种情况<br/>
+						连续点击同一个按钮，在前一个响应没有回馈之前，后面的请求都会被放弃<br/>
+						点击不同的按钮，在前一个响应没有回馈之前，前面的请求会被中断而开始使用后面的请求
+                    </p>
+                    <input type="button" value="btn2：请求一" id="btn2"/>
+					<input type="button" value="btn3：请求二" id="btn3"/>
+                    <div id="result2" class="result"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>ajax.pool</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>AJAX连接池模式：往连接池中插入请求，按照优先级规则先后发送请求</p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+                <pre class="brush: js;">
+                    /**
+			         * @param {String} name 连接池名称
+			         * @param {Integer} max 最大并发数
+			         * @param {Integer} priority 有多少个优先级(最高优先级为1，往后优先级越低)
+			         * @return {Object} 返回对创建的连接池的操作方法：增加连接，放弃连接
+			         */
+                    var ap = ajax.pool(name, max, priority);
+                    ap.add(params, priority); // 往连接池中加入一个请求，参数params同base参数，priority表示插入的连接的优先级，不提供该参数默认最低等级
+                    ap.abort(); // 中断连接池的当前的所有请求，并且清空连接池
+                </pre>
+            </div>
+            <div class="example">
+                <em>示例3</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <p>
+                        下面按钮发起一个GET请求，服务端处理时间为1-3秒，随机发生error，success，failure和无权限四种情况<br/>
+                    </p>
+                    <input type="button" value="最高优先级（priority为1）请求" id="btn4"/>
+                    <input type="button" value="次高优先级（priority为2）请求" id="btn5"/>
+					<input type="button" value="priority为3 请求" id="btn6"/>
+					<input type="button" value="priority为4 请求" id="btn7"/>
+					<input type="button" value="priority为5 请求" id="btn8"/>
+					<div>
+						<div class="box">
+						    <p>插入顺序：</p>
+	                        <div id="result3" class="result"></div>
+						</div>
+						<div class="box">
+						    <p>请求顺序：</p>
+						    <div id="result4" class="result"></div>
+						</div>
+						<div class="box">
+                            <p>请求结果：</p>
+                            <div id="result5" class="result"></div>
+                        </div>
+						<div class="clear"></div>
+					</div>
+                </div>
+            </div>
+        </div>
     </body>
 </html>

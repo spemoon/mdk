@@ -1,1 +1,10 @@
 @charset "utf-8";
+.box {
+	float:left;
+	margin-left:10px;
+}
+
+.box .result {
+	width: 350px;
+    height: 400px;
+}
