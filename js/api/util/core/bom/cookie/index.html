@@ -1,0 +1,118 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>cookie sample</title>
+		<link href="../../../../../../themes/global.css" rel="stylesheet" type="text/css"/>
+        <link href="../../../../api_page.css" rel="stylesheet" type="text/css"/>
+		<link href="style.css" rel="stylesheet" type="text/css"/>
+        <script src="../../../../../lib/sea.js" data-main="./app.js"></script>
+    </head>
+    <body>
+    	<!------------------------------------------------------------------------------------------------->
+	    <div class="modual">
+	        <h2>cookie.set</h2>
+	        <div class="introduce">
+	            <em>说明</em>
+	            <p>设置一个cookie</p>
+	        </div>
+	        <div class="usage">
+	            <em>用法</em>
+	            <pre class="brush: js;">
+                    /**
+                     * @param key {String} cookie的名字
+                     * @param value {String} cookie的值
+                     * @param time {Integer} 过期时间，毫秒数，默认一天
+                     * @param params {Object} 附加选项
+                     *     path {String} cookie存储路径
+                     *     domain {String} cookie存储域
+                     *     secure {Boolean} 是否使用HTTPS方式
+                     * @return {Undefined}
+                     */
+                    cookie.set(key, value, time, params);
+	            </pre>
+	        </div>
+	        <div class="example">
+	            <em>示例1</em>
+				<span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+	            <div class="demo">
+                    <input type="button" value="设置一个cookie，名字是nick，值是jerry，过期时间是15秒" id="btn1"/>
+                    <input type="button" value="查看cookie" id="btn2"/>
+	            </div>
+	        </div>
+	    </div>
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>cookie.sets</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>设置多个cookie</p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+	            <pre class="brush: js;">
+                    /**
+                     * @param object {Object} 键值对，键是cookie的name，值是cookie的value
+                     * @param time {Integer} 过期时间，毫秒数，默认一天
+                     * @param params {Object} 附加选项，同set方法
+                     * @return {Undefined}
+                     */
+                    cookie.sets(object, time, params);
+	            </pre>
+            </div>
+            <div class="example">
+                <em>示例2</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <input type="button" value="设置2个cookie：nick，值是jerry；id，值是10086，过期时间是15秒" id="btn3"/>
+                    <input type="button" value="查看cookie" id="btn4"/>
+                </div>
+            </div>
+        </div>
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>cookie.get</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>获取一个指定的cookie</p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+	            <pre class="brush: js;">
+                    /**
+                     * @param key {String} cookie的名字
+                     * @return {String} cookie的值
+                     */
+                    cookie.get(key);
+	            </pre>
+            </div>
+        </div>
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>cookie.del</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>删除一个或者多个cookie</p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+	            <pre class="brush: js;">
+                    cookie.del(key1 [,key2 [,key3 ...]]);
+	            </pre>
+            </div>
+            <div class="example">
+                <em>示例3</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <input type="button" value="设置3个cookie：nick:jerry;id:10086;age:25，过期时间是15秒" id="btn5"/>
+                    <input type="button" value="删除nick" id="btn6"/>
+                    <input type="button" value="删除id和age" id="btn7"/>
+                    <input type="button" value="查看cookie" id="btn8"/>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

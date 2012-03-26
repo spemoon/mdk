@@ -8,19 +8,19 @@ define(function(require, exports, module) {
         noPermissionAction:function() {
             location.href = config.loginPage;
         },
-		errorAction: function(xhr, status) {
-			
-		},
+        errorAction:function(xhr, status) {
+
+        },
         type:'GET'
     };
-	
-	// 防止ESC键导致终端AJAX请求,这种情况下AJAX的状态值是error
-	$(document).keydown(function(e) {
-		if(e.keyCode == 27) {
-			return false;
-		}
-	});
-	
+
+    // 防止ESC键导致终端AJAX请求,这种情况下AJAX的状态值是error
+    $(document).keydown(function(e) {
+        if(e.keyCode == 27) {
+            return false;
+        }
+    });
+
     var r = {
         /**
          * 设置登录页面的URL，该方法最多调用一次
@@ -38,10 +38,10 @@ define(function(require, exports, module) {
             config.noPermissionAction = callback;
             r.setNoPermissionAction = null;
         },
-		setErrorAction: function(callback) {
-			config.setErrorAction = callback;
+        setErrorAction:function(callback) {
+            config.setErrorAction = callback;
             r.setErrorAction = null;
-		},
+        },
         /**
          * 设置默认AJAX的请求类型，该方法最多调用一次
          * @param type
@@ -73,7 +73,7 @@ define(function(require, exports, module) {
             var obj = {};
             params = params || {};
             obj.url = params.url;
-			obj.data = params.data;
+            obj.data = params.data;
             obj.dataType = 'json';
             obj.type = params.type || config.type;
             obj.success = function(data) {
@@ -88,14 +88,14 @@ define(function(require, exports, module) {
                 }
             };
             obj.error = function(xhr, status) {
-				if (status != 'abort') { // 主动放弃，这种一般是程序控制，不应该抛出error
-					params.error ? params.error(xhr, status) : config.errorAction(xhr, status);
-				}
+                if(status != 'abort') { // 主动放弃，这种一般是程序控制，不应该抛出error
+                    params.error ? params.error(xhr, status) : config.errorAction(xhr, status);
+                }
             };
             obj.complete = function(xhr, status) {
                 params.complete && params.complete(xhr, status);
             }
-			params.before && params.before();
+            params.before && params.before();
             return $.ajax(obj);
         },
         /**
@@ -243,5 +243,5 @@ define(function(require, exports, module) {
             return actions;
         }
     };
-	return r;
+    return r;
 });
