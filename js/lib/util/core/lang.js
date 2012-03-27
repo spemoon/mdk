@@ -25,15 +25,19 @@ define(function(require, exports, module) {
          * 提供function的继承(利用prototype)
          * @param {Function} subClass 子类
          * @param {Function} superClass 父类
+         * @protoFns {Object} 给子类原型链添加的方法集合
          * @return {undefined}
          */
-        extend:function(subClass, superClass) {
+        extend:function(subClass, superClass, protoFns) {
             var F = function() {
             };
             F.prototype = superClass.prototype;
             subClass.prototype = new F();
             subClass.prototype.constructor = subClass;
             subClass.prototype.superClass = superClass.prototype;
+            for(var i in protoFns) {
+                subClass.prototype[i] = protoFns[i];
+            }
         },
         /**
          * 定时器加强
