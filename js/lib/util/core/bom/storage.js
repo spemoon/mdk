@@ -72,7 +72,6 @@ define(function(require, exports, module) {
                 }
             };
         } else { // 使用cookie
-        alert(3);
             var cookie = require('./cookie.js');
             node = null;
             api = {
@@ -87,23 +86,34 @@ define(function(require, exports, module) {
                 }
             };
         }
-        api.clear = function() {
-        };
         return api;
     })();
     
     var r = {
+        /**
+         * 设置一个localStorage
+         * @param {String} key 键
+         * @param {String} value 值
+         * @return {Undefined}
+         */
         set: function(key, value) {
             storage.setItem(key, value);
         },
+        /**
+         * 获取一个localStorage
+         * @param key {String} key 键
+         * @return {String} 对应的值，没有获取到返回空字符串
+         */
         get: function(key) {
             return storage.getItem(key) || '';
         },
+        /**
+         * 删除一个localStorage
+         * @param {String} key 键
+         * @return {Undefined}
+         */
         del: function(key) {
             storage.removeItem(key);
-        },
-        clear: function() {
-            storage.clear();
         }
     };
     return r;

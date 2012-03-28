@@ -12,6 +12,8 @@ define(function(require, exports, module) {
             var btn2 = $('#btn2');
             var btn3 = $('#btn3');
             var btn4 = $('#btn4');
+            var btn5 = $('#btn5');
+            var btn6 = $('#btn6');
             var txt1 = $('#txt1');
 			var txt2 = $('#txt2');
             btn1.click(function() {
@@ -20,11 +22,17 @@ define(function(require, exports, module) {
             btn2.click(function() {
                 alert(storage.get('val'));
             });
-			btn3.click(function() {
+            btn3.click(function() {
+                storage.del('val');
+            });
+			btn4.click(function() {
                 storage.set('word', txt2.val());
             });
-            btn4.click(function() {
+            btn5.click(function() {
                 alert(storage.get('word'));
+            });
+            btn6.click(function() {
+                storage.del('word');
             });
         })();
     });
