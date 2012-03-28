@@ -11,22 +11,98 @@
     <body>
     	<!------------------------------------------------------------------------------------------------->
 	    <div class="modual">
-	        <h2>package.name</h2>
+	        <h2>winname.set</h2>
 	        <div class="introduce">
 	            <em>说明</em>
-	            <p>some introductions</p>
+	            <p>设置一个window.name</p>
 	        </div>
 	        <div class="usage">
 	            <em>用法</em>
-	            <pre class="brush: js;">//code</pre>
+	            <pre class="brush: js;">
+	            	/**
+			         * @param {String} key 要设置的键名
+			         * @param {String} value 要设置的键值
+			         * @return {Undefined}
+			         */
+					 winname.set(key, value);
+	            </pre>
 	        </div>
 	        <div class="example">
-	            <em>示例</em>
+	            <em>示例1</em>
 				<span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
 	            <div class="demo">
+	            	<input type="button" value="设置key为name，value为jim的window.name" id="btn1"/>
+					<input type="button" value="设置key为name，value为tom的window.name" id="btn2"/>
+					<input type="button" value="设置key为age，value为34的window.name" id="btn3"/><br/>
+					<input type="button" value="删除key为name的window.name" id="btn4"/><br/>
+					<input type="button" value="查看key为name的window.name" id="btn5"/>
+					<input type="button" value="查看key为age的window.name" id="btn6"/>
 	            </div>
 	        </div>
 	    </div>
 		
+		<!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>winname.get</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>获取一个window.name</p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+                <pre class="brush: js;">
+                    /**
+			         * @param {String} key 键名
+			         * @return {String} 对应的键值
+			         */
+                     winname.get(key);
+                </pre>
+            </div>
+        </div>
+        
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>winname.del</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>删除一个window.name</p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+                <pre class="brush: js;">
+                    /**
+			         * @param {String} key 键名
+			         * @return {Undefined}
+			         */
+                     winname.del(key);
+                </pre>
+            </div>
+        </div>
+        
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>winname.proxy</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>跨域代理获取跨域传递的值</p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+                <pre class="brush: js;">
+                    /**
+                     * @param {String} key 键名
+                     * @return {Undefined}
+                     */
+                     winname.del(key);
+                </pre>
+            </div>
+			<div class="example">
+                <em>示例2</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <input type="button" value="代理访问获取跨域文件提供的数据" id="btn7"/>
+                </div>
+            </div>
+        </div>
     </body>
 </html>
