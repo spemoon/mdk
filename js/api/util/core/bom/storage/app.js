@@ -5,7 +5,7 @@ define(function(require, exports, module) {
     
     $(function() {
         /**--------------------------------------------
-         * 实例1： localStorage的存入，读取，删除，清空
+         * 实例1： localStorage的存入，读取，删除
          * --------------------------------------------*/
         (function() {
             var btn1 = $('#btn1');
