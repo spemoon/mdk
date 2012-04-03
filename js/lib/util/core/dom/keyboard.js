@@ -328,9 +328,8 @@ define(function(require, exports, module) {
                         var tempCache = cache.slice(i, len);
                         key = tempCache.join(',');
                         if(keyMap[key]) {
-                            keyMap[key](e);
                             cache.length = 0;
-                            return false;
+                            return keyMap[key](e) === true;
                         }
                     }
                 }

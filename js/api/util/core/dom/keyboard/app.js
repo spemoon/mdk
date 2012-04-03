@@ -74,7 +74,8 @@ define(function(require, exports, module) {
                             } else if(dir == 'right') {
                                 slider.css('left', Math.min(parseInt(slider.css('left')) + 20, $(window).scrollLeft() + $(window).width() - slider.outerWidth()));
                             }
-
+                        } else {
+                            return true;
                         }
                     }
                 }
@@ -113,7 +114,7 @@ define(function(require, exports, module) {
             array.forEach(function(v, i, arr) {
                 keyboard.hotKey(v, {
                     callback:function() {
-                        helper.slider.move(v);
+                        return helper.slider.move(v);
                     },
                     hold:true
                 });
