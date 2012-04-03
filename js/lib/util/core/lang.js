@@ -9,6 +9,9 @@ define(function(require, exports, module) {
         isUndefined:function(val) {
             return typeof val == 'undefined';
         },
+        isString:function(val) {
+            return typeof val == 'string';
+        },
         /**
          * 判断变量是否是数组
          * @param {Mix} val
