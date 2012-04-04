@@ -31,6 +31,20 @@ define(function(require, exports, module) {
                     this.parents('li').remove();
                 }
             });
+            action.listener({
+                add: function(e) {
+                    list.children('li').eq(0).after('<li>这是一条插入的最新新闻 ' + (index++) + ' <a href="#" data-action="del">删除</a></li>');
+                },
+                del: function(e) {
+                    this.parents('li').remove();
+                }
+            });
+
+            options.children('li').hover(function() {
+                $(this).addClass('hover');
+            }, function() {
+                $(this).removeClass('hover');
+            });
         })();
     });
 });

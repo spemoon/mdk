@@ -16,6 +16,9 @@
     padding-left: 5px;
     cursor: pointer;
 }
+.select li.hover {
+    background: #999;
+}
 .hidden {
     display: none;
 }

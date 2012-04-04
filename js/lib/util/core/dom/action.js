@@ -1,7 +1,14 @@
 define(function(require, exports, module) {
     var $ = require('../../../jquery/1.7.1/sea_jquery.js');
     var lang = require('../lang.js');
-
+    var array = require('../array.js');
+    
+    var cache = {
+        dom: [],
+        eventType: [],
+        action: []
+    };
+    
     var r = {
         /**
          * 利用冒泡来做监听，这样做有以下优势：
@@ -23,27 +30,48 @@ define(function(require, exports, module) {
             actions = actions || {};
             node = node && node[0] ? node : $(document);
             type = type || 'click';
-            node[type](function(e) {
-                var target = $(e.target);
-                var action = target.data('action') || target.parents('[data-action]').data('action');
-                var flag = true;
-                var fetch = actions[action];
-                if(fetch) {
-                    if(lang.isFunction(fetch)) {
-                        flag = fetch.call(target, e) === true;
-                    } else {
-                        if(lang.isFunction(fetch.is)) {
-                            flag = fetch.is.call(target, e) === true;
+            
+            var index = array.indexOf(node[0], cache.dom);
+            if(index != -1) {
+                if(cache.eventType[index] != type) {
+                    index = -1;
+                }
+            }
+            
+            if(index == -1) {
+                cache.dom.push(node[0]);
+                cache.eventType.push(type);
+                cache.action.push(actions);
+                index = cache.action.length - 1;
+
+                node[type](function(e) {
+                    var target = $(e.target);
+                    var actionKey = target.data('action') || target.parents('[data-action]').data('action');
+                    var flag = true;
+                    var fetch = cache.action[index];
+                    var fetchAction = fetch[actionKey];
+                    if(fetchAction) {
+                        if(lang.isFunction(fetchAction)) {
+                            flag = fetchAction.call(target, e) === true;
+                        } else {
+                            if(lang.isFunction(fetchAction.is)) {
+                                flag = fetchAction.is.call(target, e) === true;
+                            }
                         }
                     }
-                }
-                for(var key in actions) {
-                    if(key != action && actions[key] && actions[key].not && lang.isFunction(actions[key].not)) {
-                        actions[key].not.call(target, e);
+                    for(var key in fetch) {
+                        if(key != actionKey && fetch[key] && fetch[key].not && lang.isFunction(fetch[key].not)) {
+                            fetch[key].not.call(target, e);
+                        }
                     }
+                    return flag;
+                });
+            } else {
+                var fetch = cache.action[index];
+                for(var key in actions) {
+                    fetch[key] = actions[key];
                 }
-                return flag;
-            });
+            }
             return node;
         }
     };

@@ -305,7 +305,7 @@ define(function(require, exports, module) {
         var key;
         var temp = [0, 0, 0];
         var tag = e.target.tagName.toUpperCase();
-        if(tag != 'INPUT' || tag != 'BUTTON' || tag != 'TEXTAREA' || tag != 'SELECT' || tag != 'OPTION') {
+        if(tag != 'INPUT' && tag != 'BUTTON' && tag != 'TEXTAREA' && tag != 'SELECT' && tag != 'OPTION') {
             if(!keydownCache[e.keyCode]) {
                 if(e.ctrlKey) {
                     temp[0] = 1;
