@@ -1,43 +1,81 @@
 @charset "utf-8";
+/* 常见标签统一padding和margin */
 body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, textarea, p, blockquote, th, td {
     padding: 0;
     margin: 0;
 }
 
+/* 表格闭合border */
 table {
     border-collapse: collapse;
     border-spacing: 0;
 }
 
-fieldset, img {
+/*禁止边框 */
+fieldset, img, abbr, acronym {
     border: 0;
 }
 
+/* 特殊标签字体设置为和其他标签一致 */
 address, caption, cite, code, dfn, em, strong, th, var {
     font-weight: normal;
     font-style: normal;
 }
 
+/* 禁用列表样式 */
 ol, ul {
     list-style: none;
 }
 
+/* 去除表格中caption和th默认居中样式 */
 caption, th {
     text-align: left;
 }
 
+/* 标题标签字体设置为和其他标签一致 */
 h1, h2, h3, h4, h5, h6 {
     font-weight: normal;
     font-size: 100%;
 }
 
-q:before, q:after {
-    content:”;
+/* 去除blockquote和q标签可能出现的引号样式 */
+blockquote, q {
+    quotes: none;
 }
-abbr,acronym { border: 0;
-}
-body{font: 12px/1.2 Helvetica, Tahoma, Arial,Helvetica, sans-serif;}
 
-.clear{
-	clear:both;
+blockquote:before, blockquote:after, q:before, q:after {
+    content: '';
+    content: none;
+}
+
+/* body设置默认字体，以供继承 */
+body {
+    font: 12px/1.2 Helvetica, Tahoma, Arial, Helvetica, sans-serif;
+}
+
+/* 用来清理浮动 */
+.clear {
+    clear: both;
+}
+
+/* 不占位隐藏 */
+.hidden {
+    display: none;
+}
+
+/*  占位隐藏 */
+.s-hidden {
+    visibility: hidden;
+}
+
+/*  清除浮动 */
+.clearfix:after {
+    content: '';
+    display: block;
+    height: 0;
+    clear: both
+}
+
+.ie .clearfix {
+    zoom: 1
 }

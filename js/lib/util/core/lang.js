@@ -42,6 +42,13 @@ define(function(require, exports, module) {
                 subClass.prototype[i] = protoFns[i];
             }
         },
+        callback: function(fn, scope) {
+            var flag = true;
+            if(r.isFunction(fn)) {
+                flag = fn.call(scope) !== false;
+            }
+            return flag;
+        },
         /**
          * 定时器加强
          * @param {Object} params
