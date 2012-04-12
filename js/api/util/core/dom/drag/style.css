@@ -6,8 +6,11 @@
     background: #ddd;
     position: absolute;
 }
-#drag6, #drag8 {
+#drag6, #drag8, #drag10 {
     left: 200px;
+}
+#drag11 {
+    left: 400px;
 }
 .drag .handle {
     font-size: 14px;
@@ -26,6 +29,8 @@
     float: left;
     margin: 5px;
 }
+
+
 .demo {
     _height: 120px;
     min-height: 120px;

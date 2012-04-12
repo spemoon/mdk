@@ -60,7 +60,7 @@ define(function(require, exports, module) {
         })();
 
         /**--------------------------------------------
-         * 实例5：
+         * 实例6：
          * --------------------------------------------*/
         (function() {
             var drag7 = $('#drag7');
@@ -72,6 +72,29 @@ define(function(require, exports, module) {
             drag.reg(drag8, {
                 proxy:true
             });
+        })();
+
+        /**--------------------------------------------
+         * 实例8：
+         * --------------------------------------------*/
+        (function() {
+            var drag9 = $('#drag9');
+            drag.reg(drag9, {
+                scroll:true
+            });
+        })();
+
+        /**--------------------------------------------
+         * 实例8：
+         * --------------------------------------------*/
+        (function() {
+			var box2 = $('#box2');
+            var drag10 = $('#drag10');
+			var drag11 = $('#drag11');
+			var drag12 = $('#drag12');
+			box2.find('.drag').click(function() {
+				$(this).toggleClass('selected');
+			});
         })();
     });
 });
