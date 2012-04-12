@@ -30,6 +30,9 @@
     margin: 5px;
 }
 
+.demo .selected {
+    background: yellow;
+}
 
 .demo {
     _height: 120px;
