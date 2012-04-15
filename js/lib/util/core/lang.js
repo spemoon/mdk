@@ -42,10 +42,11 @@ define(function(require, exports, module) {
                 subClass.prototype[i] = protoFns[i];
             }
         },
-        callback: function(fn, scope) {
+        callback: function(fn, params) {
             var flag = true;
+            params = params || {};
             if(r.isFunction(fn)) {
-                flag = fn.call(scope) !== false;
+                flag = fn.apply(params.scope, params.params || []) !== false;
             }
             return flag;
         },

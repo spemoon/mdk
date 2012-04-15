@@ -6,10 +6,10 @@
     background: #ddd;
     position: absolute;
 }
-#drag6, #drag8, #drag10 {
+#drag6, #drag8, #drag12 {
     left: 200px;
 }
-#drag11 {
+#drag9, #drag13 {
     left: 400px;
 }
 .drag .handle {

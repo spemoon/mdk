@@ -63,21 +63,26 @@ define(function(require, exports, module) {
         (function() {
             drag.reg({
                 node:$('#drag7'),
-                proxy:true,
-                dashed:true
+                proxy:'dashed'
             });
             drag.reg({
                 node:$('#drag8'),
                 proxy:true
             });
+            drag.reg({
+                node:$('#drag9'),
+                proxy:function(node, handle) {
+                    return '<div style="border: 1px solid #555;background: #ddd;">自定义内容</div>';
+                }
+            });
         })();
 
         /**--------------------------------------------
-         * 实例8：
+         * 实例7：
          * --------------------------------------------*/
         (function() {
             drag.reg({
-                node:$('#drag9'),
+                node:$('#drag10'),
                 scroll:true
             });
         })();
@@ -88,15 +93,60 @@ define(function(require, exports, module) {
         (function() {
             var box2 = $('#box2');
             var list = box2.find('.drag');
-            list.click(function() {
-                $(this).toggleClass('selected');
-            });
+            list.find(':checkbox').click(function() {
+                if(this.checked) {
+                    $(this).parents('.drag').addClass('selected');
+                } else {
+                    $(this).parents('.drag').removeClass('selected');
+                }
+            }).removeAttr('checked');
             drag.reg({
                 node:list,
                 multi: function() {
                     return box2.find('.selected');
                 }
             });
+
+            /**--------------------------------------------
+             * 实例9：
+             * --------------------------------------------*/
+            (function() {
+                drag.reg({
+                    node:$('#drag14'),
+                    grid:50
+                });
+            })();
+
+            /**--------------------------------------------
+             * 实例10：
+             * --------------------------------------------*/
+            (function() {
+                drag.reg({
+                    node:$('#drag15'),
+                    offset: {
+                        top:50,
+                        left:50
+                    }
+                });
+            })();
+
+/*            (function() {
+                drag.reg({
+                    node:$('#drag14'),
+                    dragstart: function() {
+                        console.log('dragstart');
+                    },
+                    drag: function() {
+                        console.log('drag');
+                    },
+                    drop: function() {
+                        console.log('drop');
+                    },
+                    dragend: function() {
+                        console.log('dragend');
+                    }
+                });
+            })();*/
 
         })();
     });
