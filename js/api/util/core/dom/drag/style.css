@@ -38,6 +38,10 @@
     _height: 120px;
     min-height: 120px;
 }
+.demo2 {
+    _height: 320px;
+    min-height: 320px;
+}
 .example {
     border-bottom: 1px dashed purple;
     padding-bottom: 5px;
@@ -47,4 +51,8 @@
     width: 600px;
     height: 300px;
     border: 1px solid #ddd;
+}
+#box3,#box4 {
+    position: absolute;
+    left: 300px;
 }

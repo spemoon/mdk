@@ -130,23 +130,54 @@ define(function(require, exports, module) {
                 });
             })();
 
-/*            (function() {
+            /**--------------------------------------------
+             * 实例11：
+             * --------------------------------------------*/
+            (function() {
                 drag.reg({
-                    node:$('#drag14'),
-                    dragstart: function() {
-                        console.log('dragstart');
+                    node:$('#drag16'),
+                    target:$('#box3'),
+                    drop: function(e, target, handle, node, params) {
+                        target.css({
+                            background:'red'
+                        }).text('dropped');
+                    }
+                });
+            })();
+
+            /**--------------------------------------------
+             * 实例12：
+             * --------------------------------------------*/
+            (function() {
+                var box4 = $('#box4');
+                drag.reg({
+                    node:$('#drag17'),
+                    target:box4,
+                    dragstart: function(e, handle, node, params) {
+                        box4.text('dragstart');
                     },
-                    drag: function() {
-                        console.log('drag');
+                    drag: function(e, handle, node, params) {
+                        box4.text('drag---pageX:' + e.pageX + ',pageY:' + e.pageY);
                     },
-                    drop: function() {
-                        console.log('drop');
+                    dragenter: function(e, target, handle, node, params) {
+                        target.css('background', 'green').text('dragenter');
+                        console.log('dragenter');
+                    },
+                    dragover: function(e, target, handle, node, params) {
+                        target.css('background', 'yellow').text('dragover');
+                    },
+                    dragleave: function(e, target, handle, node, params) {
+                        target.css('background', '').text('dragleave');
+                        console.log('dragleave');
+                    },
+                    drop: function(e, target, handle, node, params) {
+                        target.css('background', 'red').text('dropped');
                     },
                     dragend: function() {
                         console.log('dragend');
                     }
                 });
-            })();*/
+            })();
 
         })();
     });

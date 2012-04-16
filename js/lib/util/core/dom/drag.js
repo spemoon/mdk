@@ -10,6 +10,18 @@ define(function(require, exports, module) {
     var helper = {
         floor:function(num, step) {
             return parseInt(num / step) * step;
+        },
+        mouseIn: function(e, node) {
+            var result;
+            node.each(function(i, v) {
+                var n = $(v);
+                var offset = n.offset();
+                if(e.pageX > offset.left && e.pageY > offset.top && (e.pageX < offset.left + n.width()) && (e.pageY < offset.top + n.height())) {
+                    result = n;
+                    return false;
+                }
+            });
+            return result;
         }
     };
     var r = {
@@ -39,6 +51,8 @@ define(function(require, exports, module) {
                         var startPosition = []; // 被拖拽节点的起始顶点坐标位置
                         var nodeSize = []; // 被拖拽节点的宽高
                         var multiIndex = -1; // 当前拖拽节点在multi中的位置
+                        var isEnterTarget = false; // 是否进入drop的目标
+                        var preTarget = null; // 上一个进入的drop目标
                         (function() {
                             if(multiIsFunction) {
                                 var tempList = params.multi();
@@ -74,8 +88,8 @@ define(function(require, exports, module) {
                             start:function(e) {
                                 status = 1;
                                 lang.callback(params.dragstart, {
-                                    scope:e,
-                                    params:[node, params]
+                                    scope:scope,
+                                    params:[e, scope, node, params]
                                 });
                                 if(params.proxy) { // 代理容器节点生成
                                     (function() {
@@ -93,7 +107,7 @@ define(function(require, exports, module) {
                                                         top:startPosition[i].y,
                                                         zIndex:zIndex
                                                     });
-                                                    div.innerHTML = params.proxy.call(e, node, handle);
+                                                    div.innerHTML = params.proxy.call(e, node, scope);
                                                     proxyList[0] = $div;
                                                     fragment.appendChild(div);
                                                 }
@@ -166,8 +180,8 @@ define(function(require, exports, module) {
                                         window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty();
                                     }
                                     lang.callback(params.drag, {
-                                        scope:e,
-                                        params:[node, params]
+                                        scope:scope,
+                                        params:[e, scope, node, params]
                                     });
                                     array.forEach(function(v, i, arr) {
                                         var minX, minY, maxX, maxY;
@@ -205,12 +219,39 @@ define(function(require, exports, module) {
                                             currentLeft = preOffset.left + helper.floor(currentLeft - preOffset.left, params.grid);
                                             currentTop = preOffset.top + helper.floor(currentTop - preOffset.top, params.grid);
                                         }
-
                                         v.css({
                                             left:Math.min(Math.max(currentLeft, minX), maxX),
                                             top:Math.min(Math.max(currentTop, minY), maxY)
                                         });
                                     }, params.proxy ? proxyList : nodeList);
+                                    if(params.target) {
+                                        (function(target) {
+                                            if(target) { // 进入
+                                                if(isEnterTarget) { // 之前已经在里面，触发dragover
+                                                    lang.callback(params.dragover, {
+                                                        scope:preTarget,
+                                                        params:[e, preTarget, scope, node, params]
+                                                    });
+                                                } else { // 之前在外面，触发dragenter
+                                                    isEnterTarget = true;
+                                                    preTarget = target;
+                                                    lang.callback(params.dragenter, {
+                                                        scope:preTarget,
+                                                        params:[e, preTarget, scope, node, params]
+                                                    });
+                                                }
+                                            } else { // 没进入
+                                                if(isEnterTarget) { // 之前在里面，触发dragleave
+                                                    isEnterTarget = false;
+                                                    lang.callback(params.dragleave, {
+                                                        scope:preTarget,
+                                                        params:[e, preTarget, scope, node, params]
+                                                    });
+                                                    preTarget = null;
+                                                }
+                                            }
+                                        })(helper.mouseIn(e, params.target));
+                                    }
                                 }
                             },
                             end:function(e) {
@@ -250,14 +291,18 @@ define(function(require, exports, module) {
                                     }
                                 }
                                 if(params.target) {
-                                    lang.callback(params.drop, {
-                                        scope:e,
-                                        params:[params.target, node, params]
-                                    });
+                                    (function(target) {
+                                        if(target) { // drop
+                                            lang.callback(params.drop, {
+                                                scope:preTarget,
+                                                params:[e, preTarget, scope, node, params]
+                                            });
+                                        }
+                                    })(helper.mouseIn(e, params.target));
                                 }
                                 lang.callback(params.dragend, {
-                                    scope:e,
-                                    params:[node, params]
+                                    scope:scope,
+                                    params:[e, scope, node, params]
                                 });
                                 if(scope[0].releaseCapture) {
                                     scope[0].releaseCapture();
