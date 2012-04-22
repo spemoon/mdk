@@ -215,7 +215,7 @@ define(function(require, exports, module) {
                         }
                     }
                     if(flag) { // 请求的URL和参数相同则保留上一个
-                        return;
+                        return false;
                     } else { // 不相同则放弃前一个请求
                         single[name].xhr && single[name].xhr.abort();
                     }
