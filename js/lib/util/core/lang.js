@@ -6,10 +6,10 @@ define(function(require, exports, module) {
          * @param {Mix} val
          * @return {Boolean}
          */
-        isUndefined:function(val) {
+        isUndefined: function(val) {
             return typeof val == 'undefined';
         },
-        isString:function(val) {
+        isString: function(val) {
             return typeof val == 'string';
         },
         /**
@@ -17,13 +17,13 @@ define(function(require, exports, module) {
          * @param {Mix} val
          * @return {Boolean}
          */
-        isArray:$.isArray,
+        isArray: $.isArray,
         /**
          * 判断变量是否是函数
          * @param {Mix} val
          * @return {Boolean}
          */
-        isFunction:$.isFunction,
+        isFunction: $.isFunction,
         /**
          * 提供function的继承(利用prototype)
          * @param {Function} subClass 子类
@@ -31,7 +31,7 @@ define(function(require, exports, module) {
          * @protoFns {Object} 给子类原型链添加的方法集合
          * @return {undefined}
          */
-        extend:function(subClass, superClass, protoFns) {
+        extend: function(subClass, superClass, protoFns) {
             var F = function() {
             };
             F.prototype = superClass.prototype;
@@ -63,10 +63,10 @@ define(function(require, exports, module) {
          * @return {Object}
          *     stop: {Function} 停止并清理定时器
          */
-        timer:function(params) {
+        timer: function(params) {
             var timer;
             var fn = function() {
-                if(params.rule && params.rule.call(params.scope)) {
+                if(r.isUndefined(params.rule) || (r.isFunction(params.rule) && params.rule.call(params.scope))) {
                     params.fn && params.fn.call(params.scope);
                     if(params.clear !== false) {
                         clearTimeout(timer);
@@ -82,12 +82,13 @@ define(function(require, exports, module) {
             params.start && params.start.call(params.scope);
             fn();
             return {
-                stop:function() {
+                stop: function() {
                     clearTimeout(timer);
                     params.end && params.end.call(params.scope);
                 }
             };
         }
     };
+
     return r;
 });
