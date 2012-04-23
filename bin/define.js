@@ -64,6 +64,9 @@ var helper = {
         str += '\t---- index.html\n';
         str += '\t---- app.js\n';
         str += '\t---- style.css\n';
+        str += '---- test: {test}\n';
+        str += '\t---- test.html\n';
+        str += '\t---- test.js\n';
         return {
             show:function(f, t) {
                 str = str.replace('{' + t + '}', f);
@@ -86,6 +89,7 @@ if(type && space) {
     var folder = {
         js:root + '/js/lib/' + type + '/' + p, // 模块目录
         api:root + '/js/api/' + type + '/' + space, // 例子目录
+        test: root + '/js/tests/' + type + '/' + space, // 测试用例目录
         css:root + '/themes/default' // 模块样式
     };
     var success = helper.create(type);
@@ -93,6 +97,7 @@ if(type && space) {
         if(isRemove) { // 移除
             helper.remove(folder.js + '/' + name + '.js');
             helper.remove(folder.api, true);
+            helper.remove(folder.test, true);
             if(type == 'cmp') {
                 helper.remove(folder.css + '/' + space.split('/').join('-') + '.css');
             }
@@ -100,6 +105,8 @@ if(type && space) {
             var modFile = folder.js + '/' + name + '.js';
             var indexFile = folder.api + '/index.html';
             var appFile = folder.api + '/app.js';
+            var testPage = folder.test + '/test.html';
+            var testFile = folder.test + '/test.js';
             if(path.existsSync(modFile)) {
                 process.stdout.write('\n\n' + modFile + ' exists, please change a name\n\n');
             } else {
@@ -118,11 +125,23 @@ if(type && space) {
                             fs.writeFile(indexFile, data.replace('{name}', name).replace('{global.css}', parents + '../../../themes/global.css').replace('{api.css}', parents + '../api_page.css').replace('{style.css}', parents + '../../../themes/default/' + name + '.css').replace('{sea.js}', parents + '../../lib/sea.js'));
                         });
                         fs.readFile(appFile, config.charset, function(e, data) { // 修正样式和seajs路径
-                            fs.writeFile(appFile, data.replace('{api}', parents + '../api_page.js').replace('{jquery}', parents + '../../lib/jquery/' + config.jquery + '/sea_jquery.js').replace('modName', name).replace('{mod}', parents + '../../lib/' + type + '/' + p + '/' + name + '.js').replace('{highlighter}', parents + '../../lib/external/syntaxHighlighter/shBrushJScript.js'));
+                            fs.writeFile(appFile, data.replace('{api}', parents + '../api_page.js').replace('{jquery}', parents + '../../lib/jquery/' + config.jquery + '/sea_jquery.js').replace('modName', name).replace('{mod}', parents + '../../lib/' + type + '/' + p + '/' + name + '.js'));
                         });
                         success.show(folder.api, 'api');
                     });
                 });
+                exec('mkdir -p ' + folder.test, function() { // 创建测试用例目录
+                    exec('cp ' + './model/test/* ' + folder.test, function() {
+                        fs.readFile(testPage, config.charset, function(e, data) { // 修正样式和seajs路径
+                            fs.writeFile(testPage, data.replace('{qunit.css}', parents + '../../lib/external/qunit/qunit.css').replace('{sea.js}', parents + '../../lib/sea.js'));
+                        });
+                        fs.readFile(testFile, config.charset, function(e, data) { // 修正样式和seajs路径
+                            fs.writeFile(testFile, data.replace('{qunit}', parents + '../../lib/external/qunit/sea_qunit.js').replace('{jquery}', parents + '../../lib/jquery/' + config.jquery + '/sea_jquery.js').replace('modName', name).replace('{mod}', parents + '../../lib/' + type + '/' + p + '/' + name + '.js'));
+                        });
+                        success.show(folder.test, 'test');
+                    });
+                });
+
                 if(type == 'cmp') {
                     var cssFile = folder.css + '/' + space.split('/').join('-') + '.css';
                     exec('touch ' + cssFile, function() {

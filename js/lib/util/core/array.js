@@ -6,8 +6,8 @@ define(function(require, exports, module) {
          * @param {Mix} v 被搜索的值
          * @param {Array} arr 被查找的数组
          * @return {Number} 第一个匹配的元素的下标，没找到返回-1
-        */
-        indexOf:function(v, arr) {
+         */
+        indexOf: function(v, arr) {
             var i;
             if(Array.prototype.indexOf) {
                 i = arr.indexOf(v);
@@ -23,7 +23,7 @@ define(function(require, exports, module) {
          * @param {Object} scope 执行函数的作用域
          * @return {undefined}
          */
-        forEach:function(callback, arr, scope) {
+        forEach: function(callback, arr, scope) {
             if(Array.prototype.forEach) {
                 arr.forEach(callback, scope);
             } else {

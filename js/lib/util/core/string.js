@@ -1,26 +1,37 @@
 define(function(require, exports, module) {
     var $ = require('../../jquery/1.7.1/sea_jquery.js');
+    var lang = require('./lang.js');
+    var array = require('./array.js');
     var r = {
         /**
          * 去掉字符串两侧的空白
-         * @param {String} str 待处理的字符串
+         * @param {String} string 待处理的字符串
          * @return {String}
          */
-        trim:function(str) {
-            return String.prototype.trim ? str.trim() : $.trim(str);
+        trim: function(string) {
+            return String.prototype.trim ? string.trim() : $.trim(string);
         },
         /**
          * 将对象转化成url格式的字符串(序列化)
          * @param {Object} obj 待序列化的对象
          * @return {String} 序列化的字符串
          */
-        serialize:function(obj) {
+        serialize: function(obj) {
             var t = [];
             for(var i in obj) {
-                t.push(i);
-                t.push('=');
-                t.push(obj[i]);
-                t.push('&');
+                if(lang.isArray(obj[i])) {
+                    array.forEach(function(value, index, arr) {
+                        t.push(i);
+                        t.push('=');
+                        t.push(obj[i][index]);
+                        t.push('&');
+                    }, obj[i]);
+                } else {
+                    t.push(i);
+                    t.push('=');
+                    t.push(obj[i]);
+                    t.push('&');
+                }
             }
             t.pop();
             return t.join('');
@@ -30,12 +41,12 @@ define(function(require, exports, module) {
          * @param {String} 待处理的字符串
          * @return {Object}
          */
-        parseJSON:JSON.parse || $.parseJSON,
+        parseJSON: JSON.parse || $.parseJSON,
         /**
          * 返回字符串的长度,全角字符算两个长度
          * @param {String} string 需要计算长度的字符串
          */
-        blength:function(string) {
+        blength: function(string) {
             return string.replace(/[^\x00-\xff]/g, '**').length;
         },
         /**
@@ -47,7 +58,7 @@ define(function(require, exports, module) {
          *         pad : 默认中左边开始截取,取值为right则从右边开始截取
          * @return {String} 截取得到的字符串
          */
-        cut:function(string, n, params) {
+        cut: function(string, n, params) {
             params = params || {};
             if(params.fullSharp) { // 全角算两个字符
                 var bLen = this.blength(string), nowLen = 0, suitLen = 0;
@@ -78,7 +89,7 @@ define(function(require, exports, module) {
          * @param {String} string 被操作的字符串
          * @param {Boolean} isDecode 反转义,默认是转义，无需该参数
          */
-        code:function(string, isDecode) {
+        code: function(string, isDecode) {
             if(isDecode) {
                 var r = [/&amp;/g, /&gt;/g, /&lt;/g], s = ['&', '>', '<'];
             } else {

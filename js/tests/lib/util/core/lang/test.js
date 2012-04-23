@@ -1,9 +1,7 @@
 define(function(require, exports, module) {
     var qunit = require('../../../../../lib/external/qunit/sea_qunit.js');
     var lang = require('../../../../../lib/util/core/lang.js');
-
     qunit.module("util.core.lang 测试");
-
     qunit.test('isUndefined(mix)', function() {
         var a;
         qunit.ok(lang.isUndefined(a), '仅声明未赋值的变量是undefined');
@@ -100,18 +98,51 @@ define(function(require, exports, module) {
     });
 
     qunit.test('timer(params)', function() {
-        qunit.stop();
         var i = 0;
+        qunit.stop();
         lang.timer({
             rule: function() {
                 qunit.start();
-                return i < 10;
+                return i < 5;
+            },
+            start: function() {
+                qunit.equal(i, 0, 'timer初始化的值');
             },
             fn: function() {
                 i++;
                 qunit.ok(i, '运行' + i + '次后的值');
                 qunit.stop();
+            },
+            end: function() {
+                qunit.start();
+                qunit.equal(i, 5, 'timer结束后的值');
             }
         });
-    })
+    });
+
+    qunit.test('timer(params) test stop', function() {
+        var i = 0;
+        qunit.stop();
+        var timer = lang.timer({
+            rule: function() {
+                qunit.start();
+                return i < 5;
+            },
+            start: function() {
+                qunit.equal(i, 0, 'timer初始化的值');
+            },
+            fn: function() {
+                qunit.stop();
+                i++;
+                qunit.ok(i, '运行' + i + '次后的值');
+                if(i == 3) {
+                    timer.stop(); // 中断
+                }
+            },
+            end: function() {
+                qunit.start();
+                qunit.equal(i, 3, 'timer结束后的值');
+            }
+        });
+    });
 });
