@@ -20,7 +20,7 @@ define(function(require, exports, module) {
      * -------------|--------------------|-----------------------
      */
 
-        // 月份的英文,前12个是全拼,后面12个是简写
+    // 月份的英文,前12个是全拼,后面12个是简写
     var MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     // 星期的英文,前7个是全拼,后面7个是简写
     var DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -59,7 +59,7 @@ define(function(require, exports, module) {
          * @param {Integer} year
          * @return {Boolean} true 是闰年 false 不是闰年
          */
-        isLeap:function(year) {
+        isLeap: function(year) {
             return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
         },
         /**
@@ -68,8 +68,8 @@ define(function(require, exports, module) {
          * @param {String} pattern 日期格式
          * @return {Boolean} true 是符合格式的日期字符串 false 不是
          */
-        check:function(val, pattern) {
-            var date = r.stringToDate(val, pattern || 'yyyy-MM-dd');
+        check: function(val, pattern) {
+            var date = r.stringToDate(val, pattern);
             return date != 0;
         },
         /**
@@ -81,7 +81,7 @@ define(function(require, exports, module) {
          *         0    起始日期 = 结束日期
          *         1    起始日期 < 结束日期
          */
-        compare:function(date1, date2) {
+        compare: function(date1, date2) {
             var t1 = date1.getTime(), t2 = date2.getTime();
             return t1 > t2 ? -1 : t1 < t2 ? 1 : 0;
         },
@@ -96,7 +96,7 @@ define(function(require, exports, module) {
          *         0    起始日期 = 结束日期
          *         1    起始日期 < 结束日期
          */
-        stringCompare:function(string1, pattern1, string2, pattern2) {
+        stringCompare: function(string1, pattern1, string2, pattern2) {
             var date1 = r.stringToDate(string1, pattern1), date2 = r.stringToDate(string2, pattern2);
             return r.compare(date1, date2);
         },
@@ -106,7 +106,7 @@ define(function(require, exports, module) {
          * @param {String} pattern 对应的日期格式
          * @return {Date} 日期对象,如果不能正确解析该字符串,返回0
          */
-        stringToDate:function(val, pattern) {
+        stringToDate: function(val, pattern) {
             // 输入日期字符串
             val = val + '';
             // 日期格式
@@ -272,7 +272,7 @@ define(function(require, exports, module) {
          * @param {String} pattern 格式化字符串
          * @return {String} 格式化后的字符串
          */
-        format:function(date, pattern) {
+        format: function(date, pattern) {
             pattern = pattern || 'yyyy-MM-dd';
             var result = '', i_pattern = 0, c = '', token = '', y = date.getYear() + '', M = date.getMonth() + 1, d = date.getDate(), E = date.getDay(), H = date.getHours(), m = date.getMinutes(), s = date.getSeconds(), yyyy, yy, MMM, MM, dd, hh, h, mm, ss, ampm, HH, H, KK, K, kk, k, value = {};
             if(y.length < 4) {
@@ -337,7 +337,7 @@ define(function(require, exports, module) {
          * @param {String} unit 时间单位,默认天，具体单位分别是：y年，q季度，M月，h时，m分，s秒，w周，其他都是天
          * @return {Date} 日期对象
          */
-        distance:function(date, n, unit) {
+        distance: function(date, n, unit) {
             var t = 0;
             if(unit == 'y') { //年
                 var strArr = r.format(date, 'yyyy-MM-dd HH:mm:ss').split('-');
