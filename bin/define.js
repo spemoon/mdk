@@ -3,36 +3,39 @@
  * 说明：本程序用来快速建立一个js模块的初始化脚本
  * -----------------------------------------------------
  * 用法：
- *     ./define.js type name [--remove]
+ *     ./define.js path_to_file [--sample=false] [--css=true] [--unit=false] [--doc=false] [--remove=true]
  * -----------------------------------------------------
  * 参数说明：
- *     type：类型
- *         cmp：UI组件
- *         util：工具类
- *     name：可以是一个多级目录，例如：
- *         mask
- *         momo/window
- *     --remove：删除已经建立的组件
- * -----------------------------------------------------
- * 功能：
- *     type为cmp时，以name=momo/window为例：
- *     $ ./define.js cmp momo/window
- *     将生成：
- *         mod：模块核心文件 js/lib/cmp/momo/window.js 默认已经require jquery
- *         css：模块所需样式文件 themes/default/momo-window.css
- *         api: api+实例文件夹 js/api/cmp/momo/window 包含以下文件
- *             页面： index.html 默认引入sea.js，运行app.js，样式三个（global，组件样式和页面样式)
- *             页面业务文件：app.js 默认引入cmp/momo/window.js
- *             页面样式：style.css
- * 
- *     type为util时，以name=momo/api为例：
- *     $ ./define.js util momo/api
- *     将生成：
- *         mod：模块核心文件 js/lib/util/momo/api.js 默认已经require jquery
- *         api: 实例文件夹 js/api/util/momo/api 包含以下文件
- *             页面： index.html 默认引入sea.js，运行app.js，样式两个（global，页面样式)
- *             页面业务文件：app.js 默认引入util/momo/api.js
- *             页面样式：style.css
+ *     path_to_file : js文件路径，比如：lib/util/dom/event（下同），将会在 /js/lib/util/dom/ 目录下生成event.js
+ *
+ *     --sample     : 是否生成例子目录，不设置默认true，将会在 /js/samples/lib/util/dom/event/ 目录下生成
+ *                      index.html  测试页面，该文件默认引入：
+ *                          /themes/global.css;
+ *                          /js/samples/samples.css;
+ *                          style.css
+ *                          /js/lib/sea.js 并指定data-main为./app.js
+ *                          如果配置了--css=true，还将包含：
+ *                          /themes/default/lib.util.dom.event.css
+ *                      app.js      测试页面的js，该文件默认引入：
+ *                          /js/samples/samples.js
+ *                          /js/lib/jquery/1.7.1/sea_jquery.js
+ *                          /js/lib/util/dom/event.js
+ *                      style.css   测试页面样式
+ *     --css        : 是否生成样式文件，不设置默认false，显示设定为true，将会在 /themes/default/ 目录下生成lib.util.dom.event.css
+ *     --unit       : 是否生成单元测试文件，不设置默认true，将会在 /js/tests/lib/util/dom/event/ 目录下生成
+ *                      index.html Qunit的主文件，该文件默认引入
+ *                          /js/lib/external/qunit/qunit.css
+ *                          /js/lib/sea.js 并指定data-main为./test.js
+ *                      test.js 测试脚本，该文件默认引入
+ *                          /js/lib/external/qunit/sea_qunit.js
+ *                          /js/lib/util/dom/event.js
+ *     --doc        : 是否生成doc目录，不设置默认true，将会在 /js/docs/lib/util/dom/event/ 目录下生成index.html
+ *     --remove     : 是否删除该脚本，不设置默认false，显示设定为true时候，会把上面所有生成的文件删除掉，具体如下
+ *                      核心文件 /js/lib/util/dom/event.js
+ *                      例子目录 /js/samples/lib/util/dom/event/ 及其该目录下的所有文件
+ *                      样式文件 /themes/default/lib.util.dom.event.css
+ *                      测试目录 /js/tests/lib/util/dom/event/ 及其该目录下的所有文件
+ *                      文档目录 /js/docs/lib/util/dom/event/ 及其该目录下的所有文件
  * -----------------------------------------------------
  */
 var fs = require('fs');
