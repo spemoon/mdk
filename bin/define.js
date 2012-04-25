@@ -107,6 +107,7 @@ if(type && space) {
             var appFile = folder.api + '/app.js';
             var testPage = folder.test + '/test.html';
             var testFile = folder.test + '/test.js';
+            var coverageFile = root + '/js/jsCoverage/all.js';
             if(path.existsSync(modFile)) {
                 process.stdout.write('\n\n' + modFile + ' exists, please change a name\n\n');
             } else {
@@ -137,6 +138,25 @@ if(type && space) {
                         });
                         fs.readFile(testFile, config.charset, function(e, data) { // 修正样式和seajs路径
                             fs.writeFile(testFile, data.replace('{qunit}', parents + '../../lib/external/qunit/sea_qunit.js').replace('{jquery}', parents + '../../lib/jquery/' + config.jquery + '/sea_jquery.js').replace('modName', name).replace('{mod}', parents + '../../lib/' + type + '/' + p + '/' + name + '.js'));
+                        });
+                        fs.readFile(coverageFile, config.charset, function(e, data) {
+                            var line;
+                            var content = 'require(\'..//test.js\');'
+                            var flag = true;
+                            var list = data.split('\n');
+                            for(var i = 0, len = list.length, temp; i < len; i++) {
+                                temp = list[i].trim();
+                                if(temp == content) {
+                                    flag = false;
+                                }
+                                if(/\}\);?\s*$/.test(temp)) {
+                                    line = i;
+                                }
+                            }
+                            if(flag) {
+                                var line = list.splice(i, 0, content);
+                            }
+                            fs.writeFile(coverageFile, line.join('\n'));
                         });
                         success.show(folder.test, 'test');
                     });
