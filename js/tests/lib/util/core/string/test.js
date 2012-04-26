@@ -2,7 +2,7 @@ define(function(require, exports, module) {
     var qunit = require('../../../../../lib/external/qunit/sea_qunit.js');
     var string = require('../../../../../lib/util/core/string.js');
 
-    qunit.module("util.core.string 测试");
+    qunit.module("util.core.string");
 
     qunit.test('trim(str)', function() {
         qunit.equal(string.trim(' abc'), 'abc', '去掉" abc"两侧的空白');

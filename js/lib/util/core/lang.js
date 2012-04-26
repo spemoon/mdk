@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-    var $ = require('../../jquery/1.7.1/sea_jquery.js');
+    var $ = require('../../jquery/sea_jquery.js');
     var r = {
         /**
          * 判断变量是否undefined

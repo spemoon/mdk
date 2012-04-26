@@ -3,7 +3,7 @@ define(function(require, exports, module) {
     var qunit = require('{qunit}');
     var modName = require('{mod}');
 
-    qunit.module("package 测试");
+    qunit.module("{package}");
 
 
 });

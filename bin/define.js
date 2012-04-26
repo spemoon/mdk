@@ -113,8 +113,7 @@ var program = require('commander');
  * 配置参数
  */
 var config = {
-    charset: 'utf-8',
-    jquery: '1.7.1'
+    charset: 'utf-8'
 };
 
 /**
@@ -230,7 +229,7 @@ var helper = {
         };
         pathTo.require = {
             seajs: 'js/lib/sea.js',
-            jquery: 'js/lib/jquery/' + config.jquery + '/sea_jquery.js',
+            jquery: 'js/lib/jquery/sea_jquery.js',
             globalCss: 'themes/global.css',
             qunitCss: 'js/lib/external/qunit/qunit.css',
             qunit: 'js/lib/external/qunit/sea_qunit.js'
@@ -291,7 +290,8 @@ var helper = {
                         data = data.replace('{qunit}', helper.relative(pathLen + 2) + pathTo.require.qunit)
                             .replace('{jquery}', helper.relative(pathLen + 2) + pathTo.require.jquery)
                             .replace('modName', fileName)
-                            .replace('{mod}', helper.relative(pathLen + 2) + 'js/' + mod + '.js');
+                            .replace('{mod}', helper.relative(pathLen + 2) + 'js/' + mod + '.js')
+                            .replace('{package}', pathArr.join('.'));
                         fs.writeFile(dest, data);
                     });
                     success.show(pathTo.folder.test, 'test');

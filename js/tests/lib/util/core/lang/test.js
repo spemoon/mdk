@@ -1,7 +1,9 @@
 define(function(require, exports, module) {
     var qunit = require('../../../../../lib/external/qunit/sea_qunit.js');
     var lang = require('../../../../../lib/util/core/lang.js');
-    qunit.module("util.core.lang 测试");
+
+    qunit.module("util.core.lang");
+
     qunit.test('isUndefined(mix)', function() {
         var a;
         qunit.ok(lang.isUndefined(a), '仅声明未赋值的变量是undefined');

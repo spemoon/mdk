@@ -2,7 +2,7 @@ define(function(require, exports, module) {
     var qunit = require('../../../../../lib/external/qunit/sea_qunit.js');
     var date = require('../../../../../lib/util/core/date.js');
 
-    qunit.module("util.core.date 测试");
+    qunit.module("util.core.date");
 
     qunit.test('isLeap(year)', function() {
         qunit.ok(date.isLeap(2000), '2000年是闰年');

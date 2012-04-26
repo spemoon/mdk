@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-    var $ = require('../../../jquery/1.7.1/sea_jquery.js');
+    var $ = require('../../../jquery/sea_jquery.js');
     /**
      * localStorage：标准本地存储，IE8+，FF3.0+，Opera10.5+，Chrome4+，Safari4+，iPhone2+，Android2+
      * 因此标准浏览器都支持，对于不支持的IE6，7使用IE特有的UserData来支持，其他低版本浏览器使用cookie支持

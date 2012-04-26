@@ -2,7 +2,7 @@ define(function(require, exports, module) {
     var qunit = require('../../../../../lib/external/qunit/sea_qunit.js');
     var array = require('../../../../../lib/util/core/array.js');
 
-    qunit.module("util.core.array 测试");
+    qunit.module("util.core.array");
 
     qunit.test('indexOf(v, arr)', function() {
         var obj = {};
