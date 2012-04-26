@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>array sample</title>
+		<link href="../../../../../../themes/global.css" rel="stylesheet" type="text/css"/>
+        <link href="../../../../sample.css" rel="stylesheet" type="text/css"/>
+		<link href="style.css" rel="stylesheet" type="text/css"/>
+        <script src="../../../../../lib/sea.js" data-main="./app.js"></script>
+    </head>
+    <body>
+    	<!------------------------------------------------------------------------------------------------->
+	    <div class="modual">
+	        <h2>array.indexOf</h2>
+	        <div class="introduce">
+	            <em>说明</em>
+	            <p>数组中检索元素，找到返回该元素的下标，没找到返回-1</p>
+	        </div>
+	        <div class="usage">
+	            <em>用法</em>
+	            <pre class="brush: js;">
+                    /**
+                     * 查找数组中是否存在某个值
+                     * @param {Mix} v 被搜索的值
+                     * @param {Array} arr 被查找的数组
+                     * @return {Number} 第一个匹配的元素的下标，没找到返回-1
+                    */
+                    array.indexOf(value, arr);
+                </pre>
+	        </div>
+	        <div class="example">
+	            <em>示例</em>
+				<span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+	            <div class="demo">
+                    <p>数组:[1,3,4,6,6,8,9]</p>
+                    <input id="btn1" type="button" value="在上面数组中查找6"/>
+                    <input id="btn2" type="button" value="在上面数组中查找7"/>
+                    <div id="result1" class="result"></div>
+	            </div>
+	        </div>
+	    </div>
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>array.forEach</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>数组中遍历元素，每个元素执行一个函数</p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+                <pre class="brush: js;">
+                    /**
+                     * 遍历一个数组，每个元素执行callback，callback作用域是scope
+                     * @param {Function} callback 执行函数，参数是 value，index，array
+                     * @param {Array} arr 数据源
+                     * @param {Object} scope 执行函数的作用域
+                     * @return {undefined}
+                     */
+                    array.forEach(callback, arr, scope);
+                </pre>
+            </div>
+            <div class="example">
+                <em>示例</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <p>数组:[1,3,4,6,6,8,9]</p>
+                    <input id="btn3" type="button" value="遍历上面数组，输出每个元素的平方"/>
+                    <div id="result2" class="result"></div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

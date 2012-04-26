@@ -1,0 +1,135 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>keyboard sample</title>
+		<link href="../../../../../../../themes/global.css" rel="stylesheet" type="text/css"/>
+        <link href="../../../../../sample.css" rel="stylesheet" type="text/css"/>
+		<link href="style.css" rel="stylesheet" type="text/css"/>
+        <script src="../../../../../../lib/sea.js" data-main="./app.js"></script>
+    </head>
+    <body>
+    	<!------------------------------------------------------------------------------------------------->
+	    <div class="modual">
+	        <h2>keyboard.ctrlEnter</h2>
+	        <div class="introduce">
+	            <em>说明</em>
+	            <p>某个节点响应ctrl+enter，一般用在textarea等提交上</p>
+	        </div>
+	        <div class="usage">
+	            <em>用法</em>
+	            <pre class="brush: js;">
+                    /**
+                     * @param node {Object} jQuery节点
+                     * @param callback {Function} 回调函数
+                     * @return {Object} jQuery节点
+                     */
+                    keyboard.ctrlEnter(node, callback);
+	            </pre>
+	        </div>
+	        <div class="example">
+	            <em>示例1</em>
+				<span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+	            <div class="demo">
+                    <p>光标在textarea中时按ctrl+enter可以提交</p>
+                    <textarea id="content1"></textarea>
+	            </div>
+	        </div>
+	    </div>
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>keyboard.hotKey</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>热键系统，一般用在一个系统需要提供快捷键的地方（一个成熟的web系统应该为用户提供快捷键）</p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+	            <pre class="brush: js;">
+                    /**
+                     * 热键包括两种：功能键和基本键，功能键即Ctrl，Alt，Shift，剩余的都是基本键
+                     * 热键写法注意，
+                     *     热键写法忽略大小写，例如：
+                     *         ctrl + a 和 Ctrl + A 一样
+                     *         Ctrl + Shift + a 和 CTRL + SHIFT + A 一样
+                     *     一个键盘含有两个字符情况下，需要上面的键值码请直接输出，请勿用Shift，例如：
+                     *         !，请勿用Shift+1（还可能表示End导致歧义）
+                     *         ?，请勿用Shift+/
+                     *     shift只可能和字母同时出现
+                     * 将热键注册到热键系统中，支持两种参数形式：
+                     *     1. 注册单个热键
+                     *        第1个参数是热键，
+                     *        第2个参数可能是：
+                     *            a. 回调函数
+                     *            b. 或者是个对象 {callback: 回调函数, hold: true/false} 一般hold是true时候采用到，表示支持响应按着keydown触发多次事件
+                     *     2. 注册多个热键
+                     *        只有一个参数，格式如下：
+                     *        {
+                     *            key1: callback,
+                     *            key2: {callback: callback, hold:true/false}
+                     *            ...
+                     *        }
+                     * @param $0
+                     * @param $1
+                     * @return {Undefined}
+                     */
+                    keyboard.hotKey($0, $1);
+	            </pre>
+            </div>
+            <div class="example">
+                <em>示例2</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <p>支持以下热键：</p>
+                    <div class="result">
+                        <div id="help">
+                            <ul class="help">
+                                <li>
+                                    <em>?</em>
+                                    <span>帮助</span>
+                                </li>
+                                <li>
+                                    <em>!</em>
+                                    <span>弹出一个alert</span>
+                                </li>
+                                <li>
+                                    <em>hello</em>
+                                    <span>显示'hello world'</span>
+                                </li>
+                                <li>
+                                    <em>s</em>
+                                    <span>弹出一个层，加载搜索引擎</span>
+                                </li>
+                                <li>
+                                    <em>gs</em>
+                                    <span>弹出一个层，加载google搜索引擎</span>
+                                </li>
+                                <li>
+                                    <em>google</em>
+                                    <span>弹出一个层，加载google搜索引擎</span>
+                                </li>
+                                <li>
+                                    <em>ESC</em>
+                                    <span>关闭弹出层</span>
+                                </li>
+                                <li>
+                                    <em>a</em>
+                                    <span>打开滑块</span>
+                                </li>
+                                <li>
+                                    <em>shift + a</em>
+                                    <span>关闭滑块</span>
+                                </li>
+                                <li>
+                                    <em>持续响应方向键（上下左右）</em>
+                                    <span>滑块存在时，移动一个滑块</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

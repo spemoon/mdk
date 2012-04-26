@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>storage sample</title>
+		<link href="../../../../../../../themes/global.css" rel="stylesheet" type="text/css"/>
+        <link href="../../../../../sample.css" rel="stylesheet" type="text/css"/>
+		<link href="style.css" rel="stylesheet" type="text/css"/>
+        <script src="../../../../../../lib/sea.js" data-main="./app.js"></script>
+    </head>
+    <body>
+    	<!------------------------------------------------------------------------------------------------->
+	    <div class="modual">
+	        <h2>storage.set</h2>
+	        <div class="introduce">
+	            <em>说明</em>
+	            <p>设置一个本地存储</p>
+	        </div>
+	        <div class="usage">
+	            <em>用法</em>
+	            <pre class="brush: js;">
+	            	/**
+                     * @param {String} key 键
+                     * @param {String} value 值
+                     * @return {Undefined}
+                     */
+                    storage.set(key, value);
+	            </pre>
+	        </div>
+	        <div class="example">
+	            <em>示例1</em>
+				<span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+	            <div class="demo">
+	            	<p>
+	            		<input type="text" id="txt1"/>
+						<input type="button" value="将输入框内容存入key为val的storage" id="btn1"/>
+						<input type="button" value="读取" id="btn2"/>
+                        <input type="button" value="删除" id="btn3"/>
+					</p>
+					<p>
+                        <input type="text" id="txt2"/>
+                        <input type="button" value="将输入框内容存入key为word的storage" id="btn4"/>
+                        <input type="button" value="读取" id="btn5"/>
+                        <input type="button" value="删除" id="btn6"/>
+                    </p>
+	            </div>
+	        </div>
+	    </div>
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>storage.get</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>获取一个本地存储</p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+	            <pre class="brush: js;">
+	            	/**
+                     * @param key {String} key 键
+                     * @return {String} 对应的值，没有获取到返回空字符串
+                     */
+                    storage.get(key);
+	            </pre>
+            </div>
+        </div>
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>storage.del</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>删除一个本地存储</p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+	            <pre class="brush: js;">
+	            	/**
+                     * @param {String} key 键
+                     * @return {Undefined}
+                     */
+                    storage.del(key);
+	            </pre>
+            </div>
+        </div>
+    </body>
+</html>
