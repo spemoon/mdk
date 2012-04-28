@@ -8,7 +8,7 @@ define(function(require, exports, module) {
     var win = $(window);
     var status = 0; // 0: 初始或者mouseup时无拖拽，1: mousedown准备拖拽，2: 正在mousemove拖拽
     var helper = {
-        floor:function(num, step) {
+        floor: function(num, step) {
             return parseInt(num / step) * step;
         },
         mouseIn: function(e, node) {
@@ -25,7 +25,7 @@ define(function(require, exports, module) {
         }
     };
     var r = {
-        reg:function(params) {
+        reg: function(params) {
             var handle = params.handle ? params.node.find(params.handle) : params.node;
             var multiIsFunction = lang.isFunction(params.multi);
             var proxyIsFunction = lang.isFunction(params.proxy);
@@ -73,23 +73,23 @@ define(function(require, exports, module) {
                         array.forEach(function(v, i, arr) {
                             var offset = v.offset();
                             startPosition[i] = {
-                                x:offset.left,
-                                y:offset.top
+                                x: offset.left,
+                                y: offset.top
                             };
                             nodeSize[i] = {
-                                width:v.width(),
-                                height:v.height(),
-                                outerWidth:v.outerWidth(),
-                                outerHeight:v.outerHeight()
+                                width: v.width(),
+                                height: v.height(),
+                                outerWidth: v.outerWidth(),
+                                outerHeight: v.outerHeight()
                             };
                         }, nodeList);
 
                         var action = {
-                            start:function(e) {
+                            start: function(e) {
                                 status = 1;
                                 lang.callback(params.dragstart, {
-                                    scope:scope,
-                                    params:[e, scope, node, params]
+                                    scope: scope,
+                                    params: [e, scope, node, params]
                                 });
                                 if(params.proxy) { // 代理容器节点生成
                                     (function() {
@@ -101,11 +101,11 @@ define(function(require, exports, module) {
                                             array.forEach(function(v, i, arr) {
                                                 if((multiIndex == -1 && i == 0) || (multiIsFunction && i == multiIndex)) { // 非multi时取第一个元素（也只可能一个），multi时取被拖拽的那个
                                                     $div.css({
-                                                        position:'absolute',
-                                                        display:'block',
-                                                        left:startPosition[i].x,
-                                                        top:startPosition[i].y,
-                                                        zIndex:zIndex
+                                                        position: 'absolute',
+                                                        display: 'block',
+                                                        left: startPosition[i].x,
+                                                        top: startPosition[i].y,
+                                                        zIndex: zIndex
                                                     });
                                                     div.innerHTML = params.proxy.call(e, node, scope);
                                                     proxyList[0] = $div;
@@ -118,19 +118,19 @@ define(function(require, exports, module) {
                                         } else {
                                             array.forEach(function(v, i, arr) {
                                                 var css = {
-                                                    position:'absolute',
-                                                    display:'block',
-                                                    left:startPosition[i].x,
-                                                    top:startPosition[i].y,
-                                                    width:nodeSize[i].width,
-                                                    height:nodeSize[i].height,
-                                                    zIndex:zIndex
+                                                    position: 'absolute',
+                                                    display: 'block',
+                                                    left: startPosition[i].x,
+                                                    top: startPosition[i].y,
+                                                    width: nodeSize[i].width,
+                                                    height: nodeSize[i].height,
+                                                    zIndex: zIndex
                                                 };
                                                 var proxy = v.clone().css(css);
                                                 if(params.proxy === 'dashed') {
                                                     proxy.css({
-                                                        border:'1px dashed #555',
-                                                        background:'transparent'
+                                                        border: '1px dashed #555',
+                                                        background: 'transparent'
                                                     });
                                                     proxy[0].innerHTML = '';
                                                 }
@@ -146,11 +146,11 @@ define(function(require, exports, module) {
                                 } else { // 非代理模式情况下将节点处理成absolute
                                     array.forEach(function(v, i, arr) {
                                         v.css({
-                                            position:'absolute',
-                                            left:startPosition[i].x,
-                                            top:startPosition[i].y,
-                                            zIndex:zIndex,
-                                            outline:'none'
+                                            position: 'absolute',
+                                            left: startPosition[i].x,
+                                            top: startPosition[i].y,
+                                            zIndex: zIndex,
+                                            outline: 'none'
                                         });
                                     }, nodeList);
                                     nodeList[0].attr('tabindex', '1').attr('hidefocus', 'true').focus();
@@ -163,16 +163,17 @@ define(function(require, exports, module) {
                                 if(params.scroll !== true) { // 拖动时候不影响滚动条，设置true则可以在拖动到边缘的同时让滚动条滚动
                                     e.preventDefault();
                                 }
+                                window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty();
                             },
-                            drag:function(e) {
+                            drag: function(e) {
                                 if(status == 1 || status == 2) {
                                     var startPositionIndex = Math.max(multiIndex, 0);
                                     if(status == 1) {
                                         status = 2;
                                         if(params.offset && params.axisX !== true && params.axisY !== true) {
                                             startPosition[startPositionIndex] = {
-                                                x:e.pageX - params.offset.left,
-                                                y:e.pageY - params.offset.top
+                                                x: e.pageX - params.offset.left,
+                                                y: e.pageY - params.offset.top
                                             };
                                         }
                                     }
@@ -180,14 +181,14 @@ define(function(require, exports, module) {
                                         window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty();
                                     }
                                     lang.callback(params.drag, {
-                                        scope:scope,
-                                        params:[e, scope, node, params]
+                                        scope: scope,
+                                        params: [e, scope, node, params]
                                     });
                                     array.forEach(function(v, i, arr) {
                                         var minX, minY, maxX, maxY;
                                         var targetSize = proxyIsFunction ? {
-                                            outerWidth:v.width(),
-                                            outerHeight:v.height()
+                                            outerWidth: v.width(),
+                                            outerHeight: v.height()
                                         } : nodeSize[i];
                                         if(params.container) {
                                             var container = params.container;
@@ -220,8 +221,8 @@ define(function(require, exports, module) {
                                             currentTop = preOffset.top + helper.floor(currentTop - preOffset.top, params.grid);
                                         }
                                         v.css({
-                                            left:Math.min(Math.max(currentLeft, minX), maxX),
-                                            top:Math.min(Math.max(currentTop, minY), maxY)
+                                            left: Math.min(Math.max(currentLeft, minX), maxX),
+                                            top: Math.min(Math.max(currentTop, minY), maxY)
                                         });
                                     }, params.proxy ? proxyList : nodeList);
                                     if(params.target) {
@@ -229,23 +230,23 @@ define(function(require, exports, module) {
                                             if(target) { // 进入
                                                 if(isEnterTarget) { // 之前已经在里面，触发dragover
                                                     lang.callback(params.dragover, {
-                                                        scope:preTarget,
-                                                        params:[e, preTarget, scope, node, params]
+                                                        scope: preTarget,
+                                                        params: [e, preTarget, scope, node, params]
                                                     });
                                                 } else { // 之前在外面，触发dragenter
                                                     isEnterTarget = true;
                                                     preTarget = target;
                                                     lang.callback(params.dragenter, {
-                                                        scope:preTarget,
-                                                        params:[e, preTarget, scope, node, params]
+                                                        scope: preTarget,
+                                                        params: [e, preTarget, scope, node, params]
                                                     });
                                                 }
                                             } else { // 没进入
                                                 if(isEnterTarget) { // 之前在里面，触发dragleave
                                                     isEnterTarget = false;
                                                     lang.callback(params.dragleave, {
-                                                        scope:preTarget,
-                                                        params:[e, preTarget, scope, node, params]
+                                                        scope: preTarget,
+                                                        params: [e, preTarget, scope, node, params]
                                                     });
                                                     preTarget = null;
                                                 }
@@ -254,7 +255,7 @@ define(function(require, exports, module) {
                                     }
                                 }
                             },
-                            end:function(e) {
+                            end: function(e) {
                                 status = 0;
                                 if(params.proxy) {
                                     var offset;
@@ -267,11 +268,11 @@ define(function(require, exports, module) {
                                             var dy = startPosition[startPositionIndex].y - offset.top;
                                             array.forEach(function(v, i, arr) {
                                                 v.css({
-                                                    top:startPosition[i].y - dy,
-                                                    left:startPosition[i].x - dx,
-                                                    position:'absolute',
-                                                    visibility:'visible',
-                                                    zIndex:zIndex
+                                                    top: startPosition[i].y - dy,
+                                                    left: startPosition[i].x - dx,
+                                                    position: 'absolute',
+                                                    visibility: 'visible',
+                                                    zIndex: zIndex
                                                 });
                                                 proxyList[0].remove();
                                             }, nodeList);
@@ -279,11 +280,11 @@ define(function(require, exports, module) {
                                             array.forEach(function(v, i, arr) {
                                                 offset = proxyList[i].offset();
                                                 v.css({
-                                                    top:offset.top,
-                                                    left:offset.left,
-                                                    position:'absolute',
-                                                    visibility:'visible',
-                                                    zIndex:zIndex
+                                                    top: offset.top,
+                                                    left: offset.left,
+                                                    position: 'absolute',
+                                                    visibility: 'visible',
+                                                    zIndex: zIndex
                                                 });
                                                 proxyList[0].remove();
                                             }, nodeList);
@@ -294,15 +295,15 @@ define(function(require, exports, module) {
                                     (function(target) {
                                         if(target) { // drop
                                             lang.callback(params.drop, {
-                                                scope:preTarget,
-                                                params:[e, preTarget, scope, node, params]
+                                                scope: preTarget,
+                                                params: [e, preTarget, scope, node, params]
                                             });
                                         }
                                     })(helper.mouseIn(e, params.target));
                                 }
                                 lang.callback(params.dragend, {
-                                    scope:scope,
-                                    params:[e, scope, node, params]
+                                    scope: scope,
+                                    params: [e, scope, node, params]
                                 });
                                 if(scope[0].releaseCapture) {
                                     scope[0].releaseCapture();

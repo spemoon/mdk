@@ -43,14 +43,6 @@ define(function(require, exports, module) {
             r.setErrorAction = null;
         },
         /**
-         * 设置默认AJAX的请求类型，该方法最多调用一次
-         * @param type
-         */
-        setType:function(type) {
-            config.type = type;
-            r.setType = null;
-        },
-        /**
          * 基类ajax，要求服务端返回的结果格式必须是以下格式的JSON：
          * {
          *     code: 状态码，一般就以下三个：200成功/400失败/401无权限

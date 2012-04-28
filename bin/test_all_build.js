@@ -30,10 +30,8 @@ var helper = {
 };
 
 var root = path.resolve(path.dirname('../../')) + '/js/tests';
-var coverage = 'jsCoverage';
 
-
-fs.writeFile(root + '/' + coverage + '/all.js', (function(result) {
+fs.writeFile(root + '/all.js', (function(result) {
     var content = '';
     var log = [];
     content += 'define(function(require, exports, modual) {\n';
