@@ -6,7 +6,12 @@
     background: #ddd;
     position: absolute;
 }
-#drag6, #drag8, #drag12 {
+.drag-fixed {
+    position: fixed;
+    left: 500px;
+    top: 500px;
+}
+#drag6, #drag8, #drag12, #drag20 {
     left: 200px;
 }
 #drag9, #drag13 {
@@ -52,7 +57,7 @@
     height: 300px;
     border: 1px solid #ddd;
 }
-#box3,#box4 {
+#box3,#box4,#box5 {
     position: absolute;
     left: 300px;
 }

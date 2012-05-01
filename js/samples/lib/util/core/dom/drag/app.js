@@ -144,6 +144,7 @@ define(function(require, exports, module) {
                     }
                 });
             })();
+
             /**--------------------------------------------
              * 实例12：
              * --------------------------------------------*/
@@ -175,6 +176,33 @@ define(function(require, exports, module) {
                     dragend: function() {
                         console.log('dragend');
                     }
+                });
+            })();
+
+            /**--------------------------------------------
+             * 实例13：
+             * --------------------------------------------*/
+            (function() {
+                drag.reg({
+                    node:$('#drag18')
+                });
+            })();
+
+            /**--------------------------------------------
+             * 实例14：
+             * --------------------------------------------*/
+            (function() {
+                drag.reg({
+                    node:$('#drag19'),
+                    target:$('#box5'),
+                    revert: true
+                });
+
+                drag.reg({
+                    node:$('#drag20'),
+                    target:$('#box5'),
+                    revert: true,
+                    animate: true
                 });
             })();
 

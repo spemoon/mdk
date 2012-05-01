@@ -22,6 +22,13 @@ define(function(require, exports, module) {
                 }
             });
             return result;
+        },
+        fixed: function(node, top, left) {
+            node.css({
+                top: top - doc.scrollTop(),
+                left: left - doc.scrollLeft(),
+                position: 'fixed'
+            });
         }
     };
     var r = {
@@ -74,7 +81,8 @@ define(function(require, exports, module) {
                             var offset = v.offset();
                             startPosition[i] = {
                                 x: offset.left,
-                                y: offset.top
+                                y: offset.top,
+                                position: v.css('position')
                             };
                             nodeSize[i] = {
                                 width: v.width(),
@@ -259,38 +267,45 @@ define(function(require, exports, module) {
                                 status = 0;
                                 if(params.proxy) {
                                     var offset;
-                                    if(params.proxy) {
-                                        var offset;
-                                        if(proxyIsFunction) {
-                                            offset = proxyList[0].offset();
-                                            var startPositionIndex = Math.max(multiIndex, 0);
-                                            var dx = startPosition[startPositionIndex].x - offset.left;
-                                            var dy = startPosition[startPositionIndex].y - offset.top;
-                                            array.forEach(function(v, i, arr) {
-                                                v.css({
-                                                    top: startPosition[i].y - dy,
-                                                    left: startPosition[i].x - dx,
-                                                    position: 'absolute',
-                                                    visibility: 'visible',
-                                                    zIndex: zIndex
-                                                });
-                                                proxyList[0].remove();
-                                            }, nodeList);
-                                        } else {
-                                            array.forEach(function(v, i, arr) {
-                                                offset = proxyList[i].offset();
-                                                v.css({
-                                                    top: offset.top,
-                                                    left: offset.left,
-                                                    position: 'absolute',
-                                                    visibility: 'visible',
-                                                    zIndex: zIndex
-                                                });
-                                                proxyList[0].remove();
-                                            }, nodeList);
-                                        }
+                                    if(proxyIsFunction) {
+                                        offset = proxyList[0].offset();
+                                        var startPositionIndex = Math.max(multiIndex, 0);
+                                        var dx = startPosition[startPositionIndex].x - offset.left;
+                                        var dy = startPosition[startPositionIndex].y - offset.top;
+                                        array.forEach(function(v, i, arr) {
+                                            v.css({
+                                                top: startPosition[i].y - dy,
+                                                left: startPosition[i].x - dx,
+                                                position: 'absolute',
+                                                visibility: 'visible',
+                                                zIndex: zIndex
+                                            });
+                                            proxyList[0].remove();
+                                        }, nodeList);
+                                    } else {
+                                        array.forEach(function(v, i, arr) {
+                                            offset = proxyList[i].offset();
+                                            v.css({
+                                                top: offset.top,
+                                                left: offset.left,
+                                                position: 'absolute',
+                                                visibility: 'visible',
+                                                zIndex: zIndex
+                                            });
+                                            proxyList[0].remove();
+                                        }, nodeList);
                                     }
                                 }
+                                array.forEach(function(v, i, arr) {
+                                    var position = startPosition[i].position;
+                                    var isFixed = position == 'fixed';
+                                    if(isFixed) {
+                                        var offset = v.offset();
+                                        helper.fixed(v, offset.top, offset.left);
+                                    } else if(params.keepPosition) {
+                                        v.css('position', position);
+                                    }
+                                }, nodeList);
                                 if(params.target) {
                                     (function(target) {
                                         if(target) { // drop
@@ -298,6 +313,18 @@ define(function(require, exports, module) {
                                                 scope: preTarget,
                                                 params: [e, preTarget, scope, node, params]
                                             });
+                                        } else {
+                                            if(params.revert) {
+                                                var method = params.animate ? 'animate' : 'css';
+                                                array.forEach(function(v, i, arr) {
+                                                    var position = startPosition[i];
+                                                    v[method]({
+                                                        top: position.y,
+                                                        left: position.x,
+                                                        position: position.position
+                                                    });
+                                                }, nodeList);
+                                            }
                                         }
                                     })(helper.mouseIn(e, params.target));
                                 }

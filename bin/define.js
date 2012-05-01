@@ -269,7 +269,7 @@ var helper = {
                     });
                     helper.create(pathTo.source.sample.js, pathTo.file.sample.js, function(dest, data) { // 例子JS文件
                         data = data.replace('modName', fileName)
-                            .replace('{mod}', helper.relative(pathLen + 2) + mod + '.js')
+                            .replace('{mod}', helper.relative(pathLen + 1) + mod + '.js')
                             .replace('{sample}', helper.relative(pathLen) + 'sample.js')
                             .replace('{jquery}', helper.relative(pathLen + 2) + pathTo.require.jquery);
                         fs.writeFile(dest, data);

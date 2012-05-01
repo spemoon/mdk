@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-    require('{api}');
+    require('{sample}');
     var $ = require('{jquery}');
     var modName = require('{mod}');
 
