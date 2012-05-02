@@ -206,6 +206,27 @@ define(function(require, exports, module) {
                 });
             })();
 
+            /**--------------------------------------------
+             * 实例15：
+             * --------------------------------------------*/
+            (function() {
+                var drag21 = $('#drag21');
+                var checkbox = drag21.find(':checkbox').eq(0);
+                checkbox.removeAttr('checked');
+                drag.reg({
+                    node:drag21
+                });
+                checkbox.click(function() {
+                    if(this.checked) {
+                        drag.unreg(drag21);
+                    } else {
+                        drag.reg({
+                            node:drag21
+                        });
+                    }
+                });
+            })();
+
         })();
     });
 });

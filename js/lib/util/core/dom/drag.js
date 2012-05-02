@@ -7,6 +7,7 @@ define(function(require, exports, module) {
     var doc = $(document);
     var win = $(window);
     var status = 0; // 0: 初始或者mouseup时无拖拽，1: mousedown准备拖拽，2: 正在mousemove拖拽
+    var eventSpace = +new Date();
     var helper = {
         floor: function(num, step) {
             return parseInt(num / step) * step;
@@ -45,7 +46,7 @@ define(function(require, exports, module) {
                 return false;
             });
             handle.each(function(index, item) {
-                $(item).css('cursor', 'move').mousedown(function(e) {
+                $(item).css('cursor', 'move').bind('mousedown.' + eventSpace, function(e) {
                     var node = params.node.eq(index); // 当前要拖拽的节点
                     var scope = $(this); // handle
                     if(e.which == 1) { // 限制左键拖动
@@ -345,6 +346,9 @@ define(function(require, exports, module) {
                     }
                 });
             });
+        },
+        unreg: function(node) {
+            node.css('cursor', 'default').unbind('mousedown.' + eventSpace);
         }
     };
     return r;
