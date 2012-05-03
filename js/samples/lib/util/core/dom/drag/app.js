@@ -11,6 +11,7 @@ define(function(require, exports, module) {
             drag.reg({
                 node:$('#drag1')
             });
+            console.log($('#drag1').css('margin-top'));
         })();
 
         /**--------------------------------------------

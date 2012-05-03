@@ -79,10 +79,10 @@ define(function(require, exports, module) {
                             }
                         })();
                         array.forEach(function(v, i, arr) {
-                            var offset = v.offset();
+                            var position = v.position();
                             startPosition[i] = {
-                                x: offset.left,
-                                y: offset.top,
+                                x: position.left,
+                                y: position.top,
                                 position: v.css('position')
                             };
                             nodeSize[i] = {
@@ -150,7 +150,7 @@ define(function(require, exports, module) {
                                                 }
                                             }, nodeList);
                                         }
-                                        document.body.appendChild(fragment);
+                                        node.parent()[0].appendChild(fragment);
                                     })();
                                 } else { // 非代理模式情况下将节点处理成absolute
                                     array.forEach(function(v, i, arr) {
@@ -203,15 +203,17 @@ define(function(require, exports, module) {
                                             var container = params.container;
                                             var containerWidth = container.width();
                                             var containerHeight = container.height();
-                                            var containerOffset = container.offset();
-                                            minX = containerOffset.left;
+                                            var containerPosition = container.position();
+                                            minX = containerPosition.left;
                                             maxX = minX + containerWidth - targetSize.outerWidth;
-                                            minY = containerOffset.top;
+                                            minY = containerPosition.top;
                                             maxY = minY + containerHeight - targetSize.outerHeight;
                                         } else {
-                                            minX = doc.scrollLeft();
+                                            var offsetParent = v.offsetParent();
+                                            var offsetParentPosition = offsetParent.position();
+                                            minX = doc.scrollLeft() - offsetParentPosition.left - parseFloat(offsetParent.css('margin-left'));
                                             maxX = minX + win.width() - targetSize.outerWidth;
-                                            minY = doc.scrollTop();
+                                            minY = doc.scrollTop() - offsetParentPosition.top - parseFloat(offsetParent.css('margin-top'));
                                             maxY = minY + win.height() - targetSize.outerHeight;
                                         }
                                         if(params.axisX) {
@@ -267,12 +269,12 @@ define(function(require, exports, module) {
                             end: function(e) {
                                 status = 0;
                                 if(params.proxy) {
-                                    var offset;
+                                    var position;
                                     if(proxyIsFunction) {
-                                        offset = proxyList[0].offset();
+                                        position = proxyList[0].position();
                                         var startPositionIndex = Math.max(multiIndex, 0);
-                                        var dx = startPosition[startPositionIndex].x - offset.left;
-                                        var dy = startPosition[startPositionIndex].y - offset.top;
+                                        var dx = startPosition[startPositionIndex].x - position.left;
+                                        var dy = startPosition[startPositionIndex].y - position.top;
                                         array.forEach(function(v, i, arr) {
                                             v.css({
                                                 top: startPosition[i].y - dy,
@@ -285,10 +287,10 @@ define(function(require, exports, module) {
                                         }, nodeList);
                                     } else {
                                         array.forEach(function(v, i, arr) {
-                                            offset = proxyList[i].offset();
+                                            position = proxyList[i].position();
                                             v.css({
-                                                top: offset.top,
-                                                left: offset.left,
+                                                top: position.top,
+                                                left: position.left,
                                                 position: 'absolute',
                                                 visibility: 'visible',
                                                 zIndex: zIndex
@@ -301,8 +303,8 @@ define(function(require, exports, module) {
                                     var position = startPosition[i].position;
                                     var isFixed = position == 'fixed';
                                     if(isFixed) {
-                                        var offset = v.offset();
-                                        helper.fixed(v, offset.top, offset.left);
+                                        var position = v.position();
+                                        helper.fixed(v, position.top, position.left);
                                     } else if(params.keepPosition) {
                                         v.css('position', position);
                                     }
