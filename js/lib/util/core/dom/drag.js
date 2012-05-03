@@ -211,9 +211,9 @@ define(function(require, exports, module) {
                                         } else {
                                             var offsetParent = v.offsetParent();
                                             var offsetParentPosition = offsetParent.position();
-                                            minX = doc.scrollLeft() - offsetParentPosition.left - parseFloat(offsetParent.css('margin-left'));
+                                            minX = doc.scrollLeft() - offsetParentPosition.left - parseFloat(offsetParent.css('margin-left')) - parseFloat(v.css('margin-left'));
                                             maxX = minX + win.width() - targetSize.outerWidth;
-                                            minY = doc.scrollTop() - offsetParentPosition.top - parseFloat(offsetParent.css('margin-top'));
+                                            minY = doc.scrollTop() - offsetParentPosition.top - parseFloat(offsetParent.css('margin-top')) - parseFloat(v.css('margin-top'));
                                             maxY = minY + win.height() - targetSize.outerHeight;
                                         }
                                         if(params.axisX) {
