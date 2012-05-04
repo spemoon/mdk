@@ -57,7 +57,7 @@
     height: 300px;
     border: 1px solid #ddd;
 }
-#box3,#box4,#box5 {
+#box3,#box4,#box5,#box6 {
     position: absolute;
     left: 300px;
 }

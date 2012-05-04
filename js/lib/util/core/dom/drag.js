@@ -34,20 +34,22 @@ define(function(require, exports, module) {
     };
     var r = {
         reg: function(params) {
-            var handle = params.handle ? params.node.find(params.handle) : params.node;
+            var nodes = lang.isFunction(params.node) ? params.node() : params.node;
+            var handle = params.handle ? nodes.find(params.handle) : nodes;
             var multiIsFunction = lang.isFunction(params.multi);
             var proxyIsFunction = lang.isFunction(params.proxy);
             if(params.except) { // 拖拽句柄排除
-                params.node.find(params.except).css('cursor', 'default').mousedown(function(e) {
+                nodes.find(params.except).css('cursor', 'default').mousedown(function(e) {
                     return false;
                 });
             }
-            params.node.find('input,textarea,button').css('cursor', 'default').mousedown(function(e) {
+            nodes.find('input,textarea,button').css('cursor', 'default').mousedown(function(e) {
                 return false;
             });
             handle.each(function(index, item) {
                 $(item).css('cursor', 'move').bind('mousedown.' + eventSpace, function(e) {
-                    var node = params.node.eq(index); // 当前要拖拽的节点
+                    var node = nodes.eq(index); // 当前要拖拽的节点
+                    var targetNode = node; // 当前被拖拽的节点，非proxy时是node，proxy时是代理节点
                     var scope = $(this); // handle
                     if(e.which == 1) { // 限制左键拖动
                         var zIndex = mVar.zIndex(); // 最高z-index
@@ -96,10 +98,6 @@ define(function(require, exports, module) {
                         var action = {
                             start: function(e) {
                                 status = 1;
-                                lang.callback(params.dragstart, {
-                                    scope: scope,
-                                    params: [e, scope, node, params]
-                                });
                                 if(params.proxy) { // 代理容器节点生成
                                     (function() {
                                         var fragment = document.createDocumentFragment();
@@ -118,6 +116,7 @@ define(function(require, exports, module) {
                                                     });
                                                     div.innerHTML = params.proxy.call(e, node, scope);
                                                     proxyList[0] = $div;
+                                                    targetNode = $div;
                                                     fragment.appendChild(div);
                                                 }
                                                 if(params.hide !== false) {
@@ -136,6 +135,9 @@ define(function(require, exports, module) {
                                                     zIndex: zIndex
                                                 };
                                                 var proxy = v.clone().css(css);
+                                                if((multiIndex == -1 && i == 0) || (multiIsFunction && i == multiIndex)) { // 非multi时取第一个元素（也只可能一个），multi时取被拖拽的那个
+                                                    targetNode = proxy;
+                                                }
                                                 if(params.proxy === 'dashed') {
                                                     proxy.css({
                                                         border: '1px dashed #555',
@@ -173,6 +175,10 @@ define(function(require, exports, module) {
                                     e.preventDefault();
                                 }
                                 window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty();
+                                lang.callback(params.dragstart, {
+                                    scope: scope,
+                                    params: [e, scope, node, targetNode, params]
+                                });
                             },
                             drag: function(e) {
                                 if(status == 1 || status == 2) {
@@ -191,7 +197,7 @@ define(function(require, exports, module) {
                                     }
                                     lang.callback(params.drag, {
                                         scope: scope,
-                                        params: [e, scope, node, params]
+                                        params: [e, scope, node, targetNode, params]
                                     });
                                     array.forEach(function(v, i, arr) {
                                         var minX, minY, maxX, maxY;
@@ -242,14 +248,14 @@ define(function(require, exports, module) {
                                                 if(isEnterTarget) { // 之前已经在里面，触发dragover
                                                     lang.callback(params.dragover, {
                                                         scope: preTarget,
-                                                        params: [e, preTarget, scope, node, params]
+                                                        params: [e, preTarget, scope, node, targetNode, params]
                                                     });
                                                 } else { // 之前在外面，触发dragenter
                                                     isEnterTarget = true;
                                                     preTarget = target;
                                                     lang.callback(params.dragenter, {
                                                         scope: preTarget,
-                                                        params: [e, preTarget, scope, node, params]
+                                                        params: [e, preTarget, scope, node, targetNode, params]
                                                     });
                                                 }
                                             } else { // 没进入
@@ -257,7 +263,7 @@ define(function(require, exports, module) {
                                                     isEnterTarget = false;
                                                     lang.callback(params.dragleave, {
                                                         scope: preTarget,
-                                                        params: [e, preTarget, scope, node, params]
+                                                        params: [e, preTarget, scope, node, targetNode, params]
                                                     });
                                                     preTarget = null;
                                                 }

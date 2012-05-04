@@ -11,7 +11,6 @@ define(function(require, exports, module) {
             drag.reg({
                 node:$('#drag1')
             });
-            console.log($('#drag1').css('margin-top'));
         })();
 
         /**--------------------------------------------
@@ -225,6 +224,20 @@ define(function(require, exports, module) {
                             node:drag21
                         });
                     }
+                });
+            })();
+
+            /**--------------------------------------------
+             * 实例16：
+             * --------------------------------------------*/
+            (function() {
+                drag.reg({
+                    node:$('#drag22'),
+                    target:$('#box6'),
+                    proxy: true,
+                    revert: true,
+                    animate: true,
+                    remove: false
                 });
             })();
 
