@@ -47,3 +47,22 @@
     float: right;
     margin: 2px;
 }
+
+.disabled{
+    background: #efefef;
+    color: #aaa;
+}
+
+.demo2 {
+    height: 350px;
+}
+#box7, #box8 {
+    width: 220px;
+    min-height: 50px;
+    border: 1px solid #aaa;
+    float: left;
+    margin: 30px;
+}
+.itemx {
+    background: #98fb98;
+}
