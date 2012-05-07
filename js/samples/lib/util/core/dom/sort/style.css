@@ -56,7 +56,7 @@
 .demo2 {
     height: 350px;
 }
-#box7, #box8 {
+#box7, #box8, #box9 {
     width: 220px;
     min-height: 50px;
     border: 1px solid #aaa;
@@ -65,4 +65,7 @@
 }
 .itemx {
     background: #98fb98;
+}
+.itemy {
+    background: #db7093;
 }

@@ -179,7 +179,7 @@ define(function(require, exports, module) {
                                     window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty();
                                     lang.callback(params.dragstart, {
                                         scope: scope,
-                                        params: [e, scope, node, targetNode, params]
+                                        params: [e, scope, node, targetNode, startPosition[index]] // 事件对象，handle，拖拽对象节点，拖拽对象节点或者代理节点，原始位置信息
                                     });
                                 },
                                 drag: function(e) {
@@ -199,7 +199,7 @@ define(function(require, exports, module) {
                                         }
                                         lang.callback(params.drag, {
                                             scope: scope,
-                                            params: [e, scope, node, targetNode, params]
+                                            params: [e, scope, node, targetNode, startPosition[index]]
                                         });
                                         array.forEach(function(v, i, arr) {
                                             var minX, minY, maxX, maxY;
@@ -250,14 +250,14 @@ define(function(require, exports, module) {
                                                     if(isEnterTarget) { // 之前已经在里面，触发dragover
                                                         lang.callback(params.dragover, {
                                                             scope: preTarget,
-                                                            params: [e, preTarget, scope, node, targetNode, params]
+                                                            params: [e, preTarget, scope, node, targetNode, startPosition[index]]
                                                         });
                                                     } else { // 之前在外面，触发dragenter
                                                         isEnterTarget = true;
                                                         preTarget = target;
                                                         lang.callback(params.dragenter, {
                                                             scope: preTarget,
-                                                            params: [e, preTarget, scope, node, targetNode, params]
+                                                            params: [e, preTarget, scope, node, targetNode, startPosition[index]]
                                                         });
                                                     }
                                                 } else { // 没进入
@@ -265,7 +265,7 @@ define(function(require, exports, module) {
                                                         isEnterTarget = false;
                                                         lang.callback(params.dragleave, {
                                                             scope: preTarget,
-                                                            params: [e, preTarget, scope, node, targetNode, params]
+                                                            params: [e, preTarget, scope, node, targetNode, startPosition[index]]
                                                         });
                                                         preTarget = null;
                                                     }
@@ -322,7 +322,7 @@ define(function(require, exports, module) {
                                             if(target) { // drop
                                                 lang.callback(params.drop, {
                                                     scope: preTarget,
-                                                    params: [e, preTarget, scope, node, params]
+                                                    params: [e, preTarget, scope, node, startPosition[index]]
                                                 });
                                             } else {
                                                 if(params.revert) {
@@ -341,7 +341,7 @@ define(function(require, exports, module) {
                                     }
                                     lang.callback(params.dragend, {
                                         scope: scope,
-                                        params: [e, scope, node, params]
+                                        params: [e, scope, node, startPosition[index]]
                                     });
                                     if(scope[0].releaseCapture) {
                                         scope[0].releaseCapture();
@@ -356,10 +356,10 @@ define(function(require, exports, module) {
                                 params: [e, scope, node]
                             })) {
                                 action.start(e);
-                                node.css('cursor', 'move').data('draggable', true);
+                                handle.css('cursor', 'move').data('draggable', true);
                                 doc.bind('mousemove.' + random, action.drag).bind('mouseup.' + random, action.end);
                             } else {
-                                node.css('cursor', 'default').removeData('draggable');
+                                handle.css('cursor', 'default').removeData('draggable');
                             }
                         }
                     });

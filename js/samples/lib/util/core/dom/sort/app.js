@@ -94,15 +94,22 @@ define(function(require, exports, module) {
         (function() {
             var box7 = $('#box7');
             var box8 = $('#box8');
+            var box9 = $('#box9');
 
             sort.reg({
                 node: box7,
                 item: 'li',
-                connect: box8
+                connect: $('#box8, #box9')
             });
             sort.reg({
                 node: box8,
-                item: 'li'
+                item: 'li',
+                connect: box9
+            });
+            sort.reg({
+                node: box9,
+                item: 'li',
+                connect: box7
             });
         })();
     });
