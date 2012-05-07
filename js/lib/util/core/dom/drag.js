@@ -366,8 +366,8 @@ define(function(require, exports, module) {
                 }
             });
         },
-        unreg: function(node) {
-            node.css('cursor', 'default').removeData('draggable').unbind('mousedown.' + eventSpace);
+        unreg: function(node, handle) {
+            (handle ? node.find(handle) : node).css('cursor', 'default').removeData('draggable').unbind('mousedown.' + eventSpace);
         }
     };
     return r;

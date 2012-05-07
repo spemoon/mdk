@@ -111,20 +111,21 @@ define(function(require, exports, module) {
                         if(!flag) {
                             if(params.connect) {
                                 params.connect.each(function(i, v) {
-                                    if(helper.hover($(v), targetNode)) {
+                                    var $v = $(v);
+                                    if(helper.hover($v, targetNode)) {
                                         for(var j = 0, len = connectItems[i].length; j < len; j++) {
                                             var item = $(connectItems[i][j]);
-                                            var f = true;
                                             var position = helper.hover(item, targetNode);
                                             if(position) {
                                                 item[position](placeholder);
                                                 //connectItems[i].splice(i, 0, items.splice(index, 1)[0]);
                                                 //index = i;
-                                                return f = false;
+                                                return false;
                                             }
                                         }
-                                        if(f) {
-                                            item.after(node);
+                                        if(connectItems[i].length == 0) { // 无元素情况
+                                            $v.append(placeholder);
+                                            return false;
                                         }
                                     }
                                 });
