@@ -94,23 +94,59 @@ define(function(require, exports, module) {
         (function() {
             var box7 = $('#box7');
             var box8 = $('#box8');
-            var box9 = $('#box9');
 
             sort.reg({
                 node: box7,
                 item: 'li',
-                connect: $('#box8, #box9')
+                connect: box8
             });
             sort.reg({
                 node: box8,
                 item: 'li',
-                connect: box9
+                connect: box7
             });
+        })();
+
+        /**--------------------------------------------
+         * 实例8：
+         * --------------------------------------------*/
+        (function() {
+            var box9 = $('#box9');
+            var box10 = $('#box10');
+            var box11 = $('#box11');
+
             sort.reg({
                 node: box9,
                 item: 'li',
-                connect: box7
+                connect: $('#box10, #box11'),
+                filter: function(item, i, items) {
+                    var flag = item.find(':checkbox').eq(0)[0];
+                    if(flag && flag.checked) {
+                        flag = 0;
+                    } else {
+                        flag = true;
+                    }
+                    return flag;
+                }
             });
+            sort.reg({
+                node: box10,
+                item: 'li',
+                connect: box11
+            });
+            sort.reg({
+                node: box11,
+                item: 'li',
+                connect: box9
+            });
+
+            box9.find(':checkbox').click(function() {
+                if(this.checked) {
+                    $(this).parents('li').addClass('disabled');
+                } else {
+                    $(this).parents('li').removeClass('disabled');
+                }
+            }).removeAttr('checked');
         })();
     });
 });

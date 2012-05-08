@@ -59,24 +59,30 @@ define(function(require, exports, module) {
 
     var r = {
         reg: function(params) {
+            params.node.data('config', params);
             array.forEach(function(item, index, items) {
-                var $item = $(item);
-                var connectItems = [];
+                var $item = $(item); // 被拖拽节点
                 var placeholder;
+                var connectTo; // 被拖拽到其他容器
+                var connectItems;
+                var config = params;
+
                 drag.reg({
                     node: $item,
-                    handle: params.handle,
+                    handle: config.handle,
                     beforeDrag: function(e, handle, node) {
                         var flag = true;
-                        if(lang.isFunction(params.filter)) {
-                            flag = !!params.filter(node, index, items);
+                        connectTo = false;
+                        connectItems = [];
+                        if(lang.isFunction(config.filter)) {
+                            flag = !!config.filter(node, index, items);
                         }
                         if(flag) {
-                            items = helper.items(params.node, params.item, params.filter); // 更新sort中的元素集合
+                            items = helper.items(config.node, config.item, config.filter); // 更新sort中的元素集合
                             index = helper.index(node, items); // 拖拽前的单前元素所在的位置
-                            if(params.connect) {
-                                params.connect.each(function(i, v) {
-                                    connectItems[i] = helper.items($(v), params.connectItem || params.item, params.filter);
+                            if(config.connect) {
+                                config.connect.each(function(i, v) {
+                                    connectItems[i] = helper.items($(v), config.connectItem || config.item, config.connectFilter);
                                 });
                             }
                             placeholder = node.clone().css({
@@ -86,13 +92,10 @@ define(function(require, exports, module) {
                         }
                         return flag;
                     },
-                    dragstart: function(e, handle, node, targetNode, position) {
-
-                    },
                     drag: function(e, handle, node, targetNode) {
                         var flag = false;
                         (function() {
-                            if(helper.hover(params.node, targetNode)) {
+                            if(helper.hover(config.node, targetNode)) {
                                 for(var i = 0, len = items.length; i < len; i++) {
                                     if(i != index) {
                                         var item = $(items[i]);
@@ -102,6 +105,7 @@ define(function(require, exports, module) {
                                             items.splice(i, 0, items.splice(index, 1)[0]);
                                             index = i;
                                             flag = true;
+                                            connectTo = false;
                                             break;
                                         }
                                     }
@@ -109,23 +113,24 @@ define(function(require, exports, module) {
                             }
                         })();
                         if(!flag) {
-                            if(params.connect) {
-                                params.connect.each(function(i, v) {
+                            if(config.connect) {
+                                config.connect.each(function(i, v) {
                                     var $v = $(v);
                                     if(helper.hover($v, targetNode)) {
-                                        for(var j = 0, len = connectItems[i].length; j < len; j++) {
-                                            var item = $(connectItems[i][j]);
-                                            var position = helper.hover(item, targetNode);
-                                            if(position) {
-                                                item[position](placeholder);
-                                                //connectItems[i].splice(i, 0, items.splice(index, 1)[0]);
-                                                //index = i;
-                                                return false;
-                                            }
-                                        }
                                         if(connectItems[i].length == 0) { // 无元素情况
                                             $v.append(placeholder);
+                                            connectTo = $v;
                                             return false;
+                                        } else {
+                                            for(var j = 0, len = connectItems[i].length; j < len; j++) {
+                                                var item = $(connectItems[i][j]);
+                                                var position = helper.hover(item, targetNode);
+                                                if(position) {
+                                                    item[position](placeholder);
+                                                    connectTo = $v;
+                                                    return false;
+                                                }
+                                            }
                                         }
                                     }
                                 });
@@ -136,6 +141,10 @@ define(function(require, exports, module) {
                         placeholder.replaceWith(node);
                         node.css('position', position.position);
                         placeholder = null;
+                        if(connectTo) {
+                            config = connectTo.data('config');
+                            connectTo = false;
+                        }
                     }
                 });
             }, helper.items(params.node, params.item));
