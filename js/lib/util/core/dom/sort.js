@@ -91,62 +91,64 @@ define(function(require, exports, module) {
                             node.after(placeholder);
                         }
                         return flag;
-                    },
-                    drag: function(e, handle, node, targetNode) {
-                        var flag = false;
-                        (function() {
-                            if(helper.hover(config.node, targetNode)) {
-                                for(var i = 0, len = items.length; i < len; i++) {
-                                    if(i != index) {
-                                        var item = $(items[i]);
-                                        var position = helper.hover(item, targetNode);
-                                        if(position) {
-                                            item[position](placeholder);
-                                            items.splice(i, 0, items.splice(index, 1)[0]);
-                                            index = i;
-                                            flag = true;
-                                            connectTo = false;
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        })();
-                        if(!flag) {
-                            if(config.connect) {
-                                config.connect.each(function(i, v) {
-                                    var $v = $(v);
-                                    if(helper.hover($v, targetNode)) {
-                                        if(connectItems[i].length == 0) { // 无元素情况
-                                            $v.append(placeholder);
-                                            connectTo = $v;
-                                            return false;
-                                        } else {
-                                            for(var j = 0, len = connectItems[i].length; j < len; j++) {
-                                                var item = $(connectItems[i][j]);
-                                                var position = helper.hover(item, targetNode);
-                                                if(position) {
-                                                    item[position](placeholder);
-                                                    connectTo = $v;
-                                                    return false;
-                                                }
+                    }
+                }).bind({
+                        drag: function(e, mouse, handle, node, target, position) {
+                            var flag = false;
+                            (function() {
+                                if(helper.hover(config.node, target)) {
+                                    node.trigger()
+                                    for(var i = 0, len = items.length; i < len; i++) {
+                                        if(i != index) {
+                                            var item = $(items[i]);
+                                            var position = helper.hover(item, target);
+                                            if(position) {
+                                                item[position](placeholder);
+                                                items.splice(i, 0, items.splice(index, 1)[0]);
+                                                index = i;
+                                                flag = true;
+                                                connectTo = false;
+                                                break;
                                             }
                                         }
                                     }
-                                });
+                                }
+                            })();
+                            if(!flag) {
+                                if(config.connect) {
+                                    config.connect.each(function(i, v) {
+                                        var $v = $(v);
+                                        if(helper.hover($v, target)) {
+                                            if(connectItems[i].length == 0) { // 无元素情况
+                                                $v.append(placeholder);
+                                                connectTo = $v;
+                                                return false;
+                                            } else {
+                                                for(var j = 0, len = connectItems[i].length; j < len; j++) {
+                                                    var item = $(connectItems[i][j]);
+                                                    var position = helper.hover(item, target);
+                                                    if(position) {
+                                                        item[position](placeholder);
+                                                        connectTo = $v;
+                                                        return false;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        },
+                        dragend: function(e, mouse, handle, node, position) {
+                            placeholder.replaceWith(node);
+                            node.css('position', position.position);
+                            placeholder = null;
+                            if(connectTo) {
+                                config = connectTo.data('config');
+                                connectTo = false;
                             }
                         }
-                    },
-                    dragend: function(e, handle, node, position) {
-                        placeholder.replaceWith(node);
-                        node.css('position', position.position);
-                        placeholder = null;
-                        if(connectTo) {
-                            config = connectTo.data('config');
-                            connectTo = false;
-                        }
-                    }
-                });
+                    });
             }, helper.items(params.node, params.item));
         }
     };

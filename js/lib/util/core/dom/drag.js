@@ -177,10 +177,7 @@ define(function(require, exports, module) {
                                         e.preventDefault();
                                     }
                                     window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty();
-                                    lang.callback(params.dragstart, {
-                                        scope: scope,
-                                        params: [e, scope, node, targetNode, startPosition[index]] // 事件对象，handle，拖拽对象节点，拖拽对象节点或者代理节点，原始位置信息
-                                    });
+                                    node.trigger('dragstart', [e, scope, node, targetNode, startPosition[index]]); // 事件对象，handle，拖拽对象节点，拖拽对象节点或者代理节点，原始位置信息
                                 },
                                 drag: function(e) {
                                     if(status == 1 || status == 2) {
@@ -197,10 +194,7 @@ define(function(require, exports, module) {
                                         if(params.scroll === true) { // 拖动支持滚动条响应时候要清除文本选择（滚动条的运动应该就是文本选择导致的，设置禁止选择文本滚动条则不会响应拖拽）
                                             window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty();
                                         }
-                                        lang.callback(params.drag, {
-                                            scope: scope,
-                                            params: [e, scope, node, targetNode, startPosition[index]]
-                                        });
+                                        node.trigger('drag', [e, scope, node, targetNode, startPosition[index]]); // 事件对象，handle，拖拽对象节点，拖拽对象节点或者代理节点，原始位置信息
                                         array.forEach(function(v, i, arr) {
                                             var minX, minY, maxX, maxY;
                                             var targetSize = proxyIsFunction ? {
@@ -248,25 +242,16 @@ define(function(require, exports, module) {
                                             (function(target) {
                                                 if(target) { // 进入
                                                     if(isEnterTarget) { // 之前已经在里面，触发dragover
-                                                        lang.callback(params.dragover, {
-                                                            scope: preTarget,
-                                                            params: [e, preTarget, scope, node, targetNode, startPosition[index]]
-                                                        });
+                                                        node.trigger('dragover', [e, preTarget, scope, node, targetNode, startPosition[index]]);
                                                     } else { // 之前在外面，触发dragenter
                                                         isEnterTarget = true;
                                                         preTarget = target;
-                                                        lang.callback(params.dragenter, {
-                                                            scope: preTarget,
-                                                            params: [e, preTarget, scope, node, targetNode, startPosition[index]]
-                                                        });
+                                                        node.trigger('dragenter', [e, preTarget, scope, node, targetNode, startPosition[index]]);
                                                     }
                                                 } else { // 没进入
                                                     if(isEnterTarget) { // 之前在里面，触发dragleave
                                                         isEnterTarget = false;
-                                                        lang.callback(params.dragleave, {
-                                                            scope: preTarget,
-                                                            params: [e, preTarget, scope, node, targetNode, startPosition[index]]
-                                                        });
+                                                        node.trigger('dragleave', [e, preTarget, scope, node, targetNode, startPosition[index]]);
                                                         preTarget = null;
                                                     }
                                                 }
@@ -320,10 +305,7 @@ define(function(require, exports, module) {
                                     if(params.target) {
                                         (function(target) {
                                             if(target) { // drop
-                                                lang.callback(params.drop, {
-                                                    scope: preTarget,
-                                                    params: [e, preTarget, scope, node, startPosition[index]]
-                                                });
+                                                node.trigger('drop', [e, target, scope, node, startPosition[index]]);
                                             } else {
                                                 if(params.revert) {
                                                     var method = params.animate ? 'animate' : 'css';
@@ -339,10 +321,7 @@ define(function(require, exports, module) {
                                             }
                                         })(helper.mouseIn(e, params.target));
                                     }
-                                    lang.callback(params.dragend, {
-                                        scope: scope,
-                                        params: [e, scope, node, startPosition[index]]
-                                    });
+                                    node.trigger('dragend', [e, scope, node, startPosition[index]]);
                                     if(scope[0].releaseCapture) {
                                         scope[0].releaseCapture();
                                     }
@@ -365,6 +344,7 @@ define(function(require, exports, module) {
                     });
                 }
             });
+            return nodes;
         },
         unreg: function(node, handle) {
             (handle ? node.find(handle) : node).css('cursor', 'default').removeData('draggable').unbind('mousedown.' + eventSpace);

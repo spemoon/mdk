@@ -9,7 +9,7 @@ define(function(require, exports, module) {
          * --------------------------------------------*/
         (function() {
             drag.reg({
-                node:$('#drag1')
+                node: $('#drag1')
             });
         })();
 
@@ -18,8 +18,8 @@ define(function(require, exports, module) {
          * --------------------------------------------*/
         (function() {
             drag.reg({
-                node:$('#drag2'),
-                handle:'.handle'
+                node: $('#drag2'),
+                handle: '.handle'
             });
         })();
 
@@ -28,8 +28,8 @@ define(function(require, exports, module) {
          * --------------------------------------------*/
         (function() {
             drag.reg({
-                node:$('#drag3'),
-                except:'.except'
+                node: $('#drag3'),
+                except: '.except'
             });
         })();
 
@@ -38,8 +38,8 @@ define(function(require, exports, module) {
          * --------------------------------------------*/
         (function() {
             drag.reg({
-                node:$('#drag4'),
-                container:$('#box1')
+                node: $('#drag4'),
+                container: $('#box1')
             });
         })();
 
@@ -48,12 +48,12 @@ define(function(require, exports, module) {
          * --------------------------------------------*/
         (function() {
             drag.reg({
-                node:$('#drag5'),
-                axisX:true
+                node: $('#drag5'),
+                axisX: true
             });
             drag.reg({
-                node:$('#drag6'),
-                axisY:true
+                node: $('#drag6'),
+                axisY: true
             });
         })();
 
@@ -62,16 +62,16 @@ define(function(require, exports, module) {
          * --------------------------------------------*/
         (function() {
             drag.reg({
-                node:$('#drag7'),
-                proxy:'dashed'
+                node: $('#drag7'),
+                proxy: 'dashed'
             });
             drag.reg({
-                node:$('#drag8'),
-                proxy:true
+                node: $('#drag8'),
+                proxy: true
             });
             drag.reg({
-                node:$('#drag9'),
-                proxy:function(node, handle) {
+                node: $('#drag9'),
+                proxy: function(node, handle) {
                     return '<div style="border: 1px solid #555;background: #ddd;">自定义内容</div>';
                 }
             });
@@ -82,8 +82,8 @@ define(function(require, exports, module) {
          * --------------------------------------------*/
         (function() {
             drag.reg({
-                node:$('#drag10'),
-                scroll:true
+                node: $('#drag10'),
+                scroll: true
             });
         })();
 
@@ -93,15 +93,16 @@ define(function(require, exports, module) {
         (function() {
             var box2 = $('#box2');
             var list = box2.find('.drag');
-            list.find(':checkbox').click(function() {
-                if(this.checked) {
-                    $(this).parents('.drag').addClass('selected');
-                } else {
-                    $(this).parents('.drag').removeClass('selected');
-                }
-            }).removeAttr('checked');
+            list.find(':checkbox').click(
+                function() {
+                    if(this.checked) {
+                        $(this).parents('.drag').addClass('selected');
+                    } else {
+                        $(this).parents('.drag').removeClass('selected');
+                    }
+                }).removeAttr('checked');
             drag.reg({
-                node:list,
+                node: list,
                 multi: function() {
                     return box2.find('.selected');
                 }
@@ -112,8 +113,8 @@ define(function(require, exports, module) {
              * --------------------------------------------*/
             (function() {
                 drag.reg({
-                    node:$('#drag14'),
-                    grid:50
+                    node: $('#drag14'),
+                    grid: 50
                 });
             })();
 
@@ -122,10 +123,10 @@ define(function(require, exports, module) {
              * --------------------------------------------*/
             (function() {
                 drag.reg({
-                    node:$('#drag15'),
+                    node: $('#drag15'),
                     offset: {
-                        top:50,
-                        left:50
+                        top: 50,
+                        left: 50
                     }
                 });
             })();
@@ -135,14 +136,15 @@ define(function(require, exports, module) {
              * --------------------------------------------*/
             (function() {
                 drag.reg({
-                    node:$('#drag16'),
-                    target:$('#box3'),
-                    drop: function(e, target, handle, node, params) {
-                        target.css({
-                            background:'red'
-                        }).text('dropped');
-                    }
-                });
+                    node: $('#drag16'),
+                    target: $('#box3')
+                }).bind({
+                        drop: function(e, mouse, container, handle, node, target, position) {
+                            container.css({
+                                background: 'red'
+                            }).text('dropped');
+                        }
+                    });
             })();
 
             /**--------------------------------------------
@@ -151,32 +153,33 @@ define(function(require, exports, module) {
             (function() {
                 var box4 = $('#box4');
                 drag.reg({
-                    node:$('#drag17'),
-                    target:box4,
-                    dragstart: function(e, handle, node, params) {
-                        box4.text('dragstart');
-                    },
-                    drag: function(e, handle, node, params) {
-                        box4.text('drag---pageX:' + e.pageX + ',pageY:' + e.pageY);
-                    },
-                    dragenter: function(e, target, handle, node, params) {
-                        target.css('background', 'green').text('dragenter');
-                        console.log('dragenter');
-                    },
-                    dragover: function(e, target, handle, node, params) {
-                        target.css('background', 'yellow').text('dragover');
-                    },
-                    dragleave: function(e, target, handle, node, params) {
-                        target.css('background', '').text('dragleave');
-                        console.log('dragleave');
-                    },
-                    drop: function(e, target, handle, node, params) {
-                        target.css('background', 'red').text('dropped');
-                    },
-                    dragend: function() {
-                        console.log('dragend');
-                    }
-                });
+                    node: $('#drag17'),
+                    target: box4
+                }).bind({
+                        dragstart: function(e, mouse, handle, node, target, position) {
+                            box4.text('dragstart');
+                        },
+                        drag: function(e, mouse, handle, node, target, position) {
+                            box4.text('drag---pageX:' + mouse.pageX + ',pageY:' + mouse.pageY);
+                        },
+                        dragenter: function(e, mouse, container, handle, node, target, position) {
+                            container.css('background', 'green').text('dragenter');
+                            console.log('dragenter');
+                        },
+                        dragover: function(e, mouse, container, handle, node, target, position) {
+                            container.css('background', 'yellow').text('dragover');
+                        },
+                        dragleave: function(e, mouse, container, handle, node, target, position) {
+                            container.css('background', '').text('dragleave');
+                            console.log('dragleave');
+                        },
+                        drop: function(e, mouse, container, handle, node, target, position) {
+                            container.css('background', 'red').text('dropped');
+                        },
+                        dragend: function(e, mouse, handle, node, position) {
+                            console.log('dragend');
+                        }
+                    });
             })();
 
             /**--------------------------------------------
@@ -184,7 +187,7 @@ define(function(require, exports, module) {
              * --------------------------------------------*/
             (function() {
                 drag.reg({
-                    node:$('#drag18')
+                    node: $('#drag18')
                 });
             })();
 
@@ -193,14 +196,14 @@ define(function(require, exports, module) {
              * --------------------------------------------*/
             (function() {
                 drag.reg({
-                    node:$('#drag19'),
-                    target:$('#box5'),
+                    node: $('#drag19'),
+                    target: $('#box5'),
                     revert: true
                 });
 
                 drag.reg({
-                    node:$('#drag20'),
-                    target:$('#box5'),
+                    node: $('#drag20'),
+                    target: $('#box5'),
                     revert: true,
                     animate: true
                 });
@@ -214,14 +217,14 @@ define(function(require, exports, module) {
                 var checkbox = drag21.find(':checkbox').eq(0);
                 checkbox.removeAttr('checked');
                 drag.reg({
-                    node:drag21
+                    node: drag21
                 });
                 checkbox.click(function() {
                     if(this.checked) {
                         drag.unreg(drag21);
                     } else {
                         drag.reg({
-                            node:drag21
+                            node: drag21
                         });
                     }
                 });
@@ -234,7 +237,7 @@ define(function(require, exports, module) {
                 var drag22 = $('#drag22');
                 var text22 = $('#text22');
                 drag.reg({
-                    node:drag22,
+                    node: drag22,
                     beforeDrag: function() {
                         var flag = +new Date % 3 != 0;
                         text22.text(flag ? '可以拖拽' : '不能拖拽');
