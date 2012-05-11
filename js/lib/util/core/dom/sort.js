@@ -101,7 +101,7 @@ define(function(require, exports, module) {
                     }
                 }).bind({
                         dragstart: function(e, mouse, handle, node, target, position) {
-                            event.trigger('dragstart', [mouse, handle, node, target, position]);
+                            event.trigger('dragstart', [placeholder, mouse, handle, node, target, position]);
                         },
                         drag: function(e, mouse, handle, node, target, position) {
                             var flag = false;

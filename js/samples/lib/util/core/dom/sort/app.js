@@ -164,10 +164,10 @@ define(function(require, exports, module) {
                 item: 'li',
                 connect: box13
             }).bind({
-                    dragstart: function() {
+                    dragstart: function(e, placeholder, mouse, handle, node, target, position) {
                         console.log('dragstart');
                     },
-                    placeholder: function(e, placeholder) {
+                    placeholder: function(e, placeholder, container, i, index, mouse, handle, node, target, position) {
                         placeholder.css({
                             border: '1px solid blue',
                             background: '#fff',
@@ -175,7 +175,7 @@ define(function(require, exports, module) {
                         });
                         console.log('placeholder');
                     },
-                    dragend: function() {
+                    dragend: function(e, mouse, handle, node, position) {
                         console.log('dragend');
                     }
                 });
@@ -184,6 +184,69 @@ define(function(require, exports, module) {
                 item: 'li',
                 connect: box12
             });
+        })();
+
+        /**--------------------------------------------
+         * 实例10：
+         * --------------------------------------------*/
+        (function() {
+            var cookie = require('../../../../../../lib/util/core/bom/cookie.js');
+            var col = [$('#col1'), $('#col2'), $('#col3')];
+            var data = [
+                {cls: 'min', text: '床前明月光', pos: [0, 0]},
+                {cls: 'mid', text: '疑是地上霜', pos: [0, 1]},
+                {cls: 'max', text: '举头望明月', pos: [0, 2]},
+                {cls: 'mid', text: '低头思故乡', pos: [1, 0]},
+                {cls: 'max', text: '离离原上草', pos: [1, 1]},
+                {cls: 'min', text: '一岁一枯荣', pos: [1, 2]},
+                {cls: 'max', text: '野火烧不尽', pos: [2, 0]},
+                {cls: 'min', text: '春风吹又生', pos: [2, 1]},
+                {cls: 'mid', text: '！！！！！', pos: [2, 2]}
+            ];
+            (function(portlet) {
+                if(portlet) {
+                    portlet = portlet.split('_');
+                    for(var i = 0, len = portlet.length; i < len; i++) {
+                        data[i].pos = portlet[i].split(',');
+                    }
+                }
+            })(cookie.get('portlet'));
+            var createItem = function(config) {
+                return '<div class="col-content col-content-' + config.cls + '">' + config.text + '</div>';
+            };
+            var placeholderShow = function(placeholder) {
+                placeholder.css({
+                    border: '2px dashed #ddd',
+                    background: '#fff',
+                    visibility: 'visible'
+                });
+            };
+            var sortAction = function(node, connect) {
+                sort.reg({
+                    node: node,
+                    item: '.col-content',
+                    connect: connect
+                }).bind({
+                        dragstart: function(e, placeholder, mouse, handle, node, target, position) {
+                            placeholderShow(placeholder);
+                        },
+                        placeholder: function(e, placeholder, container, i, index, mouse, handle, node, target, position) {
+                            placeholderShow(placeholder);
+                        }
+                    });
+            };
+            var buildView = function(data) {
+                for(var i = 0; i < data.length; i++) {
+                    for(var j = 0; j < data[i].length; j++) {
+                        col[i].append('<div class="col-content col-content-' + data[i][j] + '"></div>');
+                    }
+                }
+            };
+
+            buildView(data);
+            sortAction(col[0], $('#col2, #col3'));
+            sortAction(col[1], $('#col1, #col3'));
+            sortAction(col[2], $('#col1, #col2'));
         })();
     });
 });

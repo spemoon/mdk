@@ -69,3 +69,33 @@
 .itemy {
     background: #db7093;
 }
+
+#col1, #col2, #col3 {
+    width: 250px;
+    float: left;
+    margin: 10px;
+    min-height: 300px;
+    _height: 300px;
+    padding: 10px;
+}
+
+.col-content {
+    width: 230px;
+    border: 1px solid #ddd;
+    margin: 10px;
+}
+
+.col-content-min {
+    height: 50px;
+    background: #eee8aa;
+}
+
+.col-content-mid {
+    height: 100px;
+    background: #afeeee;
+}
+
+.col-content-max {
+    height: 150px;
+    background: #cd853f;
+}

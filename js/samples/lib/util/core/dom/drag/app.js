@@ -245,6 +245,22 @@ define(function(require, exports, module) {
                     }
                 });
             })();
+
+            /**--------------------------------------------
+             * 实例17：
+             * --------------------------------------------*/
+            (function() {
+                var col1 = $('#drag22');
+                var text22 = $('#text22');
+                drag.reg({
+                    node: drag22,
+                    beforeDrag: function() {
+                        var flag = +new Date % 3 != 0;
+                        text22.text(flag ? '可以拖拽' : '不能拖拽');
+                        return flag;
+                    }
+                });
+            })();
         })();
     });
 });
