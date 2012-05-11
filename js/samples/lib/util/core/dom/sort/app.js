@@ -58,13 +58,14 @@ define(function(require, exports, module) {
                     return flag ? 0 : true;
                 }
             });
-            box5.find(':checkbox').click(function() {
-                if(this.checked) {
-                    $(this).parents('li').addClass('disabled');
-                } else {
-                    $(this).parents('li').removeClass('disabled');
-                }
-            }).removeAttr('checked');
+            box5.find(':checkbox').click(
+                function() {
+                    if(this.checked) {
+                        $(this).parents('li').addClass('disabled');
+                    } else {
+                        $(this).parents('li').removeClass('disabled');
+                    }
+                }).removeAttr('checked');
         })();
 
         /**--------------------------------------------
@@ -79,13 +80,14 @@ define(function(require, exports, module) {
                     return !item.find(':checkbox').eq(0)[0].checked;
                 }
             });
-            box6.find(':checkbox').click(function() {
-                if(this.checked) {
-                    $(this).parents('li').addClass('disabled');
-                } else {
-                    $(this).parents('li').removeClass('disabled');
-                }
-            }).removeAttr('checked');
+            box6.find(':checkbox').click(
+                function() {
+                    if(this.checked) {
+                        $(this).parents('li').addClass('disabled');
+                    } else {
+                        $(this).parents('li').removeClass('disabled');
+                    }
+                }).removeAttr('checked');
         })();
 
         /**--------------------------------------------
@@ -140,13 +142,48 @@ define(function(require, exports, module) {
                 connect: box9
             });
 
-            box9.find(':checkbox').click(function() {
-                if(this.checked) {
-                    $(this).parents('li').addClass('disabled');
-                } else {
-                    $(this).parents('li').removeClass('disabled');
-                }
-            }).removeAttr('checked');
+            box9.find(':checkbox').click(
+                function() {
+                    if(this.checked) {
+                        $(this).parents('li').addClass('disabled');
+                    } else {
+                        $(this).parents('li').removeClass('disabled');
+                    }
+                }).removeAttr('checked');
+        })();
+
+        /**--------------------------------------------
+         * 实例9：
+         * --------------------------------------------*/
+        (function() {
+            var box12 = $('#box12');
+            var box13 = $('#box13');
+
+            sort.reg({
+                node: box12,
+                item: 'li',
+                connect: box13
+            }).bind({
+                    dragstart: function() {
+                        console.log('dragstart');
+                    },
+                    placeholder: function(e, placeholder) {
+                        placeholder.css({
+                            border: '1px solid blue',
+                            background: '#fff',
+                            visibility: 'visible'
+                        });
+                        console.log('placeholder');
+                    },
+                    dragend: function() {
+                        console.log('dragend');
+                    }
+                });
+            sort.reg({
+                node: box13,
+                item: 'li',
+                connect: box12
+            });
         })();
     });
 });

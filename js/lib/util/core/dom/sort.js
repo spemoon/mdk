@@ -59,6 +59,7 @@ define(function(require, exports, module) {
 
     var r = {
         reg: function(params) {
+            var event = $({});
             params.node.data('config', params);
             array.forEach(function(item, index, items) {
                 var $item = $(item); // 被拖拽节点
@@ -66,38 +67,47 @@ define(function(require, exports, module) {
                 var connectTo; // 被拖拽到其他容器
                 var connectItems;
                 var config = params;
+                var prevContainer; // 上一次进入的容器
 
                 drag.reg({
                     node: $item,
                     handle: config.handle,
                     beforeDrag: function(e, handle, node) {
-                        var flag = true;
-                        connectTo = false;
-                        connectItems = [];
-                        if(lang.isFunction(config.filter)) {
-                            flag = !!config.filter(node, index, items);
-                        }
+                        var flag = lang.callback(params.beforeDrag, {
+                            scope: handle,
+                            params: [e, handle, node]
+                        });
                         if(flag) {
-                            items = helper.items(config.node, config.item, config.filter); // 更新sort中的元素集合
-                            index = helper.index(node, items); // 拖拽前的单前元素所在的位置
-                            if(config.connect) {
-                                config.connect.each(function(i, v) {
-                                    connectItems[i] = helper.items($(v), config.connectItem || config.item, config.connectFilter);
-                                });
+                            connectTo = false;
+                            connectItems = [];
+                            if(lang.isFunction(config.filter)) {
+                                flag = !!config.filter(node, index, items);
                             }
-                            placeholder = node.clone().css({
-                                visibility: 'hidden'
-                            });
-                            node.after(placeholder);
+                            if(flag) {
+                                items = helper.items(config.node, config.item, config.filter); // 更新sort中的元素集合
+                                index = helper.index(node, items); // 拖拽前的单前元素所在的位置
+                                if(config.connect) {
+                                    config.connect.each(function(i, v) {
+                                        connectItems[i] = helper.items($(v), config.connectItem || config.item, config.connectFilter);
+                                    });
+                                }
+                                placeholder = node.clone().empty().css({
+                                    visibility: 'hidden'
+                                });
+                                node.after(placeholder);
+                            }
                         }
                         return flag;
                     }
                 }).bind({
+                        dragstart: function(e, mouse, handle, node, target, position) {
+                            event.trigger('dragstart', [mouse, handle, node, target, position]);
+                        },
                         drag: function(e, mouse, handle, node, target, position) {
                             var flag = false;
                             (function() {
                                 if(helper.hover(config.node, target)) {
-                                    node.trigger()
+                                    prevContainer = config.node;
                                     for(var i = 0, len = items.length; i < len; i++) {
                                         if(i != index) {
                                             var item = $(items[i]);
@@ -105,6 +115,7 @@ define(function(require, exports, module) {
                                             if(position) {
                                                 item[position](placeholder);
                                                 items.splice(i, 0, items.splice(index, 1)[0]);
+                                                event.trigger('placeholder', [placeholder, config.node, i, index, mouse, handle, node, target, position]);
                                                 index = i;
                                                 flag = true;
                                                 connectTo = false;
@@ -119,9 +130,11 @@ define(function(require, exports, module) {
                                     config.connect.each(function(i, v) {
                                         var $v = $(v);
                                         if(helper.hover($v, target)) {
+                                            prevContainer = $v;
                                             if(connectItems[i].length == 0) { // 无元素情况
                                                 $v.append(placeholder);
                                                 connectTo = $v;
+                                                event.trigger('placeholder', [placeholder, $v, i, index, mouse, handle, node, target, position]);
                                                 return false;
                                             } else {
                                                 for(var j = 0, len = connectItems[i].length; j < len; j++) {
@@ -130,6 +143,7 @@ define(function(require, exports, module) {
                                                     if(position) {
                                                         item[position](placeholder);
                                                         connectTo = $v;
+                                                        event.trigger('placeholder', [placeholder, $v, i, index, mouse, handle, node, target, position]);
                                                         return false;
                                                     }
                                                 }
@@ -147,9 +161,12 @@ define(function(require, exports, module) {
                                 config = connectTo.data('config');
                                 connectTo = false;
                             }
+                            event.trigger('dragend', [e, mouse, handle, node, position]);
+                            prevContainer = null;
                         }
                     });
             }, helper.items(params.node, params.item));
+            return event;
         }
     };
     return r;
