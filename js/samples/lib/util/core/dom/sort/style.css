@@ -70,7 +70,7 @@
     background: #db7093;
 }
 
-#col1, #col2, #col3 {
+.col {
     width: 250px;
     float: left;
     margin: 10px;

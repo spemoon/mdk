@@ -68,6 +68,7 @@ define(function(require, exports, module) {
                 var connectItems;
                 var config = params;
                 var prevContainer; // 上一次进入的容器
+                var endIndex; // 拖拽结束后所处容器的位置index
 
                 drag.reg({
                     node: $item,
@@ -117,6 +118,7 @@ define(function(require, exports, module) {
                                                 items.splice(i, 0, items.splice(index, 1)[0]);
                                                 event.trigger('placeholder', [placeholder, config.node, i, index, mouse, handle, node, target, position]);
                                                 index = i;
+                                                endIndex = i;
                                                 flag = true;
                                                 connectTo = false;
                                                 break;
@@ -143,6 +145,7 @@ define(function(require, exports, module) {
                                                     if(position) {
                                                         item[position](placeholder);
                                                         connectTo = $v;
+                                                        endIndex = i;
                                                         event.trigger('placeholder', [placeholder, $v, i, index, mouse, handle, node, target, position]);
                                                         return false;
                                                     }
@@ -161,7 +164,7 @@ define(function(require, exports, module) {
                                 config = connectTo.data('config');
                                 connectTo = false;
                             }
-                            event.trigger('dragend', [e, mouse, handle, node, position]);
+                            event.trigger('dragend', [prevContainer, endIndex, mouse, handle, node, position]);
                             prevContainer = null;
                         }
                     });
