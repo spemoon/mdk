@@ -299,7 +299,7 @@ define(function(require, exports, module) {
                                         if(isFixed) {
                                             var position = v.position();
                                             helper.fixed(v, position.top, position.left);
-                                        } else if(params.keepPosition) {
+                                        } else if(params.keepPosition) { // 保持position，很少使用，目前用于sort模块
                                             v.css('position', position);
                                         }
                                     }, nodeList);

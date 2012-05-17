@@ -1,7 +1,29 @@
 @charset "utf-8";
+.demo {
+    _height: 220px;
+    min-height: 220px;
+}
 .box {
     width: 200px;
     height: 200px;
     border: 1px solid #000;
-    position: relative;
+    background: #b0e0e6;
+    position: absolute;
+}
+
+.dialog {
+    background: #C4E3FD;
+    position: absolute;
+}
+.dialog .nw, .dialog .ne, .dialog .sw, .dialog .se {
+    background: #C4E3FD;
+    height: 10px;
+    width: 10px;
+}
+.dialog .n, .dialog .w, .dialog .e, .dialog .s {
+    background: #F7F9FD;
+}
+
+textarea {
+    resize: none;
 }

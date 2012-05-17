@@ -1,55 +1,42 @@
 @charset "utf-8";
 .resize-anchor {
     position: absolute;
-    width: 8px;
-    height: 8px;
-    background: #98fb98;
+    width: 12px;
+    height: 12px;
 }
-.resize-tl {
+.resize-nw {
     top:-4px;
     left: -4px;
-    cursor:nw-resize;
     z-index: 1;
-    background: #db7093;
 }
-.resize-t {
+.resize-n {
     top: -4px;
     width: 100%;
-    cursor: n-resize;
 }
-.resize-tr {
+.resize-ne {
     top:-4px;
     right: -4px;
-    cursor:ne-resize;
     z-index: 1;
-    background: #db7093;
 }
-.resize-l {
+.resize-w {
     left: -4px;
     height: 100%;
-    cursor: w-resize;
 }
-.resize-r {
+.resize-e {
     right: -4px;
     height: 100%;
-    cursor: e-resize;
 }
-.resize-bl {
+.resize-sw {
     bottom: -4px;
     left: -4px;
-    cursor: sw-resize;
     z-index: 1;
-    background: #db7093;
 }
-.resize-b {
+.resize-s {
     bottom: -4px;
     width: 100%;
-    cursor: s-resize;
 }
-.resize-br {
+.resize-se {
     bottom: -4px;
     right: -4px;
-    cursor: se-resize;
     z-index: 1;
-    background: #db7093;
 }
