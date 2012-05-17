@@ -1,4 +1,8 @@
 @charset "utf-8";
+.example {
+    border-bottom: 1px dashed purple;
+    padding-bottom: 5px;
+}
 .demo {
     _height: 220px;
     min-height: 220px;
@@ -13,6 +17,7 @@
 
 .dialog {
     background: #C4E3FD;
+    border: 1px solid #aaa;
     position: absolute;
 }
 .dialog .nw, .dialog .ne, .dialog .sw, .dialog .se {
@@ -26,4 +31,19 @@
 
 textarea {
     resize: none;
+}
+
+.dialog .header {
+    height: 24px;
+    line-height: 24px;
+    border-bottom: 1px solid #666;
+}
+.dialog .content {
+    border-bottom: 1px solid #666;
+    min-height: 120px;
+}
+
+.dialog .footer {
+    height: 24px;
+    line-height: 24px;
 }

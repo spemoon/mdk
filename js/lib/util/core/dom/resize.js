@@ -27,18 +27,17 @@ define(function(require, exports, module) {
                 css.height = helper.size(startPosition.y - css.top + startPosition.height, params.minHeight, params.maxHeight);
             }
             if(dir.indexOf('e') != -1) {
-                x = Math.min(x, params.scroll === true ? doc.scrollLeft() + win.width() : doc.width());
+                x = Math.min(x, params.scroll === true ? doc.scrollLeft() + win.width() : doc.scrollLeft() + win.width()) - parseFloat(node.css('border-left-width')) - parseFloat(node.css('border-right-width'));
                 css.width = helper.size(x - startPosition.x, params.minWidth, params.maxWidth);
             }
             if(dir.indexOf('s') != -1) {
-                y = Math.min(y, params.scroll === true ? doc.scrollTop() + win.height() : doc.height());
+                y = Math.min(y, params.scroll === true ? doc.height() : doc.scrollTop() + win.height()) - parseFloat(node.css('border-bottom-width')) - parseFloat(node.css('border-top-width'));
                 css.height = helper.size(y - startPosition.y, params.minHeight, params.maxHeight);
             }
             if(dir.indexOf('w') != -1) {
                 css.left = Math.min(Math.max(params.scroll === true ? 0 : doc.scrollLeft(), x), startPosition.x + startPosition.width);
                 css.width = helper.size(startPosition.x - css.left + startPosition.width, params.minWidth, params.maxWidth);
             }
-            console.log(css);
             node.css(css);
         }
     };
@@ -48,7 +47,7 @@ define(function(require, exports, module) {
             var event = $({}); // 用来绑定事件
             var handles = {};
             if(node[0].tagName.toUpperCase() == 'TEXTAREA') {
-                (function() {
+                (function() { // wrap textarea,直接使用wrap方法会无法插入resize节点
                     var wrap = $('<div></div>').css({
                         position: 'relative',
                         width: node.width(),
@@ -76,7 +75,11 @@ define(function(require, exports, module) {
                         anchor = $('<span class="resize-anchor resize-' + key + '"></span>');
                         node.append(anchor);
                     } else {
-                        anchor = $(dir[key]);
+                        if(typeof dir[key] == 'string') {
+                            anchor = $(dir[key]);
+                        } else { // jquery node
+                            anchor = dir[key];
+                        }
                     }
                     anchor.css('cursor', key + '-' + 'resize');
                     handles[key] = anchor;
@@ -153,7 +156,9 @@ define(function(require, exports, module) {
                                                 if(status == 1) {
                                                     status = 2;
                                                 }
-                                                params.action ? params.action(e, dir, node, startPosition, params) : helper.resize(e, dir, node, startPosition, params);
+                                                if(params.preventDefault !== true) {
+                                                    helper.resize(e, dir, node, startPosition, params);
+                                                }
                                                 if(params.scroll === true) { // 拖动支持滚动条响应时候要清除文本选择（滚动条的运动应该就是文本选择导致的，设置禁止选择文本滚动条则不会响应resize）
                                                     window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty();
                                                 }

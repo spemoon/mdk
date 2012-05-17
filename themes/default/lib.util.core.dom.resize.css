@@ -1,42 +1,42 @@
 @charset "utf-8";
 .resize-anchor {
     position: absolute;
-    width: 12px;
-    height: 12px;
+    width: 8px;
+    height: 8px;
 }
 .resize-nw {
-    top:-4px;
-    left: -4px;
+    top:0;
+    left: 0;
     z-index: 1;
 }
 .resize-n {
-    top: -4px;
+    top: 0;
     width: 100%;
 }
 .resize-ne {
-    top:-4px;
-    right: -4px;
+    top:0;
+    right: 0;
     z-index: 1;
 }
 .resize-w {
-    left: -4px;
+    left: 0;
     height: 100%;
 }
 .resize-e {
-    right: -4px;
+    right: 0;
     height: 100%;
 }
 .resize-sw {
-    bottom: -4px;
-    left: -4px;
+    bottom: 0;
+    left: 0;
     z-index: 1;
 }
 .resize-s {
-    bottom: -4px;
+    bottom: 0;
     width: 100%;
 }
 .resize-se {
-    bottom: -4px;
-    right: -4px;
+    bottom: 0;
+    right: -0;
     z-index: 1;
 }

@@ -20,6 +20,21 @@ define(function(require, exports, module) {
          * --------------------------------------------*/
         (function() {
             var box2 = $('#box2');
+            var content = box2.find('.content');
+            resize.reg({
+                node: box2,
+                preventDefault: true,
+                dir: {
+                    se: box2.find('.se')
+                }
+            }).bind({
+                    resize: function(e, mouse, dir, node, startPosition, params) {
+                        content.css({
+                            width: mouse.pageX,
+                            height: mouse.pageY
+                        });
+                    }
+                });
         })();
 
         /**--------------------------------------------
