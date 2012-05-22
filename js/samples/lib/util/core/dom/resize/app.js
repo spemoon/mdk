@@ -23,17 +23,12 @@ define(function(require, exports, module) {
             var content = box2.find('.content');
             resize.reg({
                 node: box2,
-                preventDefault: true,
+                sizeNode: content,
                 dir: {
-                    se: box2.find('.se')
+                    se: box2.find('.se'),
+                    sw: box2.find('.sw')
                 }
             }).bind({
-                    resize: function(e, mouse, dir, node, startPosition, params) {
-                        content.css({
-                            width: mouse.pageX,
-                            height: mouse.pageY
-                        });
-                    }
                 });
         })();
 

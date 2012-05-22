@@ -10,42 +10,60 @@ define(function(require, exports, module) {
     var status = 0; // 0: 初始或者mouseup时无resize，1: mousedown准备resize，2: 正在mousemove resize
     var eventSpace = +new Date();
     var helper = {
-        size: function(val, min, max) {
-            if(typeof max != 'undefined') {
-                val = Math.min(val, max);
+        style: function(type, val, node) {
+            if(typeof val != 'undefined') {
+                node[0].style[type] = val + 'px';
             }
-            val = Math.max(val, min || 0);
-            return val;
         },
-        resize: function(e, dir, node, startPosition, params) {
-            var x = e.pageX;
-            var y = e.pageY;
+        resize: function(params) {
+            var x = params.event.pageX;
+            var y = params.event.pageY;
+            var dir = params.dir;
+            var maxHeight = params.maxHeight;
+            var maxWidth = params.maxWidth;
+            var minHeight = params.minHeight;
+            var minWidth = params.minWidth;
+            var scroll = params.scroll;
+            var marginTop = params.marginTop;
+            var marginLeft = params.marginLeft;
+            var node = params.node;
+            var sizeNode = params.sizeNode;
+            var position = params.position;
+
             var top, left, width, height;
-            var css = {};
-            if(dir.indexOf('n') != -1) {
-                css.top = Math.min(Math.max(params.scroll === true ? 0 : doc.scrollTop(), y), startPosition.y + startPosition.height);
-                css.height = helper.size(startPosition.y - css.top + startPosition.height, params.minHeight, params.maxHeight);
+            if(dir.indexOf('n') != -1) { // north,处理top和height
+                top = Math.min(Math.max((scroll ? 0 : doc.scrollTop()) + marginTop, position.y + position.height - maxHeight, y), position.y + position.height - minHeight);
+                height = position.y - top + position.height;
             }
-            if(dir.indexOf('e') != -1) {
-                x = Math.min(x, params.scroll === true ? doc.scrollLeft() + win.width() : doc.scrollLeft() + win.width()) - parseFloat(node.css('border-left-width')) - parseFloat(node.css('border-right-width'));
-                css.width = helper.size(x - startPosition.x, params.minWidth, params.maxWidth);
+            if(dir.indexOf('e') != -1) { // east,处理width
+                width = Math.max(Math.min((scroll ? doc.width() : doc.scrollLeft() + win.width()) - marginLeft, x), position.x + minWidth) - position.x;
             }
-            if(dir.indexOf('s') != -1) {
-                y = Math.min(y, params.scroll === true ? doc.height() : doc.scrollTop() + win.height()) - parseFloat(node.css('border-bottom-width')) - parseFloat(node.css('border-top-width'));
-                css.height = helper.size(y - startPosition.y, params.minHeight, params.maxHeight);
+            if(dir.indexOf('s') != -1) { // south,处理height
+                height = Math.max(Math.min(scroll ? doc.height() : doc.scrollTop() + win.height() - marginTop, y), position.y + minHeight) - position.y;
             }
-            if(dir.indexOf('w') != -1) {
-                css.left = Math.min(Math.max(params.scroll === true ? 0 : doc.scrollLeft(), x), startPosition.x + startPosition.width);
-                css.width = helper.size(startPosition.x - css.left + startPosition.width, params.minWidth, params.maxWidth);
+            if(dir.indexOf('w') != -1) { // west,处理left和width
+                left = Math.min(Math.max((scroll ? 0 : doc.scrollLeft()) + marginLeft, position.x + position.width - maxWidth, x), position.x + position.width - minWidth);
+                width = position.x - left + position.width;
             }
-            node.css(css);
+            helper.style('top', top, node);
+            helper.style('left', left, node);
+            helper.style('height', height, sizeNode);
+            helper.style('width', width, sizeNode);
         }
     };
     var r = {
         reg: function(params) {
-            var node = lang.isFunction(params.node) ? params.node() : params.node;
+            var node = params.node;
+            var sizeNode = params.sizeNode || node;
+            var minHeight = params.minHeight || 30;
+            var minWidth = params.minWidth || 30;
+            var maxHeight;
+            var maxWidth;
             var event = $({}); // 用来绑定事件
             var handles = {};
+            var marginTop = (params.marginTop || 0) + parseFloat(node.css('border-bottom-width')) + parseFloat(node.css('border-top-width'));
+            var marginLeft = (params.marginLeft || 0) + parseFloat(node.css('border-left-width')) + parseFloat(node.css('border-right-width'));
+            var scroll = params.scroll === true;
             if(node[0].tagName.toUpperCase() == 'TEXTAREA') {
                 (function() { // wrap textarea,直接使用wrap方法会无法插入resize节点
                     var wrap = $('<div></div>').css({
@@ -92,6 +110,8 @@ define(function(require, exports, module) {
                             handle.data('resizable', true).bind('mousedown.' + eventSpace, function(e) {
                                 var targetNode = node; // 当前被resize的节点，非proxy时是node，proxy时是代理节点
                                 var scope = $(this); // handle
+                                maxHeight = params.maxHeight || win.height();
+                                maxWidth = params.maxWidth || win.width();
                                 if(e.which == 1) { // 限制左键拖动
                                     var random = +new Date(); // 时间戳用来做事件命名空间
                                     var mouseX = e.pageX, mouseY = e.pageY;
@@ -157,7 +177,21 @@ define(function(require, exports, module) {
                                                     status = 2;
                                                 }
                                                 if(params.preventDefault !== true) {
-                                                    helper.resize(e, dir, node, startPosition, params);
+                                                    helper.resize({
+                                                        event: e,
+                                                        dir: dir,
+                                                        node: node,
+                                                        sizeNode: sizeNode,
+                                                        position: startPosition,
+                                                        minHeight: minHeight,
+                                                        minWidth: minWidth,
+                                                        maxHeight: maxHeight,
+                                                        maxWidth: maxWidth,
+                                                        marginTop: marginTop,
+                                                        marginLeft: marginLeft,
+                                                        scroll: scroll,
+                                                        params: params
+                                                    });
                                                 }
                                                 if(params.scroll === true) { // 拖动支持滚动条响应时候要清除文本选择（滚动条的运动应该就是文本选择导致的，设置禁止选择文本滚动条则不会响应resize）
                                                     window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty();
