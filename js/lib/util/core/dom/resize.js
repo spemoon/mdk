@@ -87,6 +87,13 @@ define(function(require, exports, module) {
             }
 
             if(node[0].tagName.toUpperCase() == 'TEXTAREA') {
+                params.type = 'textarea';
+                params.keepPosition = true;
+                if(!params.dir && !params.all) {
+                    params.dir = {
+                        se: true
+                    };
+                }
                 (function() { // wrap textarea,直接使用wrap方法会无法插入resize节点
                     var wrap = $('<div></div>').css({
                         position: 'relative',
@@ -221,6 +228,10 @@ define(function(require, exports, module) {
                                                 var result = helper.resize(obj);
                                                 if(scroll) { // 拖动支持滚动条响应时候要清除文本选择（滚动条的运动应该就是文本选择导致的，设置禁止选择文本滚动条则不会响应resize）
                                                     window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty();
+                                                }
+                                                if(params.type == 'textarea') {
+                                                    helper.style('width', result.width, node);
+                                                    helper.style('height', result.height, node);
                                                 }
                                                 event.trigger('resize', [result, obj]); //
                                             }

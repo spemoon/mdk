@@ -46,21 +46,9 @@ define(function(require, exports, module) {
          * 实例3：
          * --------------------------------------------*/
         (function() {
-            var box3 = $('#box3');
             resize.reg({
-                node: box3,
-                dir: {
-                    s: true
-                },
-                keepPosition: true
-            }).bind({
-                    resize: function(e, result, params) {
-                        params.node.css({
-                            width: result.width,
-                            height: result.height
-                        });
-                    }
-                });
+                node: $('#box3')
+            });
 
         })();
     });
