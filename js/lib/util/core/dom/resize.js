@@ -25,30 +25,40 @@ define(function(require, exports, module) {
             var minWidth = params.minWidth;
             var scroll = params.scroll;
             var marginTop = params.marginTop;
+            var marginBottom = params.marginBottom;
             var marginLeft = params.marginLeft;
+            var marginRight = params.marginRight;
+            var paddingRight = params.paddingRight;
+            var paddingBottom = params.paddingBottom;
             var node = params.node;
             var sizeNode = params.sizeNode;
             var position = params.position;
 
             var top, left, width, height;
             if(dir.indexOf('n') != -1) { // north,处理top和height
-                top = Math.min(Math.max((scroll ? 0 : doc.scrollTop()) + marginTop, position.y + position.height - maxHeight, y), position.y + position.height - minHeight);
+                top = Math.min(Math.max(scroll ? 0 : doc.scrollTop(), position.y + position.height - maxHeight, y), position.y + position.height - minHeight);
                 height = position.y - top + position.height;
             }
             if(dir.indexOf('e') != -1) { // east,处理width
-                width = Math.max(Math.min((scroll ? doc.width() : doc.scrollLeft() + win.width()) - marginLeft, x), position.x + minWidth) - position.x;
+                width = Math.min(maxWidth, Math.max(minWidth, Math.max(Math.min((scroll ? doc.width() : doc.scrollLeft() + win.width()) - marginLeft - marginRight, x), position.x + minWidth) - position.x - paddingRight));
             }
             if(dir.indexOf('s') != -1) { // south,处理height
-                height = Math.max(Math.min(scroll ? doc.height() : doc.scrollTop() + win.height() - marginTop, y), position.y + minHeight) - position.y;
+                height = Math.min(maxHeight, Math.max(minHeight, Math.max(Math.min((scroll ? doc.height() : doc.scrollTop() + win.height()) - marginTop - marginBottom, y), position.y + minHeight) - position.y - paddingBottom));
             }
             if(dir.indexOf('w') != -1) { // west,处理left和width
-                left = Math.min(Math.max((scroll ? 0 : doc.scrollLeft()) + marginLeft, position.x + position.width - maxWidth, x), position.x + position.width - minWidth);
+                left = Math.min(Math.max((scroll ? 0 : doc.scrollLeft()), position.x + position.width - maxWidth, x), position.x + position.width - minWidth);
                 width = position.x - left + position.width;
             }
             helper.style('top', top, node);
             helper.style('left', left, node);
             helper.style('height', height, sizeNode);
             helper.style('width', width, sizeNode);
+            return {
+                top: top,
+                left: left,
+                height: height,
+                width: width
+            }
         }
     };
     var r = {
@@ -61,21 +71,34 @@ define(function(require, exports, module) {
             var maxWidth;
             var event = $({}); // 用来绑定事件
             var handles = {};
-            var marginTop = (params.marginTop || 0) + parseFloat(node.css('border-bottom-width')) + parseFloat(node.css('border-top-width'));
-            var marginLeft = (params.marginLeft || 0) + parseFloat(node.css('border-left-width')) + parseFloat(node.css('border-right-width'));
+            var marginTop = (params.marginTop || 0) + parseFloat(node.css('border-top-width'));
+            var marginBottom = (params.marginBottom || 0) + parseFloat(node.css('border-bottom-width'));
+            var marginLeft = (params.marginLeft || 0) + parseFloat(node.css('border-left-width'));
+            var marginRight = (params.marginRight || 0) + parseFloat(node.css('border-right-width'));
+            var paddingRight = params.paddingRight || 0;
+            var paddingBottom = params.paddingBottom || 0;
+
             var scroll = params.scroll === true;
+            if(sizeNode.height() < minHeight) {
+                sizeNode.height(minHeight);
+            }
+            if(sizeNode.width() < minWidth) {
+                sizeNode.width(minWidth);
+            }
+
             if(node[0].tagName.toUpperCase() == 'TEXTAREA') {
                 (function() { // wrap textarea,直接使用wrap方法会无法插入resize节点
                     var wrap = $('<div></div>').css({
                         position: 'relative',
-                        width: node.width(),
-                        height: node.height()
+                        width: sizeNode.width(),
+                        height: sizeNode.height()
                     });
                     var clone = node.clone(true);
                     node.before(wrap);
                     wrap.append(clone);
                     node.remove();
                     node = wrap;
+                    sizeNode = clone;
                 })();
             }
             params.dir = params.dir || {};
@@ -121,8 +144,8 @@ define(function(require, exports, module) {
                                         var offset = node.offset();
                                         startPosition.x = offset.left;
                                         startPosition.y = offset.top;
-                                        startPosition.width = node.width();
-                                        startPosition.height = node.height();
+                                        startPosition.width = sizeNode.width();
+                                        startPosition.height = sizeNode.height();
                                         startPosition.position = node.css('position');
                                         if(startPosition.position == 'static' || !startPosition.position) {
                                             startPosition.position = 'relative';
@@ -173,30 +196,33 @@ define(function(require, exports, module) {
                                         },
                                         drag: function(e) {
                                             if(status == 1 || status == 2) {
+                                                var obj = {
+                                                    event: e,
+                                                    dir: dir,
+                                                    node: node,
+                                                    sizeNode: sizeNode,
+                                                    position: startPosition,
+                                                    minHeight: minHeight,
+                                                    minWidth: minWidth,
+                                                    maxHeight: maxHeight,
+                                                    maxWidth: maxWidth,
+                                                    marginTop: marginTop,
+                                                    marginBottom: marginBottom,
+                                                    marginLeft: marginLeft,
+                                                    marginRight: marginRight,
+                                                    paddingBottom: paddingBottom,
+                                                    paddingRight: paddingRight,
+                                                    scroll: scroll,
+                                                    params: params
+                                                };
                                                 if(status == 1) {
                                                     status = 2;
                                                 }
-                                                if(params.preventDefault !== true) {
-                                                    helper.resize({
-                                                        event: e,
-                                                        dir: dir,
-                                                        node: node,
-                                                        sizeNode: sizeNode,
-                                                        position: startPosition,
-                                                        minHeight: minHeight,
-                                                        minWidth: minWidth,
-                                                        maxHeight: maxHeight,
-                                                        maxWidth: maxWidth,
-                                                        marginTop: marginTop,
-                                                        marginLeft: marginLeft,
-                                                        scroll: scroll,
-                                                        params: params
-                                                    });
-                                                }
-                                                if(params.scroll === true) { // 拖动支持滚动条响应时候要清除文本选择（滚动条的运动应该就是文本选择导致的，设置禁止选择文本滚动条则不会响应resize）
+                                                var result = helper.resize(obj);
+                                                if(scroll) { // 拖动支持滚动条响应时候要清除文本选择（滚动条的运动应该就是文本选择导致的，设置禁止选择文本滚动条则不会响应resize）
                                                     window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty();
                                                 }
-                                                event.trigger('resize', [e, dir, node, startPosition, params]); //
+                                                event.trigger('resize', [result, obj]); //
                                             }
                                         },
                                         end: function(e) {

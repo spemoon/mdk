@@ -25,9 +25,19 @@ define(function(require, exports, module) {
                 node: box2,
                 sizeNode: content,
                 dir: {
+                    ne: box2.find('.ne'),
+                    n: box2.find('.n'),
+                    nw: box2.find('.nw'),
                     se: box2.find('.se'),
-                    sw: box2.find('.sw')
-                }
+                    s: box2.find('.s'),
+                    sw: box2.find('.sw'),
+                    e: box2.find('.e'),
+                    w: box2.find('.w')
+                },
+                minWidth: 150,
+                minHeight: 80,
+                paddingRight: box2.find('.e').width() + box2.find('.w').width(),
+                paddingBottom: box2.find('.n').height() + box2.find('.s').height() + box2.find('.header').height() + box2.find('.footer').height(),
             }).bind({
                 });
         })();
@@ -40,12 +50,15 @@ define(function(require, exports, module) {
             resize.reg({
                 node: box3,
                 dir: {
-                    se: true
-                }
+                    s: true
+                },
+                keepPosition: true
             }).bind({
-                    resize: function(e, mouse, dir, node, startPosition, params) {
-                        document.getElementById('box3').style.width = node.width() + 'px';
-                        document.getElementById('box3').style.height = node.height() + 'px';
+                    resize: function(e, result, params) {
+                        params.node.css({
+                            width: result.width,
+                            height: result.height
+                        });
                     }
                 });
 
