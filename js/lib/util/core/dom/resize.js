@@ -16,6 +16,7 @@ define(function(require, exports, module) {
             }
         },
         resize: function(params) {
+            var isProxy = params.isProxy;
             var x = params.event.pageX;
             var y = params.event.pageY;
             var dir = params.dir;
@@ -30,14 +31,25 @@ define(function(require, exports, module) {
             var marginRight = params.marginRight;
             var paddingRight = params.paddingRight;
             var paddingBottom = params.paddingBottom;
+            var paddingRightCopy = paddingRight;
+            var paddingBottomCopy = paddingBottom;
             var node = params.node;
             var sizeNode = params.sizeNode;
             var position = params.position;
+            if(isProxy) {
+                minHeight += paddingBottom;
+                minWidth += paddingRight;
+                paddingBottom = 0;
+                paddingRight = 0;
+            }
 
             var top, left, width, height;
             if(dir.indexOf('n') != -1) { // north,处理top和height
                 top = Math.min(Math.max(scroll ? 0 : doc.scrollTop(), position.y + position.height - maxHeight, y), position.y + position.height - minHeight);
                 height = position.y - top + position.height;
+                if(isProxy) {
+                    height += paddingBottomCopy;
+                }
             }
             if(dir.indexOf('e') != -1) { // east,处理width
                 width = Math.min(maxWidth, Math.max(minWidth, Math.max(Math.min((scroll ? doc.width() : doc.scrollLeft() + win.width()) - marginLeft - marginRight, x), position.x + minWidth) - position.x - paddingRight));
@@ -65,18 +77,16 @@ define(function(require, exports, module) {
         reg: function(params) {
             var node = params.node;
             var sizeNode = params.sizeNode || node;
+            var isProxy = !!params.proxy;
+            var paddingRight = params.paddingRight || 0;
+            var paddingBottom = params.paddingBottom || 0;
             var minHeight = params.minHeight || 30;
             var minWidth = params.minWidth || 30;
             var maxHeight;
             var maxWidth;
             var event = $({}); // 用来绑定事件
             var handles = {};
-            var marginTop = (params.marginTop || 0) + parseFloat(node.css('border-top-width'));
-            var marginBottom = (params.marginBottom || 0) + parseFloat(node.css('border-bottom-width'));
-            var marginLeft = (params.marginLeft || 0) + parseFloat(node.css('border-left-width'));
-            var marginRight = (params.marginRight || 0) + parseFloat(node.css('border-right-width'));
-            var paddingRight = params.paddingRight || 0;
-            var paddingBottom = params.paddingBottom || 0;
+            var marginTop, marginBottom, marginLeft, marginRight;
 
             var scroll = params.scroll === true;
             if(sizeNode.height() < minHeight) {
@@ -97,8 +107,8 @@ define(function(require, exports, module) {
                 (function() { // wrap textarea,直接使用wrap方法会无法插入resize节点
                     var wrap = $('<div></div>').css({
                         position: 'relative',
-                        width: sizeNode.width(),
-                        height: sizeNode.height()
+                        width: sizeNode.outerWidth(),
+                        height: sizeNode.outerHeight()
                     });
                     var clone = node.clone(true);
                     node.before(wrap);
@@ -139,6 +149,8 @@ define(function(require, exports, module) {
                         if(!handle.data('resizable')) {
                             handle.data('resizable', true).bind('mousedown.' + eventSpace, function(e) {
                                 var targetNode = node; // 当前被resize的节点，非proxy时是node，proxy时是代理节点
+                                var targetSizeNode = sizeNode;
+                                var result;
                                 var scope = $(this); // handle
                                 maxHeight = params.maxHeight || win.height();
                                 maxWidth = params.maxWidth || win.width();
@@ -147,37 +159,39 @@ define(function(require, exports, module) {
                                     var mouseX = e.pageX, mouseY = e.pageY;
                                     var startPosition = {
                                     };
-                                    (function() {
-                                        var offset = node.offset();
-                                        startPosition.x = offset.left;
-                                        startPosition.y = offset.top;
-                                        startPosition.width = sizeNode.width();
-                                        startPosition.height = sizeNode.height();
-                                        startPosition.position = node.css('position');
-                                        if(startPosition.position == 'static' || !startPosition.position) {
-                                            startPosition.position = 'relative';
-                                            node.css('position', startPosition.position);
-                                        }
-                                    })();
+                                    var proxy;
                                     var action = {
                                         start: function(e) {
                                             status = 1;
-                                            if(params.proxy) { // 代理容器节点生成
+                                            if(isProxy) { // 代理容器节点生成
                                                 (function() {
-                                                    var proxy = v.clone();
-                                                    if(params.proxy === 'dashed') {
-                                                        proxy.css({
-                                                            border: '1px dashed #555',
-                                                            background: 'transparent'
-                                                        });
-                                                        proxy[0].innerHTML = '';
-                                                    }
-                                                    if(params.hide !== false) {
+                                                    proxy = $('<div/>').addClass('resize-proxy').css({
+                                                        width: node.width(),
+                                                        height: node.height(),
+                                                        top: node.css('top'),
+                                                        left: node.css('left')
+                                                    });
+                                                    if(params.hide === true) {
                                                         node.css('visibility', 'hidden');
                                                     }
-                                                    node.parent()[0].appendChild(proxy);
+                                                    node.parent().append(proxy);
+                                                    targetNode = proxy;
+                                                    targetSizeNode = proxy;
                                                 })();
-                                            } else { //
+                                            }
+                                            (function() {
+                                                var offset = node.offset();
+                                                startPosition.x = offset.left;
+                                                startPosition.y = offset.top;
+                                                startPosition.width = sizeNode.width();
+                                                startPosition.height = sizeNode.height();
+                                                startPosition.position = node.css('position');
+                                                if(startPosition.position == 'static' || !startPosition.position) {
+                                                    startPosition.position = 'relative';
+                                                    node.css('position', startPosition.position);
+                                                }
+                                            })();
+                                            if(!isProxy) { //
                                                 if(params.keepPosition === true) { // 保持住position，适合下/右以及右下角resize的情况，其他情况情况并不适用
                                                     node.css('outline', 'none');
                                                 } else {
@@ -190,6 +204,10 @@ define(function(require, exports, module) {
                                                 }
                                                 node.attr('tabindex', '1').attr('hidefocus', 'true').focus();
                                             }
+                                            marginTop = (params.marginTop || 0) + parseFloat(targetNode.css('border-top-width'));
+                                            marginBottom = (params.marginBottom || 0) + parseFloat(targetNode.css('border-bottom-width'));
+                                            marginLeft = (params.marginLeft || 0) + parseFloat(targetNode.css('border-left-width'));
+                                            marginRight = (params.marginRight || 0) + parseFloat(targetNode.css('border-right-width'));
                                             win.bind('blur.' + random, action.end); // 失去焦点时候触发mouseup，防止resize过程光标被其他程序抢夺后导致回到界面鼠标其实处于mouseup状态却可以resize);
                                             if(scope[0].setCapture) {
                                                 scope[0].setCapture();
@@ -206,8 +224,8 @@ define(function(require, exports, module) {
                                                 var obj = {
                                                     event: e,
                                                     dir: dir,
-                                                    node: node,
-                                                    sizeNode: sizeNode,
+                                                    node: targetNode,
+                                                    sizeNode: targetSizeNode,
                                                     position: startPosition,
                                                     minHeight: minHeight,
                                                     minWidth: minWidth,
@@ -220,31 +238,39 @@ define(function(require, exports, module) {
                                                     paddingBottom: paddingBottom,
                                                     paddingRight: paddingRight,
                                                     scroll: scroll,
+                                                    isProxy: isProxy,
                                                     params: params
                                                 };
                                                 if(status == 1) {
                                                     status = 2;
                                                 }
-                                                var result = helper.resize(obj);
+                                                result = helper.resize(obj);
                                                 if(scroll) { // 拖动支持滚动条响应时候要清除文本选择（滚动条的运动应该就是文本选择导致的，设置禁止选择文本滚动条则不会响应resize）
                                                     window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty();
                                                 }
                                                 if(params.type == 'textarea') {
-                                                    helper.style('width', result.width, node);
-                                                    helper.style('height', result.height, node);
+                                                    helper.style('width', targetSizeNode.outerWidth(), targetNode);
+                                                    helper.style('height', targetSizeNode.outerHeight(), targetNode);
                                                 }
                                                 event.trigger('resize', [result, obj]); //
                                             }
                                         },
                                         end: function(e) {
                                             status = 0;
-                                            if(params.proxy) {
-
+                                            if(isProxy) {
+                                                if(result) {
+                                                    helper.style('top', result.top, node);
+                                                    helper.style('left', result.left, node);
+                                                    helper.style('width', result.width - paddingRight, sizeNode);
+                                                    helper.style('height', result.height - paddingBottom, sizeNode);
+                                                }
+                                                proxy.remove();
                                             }
                                             event.trigger('end', [e, scope, node]);
                                             if(scope[0].releaseCapture) {
                                                 scope[0].releaseCapture();
                                             }
+                                            result = null;
                                             doc.unbind('mousemove.' + random).unbind('mouseup.' + random);
                                             scope.unbind('losecapture.' + random);
                                             win.unbind('blur.' + random);

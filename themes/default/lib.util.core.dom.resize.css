@@ -4,39 +4,57 @@
     width: 10px;
     height: 10px;
 }
+
 .resize-nw {
-    top:0;
+    top: 0;
     left: 0;
     z-index: 1;
 }
+
 .resize-n {
     top: 0;
+    left: 0;
     width: 100%;
 }
+
 .resize-ne {
-    top:0;
+    top: 0;
     right: 0;
     z-index: 1;
 }
+
 .resize-w {
+    top: 0;
     left: 0;
     height: 100%;
 }
+
 .resize-e {
+    top: 0;
     right: 0;
     height: 100%;
 }
+
 .resize-sw {
     bottom: 0;
     left: 0;
     z-index: 1;
 }
+
 .resize-s {
+    left: 0;
     bottom: 0;
     width: 100%;
 }
+
 .resize-se {
     bottom: 0;
-    right: -0;
+    right: 0;
     z-index: 1;
+}
+
+.resize-proxy {
+    border: 2px dashed #555;
+    background: transparent;
+    position: absolute;
 }

@@ -37,9 +37,8 @@ define(function(require, exports, module) {
                 minWidth: 150,
                 minHeight: 80,
                 paddingRight: box2.find('.e').width() + box2.find('.w').width(),
-                paddingBottom: box2.find('.n').height() + box2.find('.s').height() + box2.find('.header').height() + box2.find('.footer').height(),
-            }).bind({
-                });
+                paddingBottom: box2.find('.n').height() + box2.find('.s').height() + box2.find('.header').height() + box2.find('.footer').height()
+            });
         })();
 
         /**--------------------------------------------
@@ -49,7 +48,44 @@ define(function(require, exports, module) {
             resize.reg({
                 node: $('#box3')
             });
+        })();
 
+        /**--------------------------------------------
+         * 实例4：
+         * --------------------------------------------*/
+        (function() {
+            resize.reg({
+                node: $('#box4'),
+                proxy: true,
+                all: true
+            });
+        })();
+
+        /**--------------------------------------------
+         * 实例5：
+         * --------------------------------------------*/
+        (function() {
+            var box5 = $('#box5');
+            var content = box5.find('.content');
+            resize.reg({
+                node: box5,
+                sizeNode: content,
+                proxy: true,
+                dir: {
+                    ne: box5.find('.ne'),
+                    n: box5.find('.n'),
+                    nw: box5.find('.nw'),
+                    se: box5.find('.se'),
+                    s: box5.find('.s'),
+                    sw: box5.find('.sw'),
+                    e: box5.find('.e'),
+                    w: box5.find('.w')
+                },
+                minWidth: 150,
+                minHeight: 80,
+                paddingRight: box5.find('.e').width() + box5.find('.w').width(),
+                paddingBottom: box5.find('.n').height() + box5.find('.s').height() + box5.find('.header').height() + box5.find('.footer').height()
+            });
         })();
     });
 });

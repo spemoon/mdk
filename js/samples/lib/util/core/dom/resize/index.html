@@ -31,7 +31,7 @@
 	        </div>
 
             <div class="example">
-                <em>示例2:已有resize节点</em>
+                <em>示例2:已有resize节点,sizeNode和node分开的情况</em>
                 <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
                 <div class="demo">
                     <div class="dialog" id="box2">
@@ -86,10 +86,39 @@
             </div>
 
             <div class="example">
-                <em>示例5:event</em>
+                <em>示例5:proxy，sizeNode和node分开情况</em>
                 <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
                 <div class="demo">
-                    <div class="box" id="box5">
+                    <div class="dialog" id="box5">
+                        <table>
+                            <tr>
+                                <td class="nw"></td>
+                                <td class="n"></td>
+                                <td class="ne"></td>
+                            </tr>
+                            <tr>
+                                <td class="w"></td>
+                                <td>
+                                    <table>
+                                        <tr>
+                                            <td><div class="header">{header}</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="content">{content}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="footer">{footer}</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td class="e"></td>
+                            </tr>
+                            <tr>
+                                <td class="sw"></td>
+                                <td class="s"></td>
+                                <td class="se"></td>
+                            </tr>
+                        </table>
                     </div>
                 </div>
             </div>
