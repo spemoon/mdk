@@ -87,5 +87,39 @@ define(function(require, exports, module) {
                 paddingBottom: box5.find('.n').height() + box5.find('.s').height() + box5.find('.header').height() + box5.find('.footer').height()
             });
         })();
+
+        /**--------------------------------------------
+         * 实例6：
+         * --------------------------------------------*/
+        (function() {
+            resize.reg({
+                node: $('#box6'),
+                all: true,
+                minWidth: 100,
+                maxWidth: 500,
+                minHeight: 80,
+                maxHeight: 250
+            });
+        })();
+
+        /**--------------------------------------------
+         * 实例7：
+         * --------------------------------------------*/
+        (function() {
+            resize.reg({
+                node: $('#box7'),
+                all: true
+            }).bind({
+                    start: function(event, e, handle, node, targetNode, targetSizeNode, startPosition) {
+                        console.log('start');
+                    },
+                    resize: function(event, e, position, params) {
+                        console.log(position);
+                    },
+                    end: function(event, e, handle, node, startPosition) {
+                        console.log('end');
+                    }
+                });
+        })();
     });
 });

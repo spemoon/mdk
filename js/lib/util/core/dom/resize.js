@@ -37,8 +37,6 @@ define(function(require, exports, module) {
             var sizeNode = params.sizeNode;
             var position = params.position;
             if(isProxy) {
-                minHeight += paddingBottom;
-                minWidth += paddingRight;
                 paddingBottom = 0;
                 paddingRight = 0;
             }
@@ -60,6 +58,9 @@ define(function(require, exports, module) {
             if(dir.indexOf('w') != -1) { // west,处理left和width
                 left = Math.min(Math.max((scroll ? 0 : doc.scrollLeft()), position.x + position.width - maxWidth, x), position.x + position.width - minWidth);
                 width = position.x - left + position.width;
+                if(isProxy) {
+                    width += paddingRightCopy;
+                }
             }
             helper.style('top', top, node);
             helper.style('left', left, node);
@@ -217,7 +218,7 @@ define(function(require, exports, module) {
                                                 e.preventDefault();
                                             }
                                             window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty();
-                                            event.trigger('start', [e, scope, node]); // 事件对象，handle，resize对象节点
+                                            event.trigger('start', [e, scope, node, targetNode, targetSizeNode, startPosition]);
                                         },
                                         drag: function(e) {
                                             if(status == 1 || status == 2) {
@@ -252,7 +253,7 @@ define(function(require, exports, module) {
                                                     helper.style('width', targetSizeNode.outerWidth(), targetNode);
                                                     helper.style('height', targetSizeNode.outerHeight(), targetNode);
                                                 }
-                                                event.trigger('resize', [result, obj]); //
+                                                event.trigger('resize', [e, result, obj]); //
                                             }
                                         },
                                         end: function(e) {
@@ -266,7 +267,7 @@ define(function(require, exports, module) {
                                                 }
                                                 proxy.remove();
                                             }
-                                            event.trigger('end', [e, scope, node]);
+                                            event.trigger('end', [e, scope, node, startPosition]);
                                             if(scope[0].releaseCapture) {
                                                 scope[0].releaseCapture();
                                             }
