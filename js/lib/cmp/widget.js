@@ -6,33 +6,55 @@ define(function(require, exports, module) {
     var AOP = ['beforeInit', 'afterInit', 'beforeRender', 'afterRender', 'beforeUnrender', 'afterUnrender', 'beforeDestory', 'afterDestory'];
 
     return {
+        /**
+         * 构建一个widget
+         * @param params
+         * @return {Function}
+         */
         create: function(params) {
-            var widget = function(config) {
+
+            /**
+             * widget构造器
+             * @param config 由widget组件提供
+             *     singleton: 是否使用单例模式
+             *     extend: 父类
+             *     params: 绑在this上的成员变量
+             *     renderTo: 渲染的父节点
+             *     tpl: 模板
+             *     events:
+             * @param params 由widget实例提供
+             *     params: 绑在this上的成员变量
+             *     renderTo: 渲染的父节点
+             */
+            var widget = function(config, params) {
                 if(config.singleton === true) { // 单例模式
                     if(this.singleton === true) { // 判断是否已经实例化
                         return this;
                     }
                 }
                 if(config.extend) { // 继承构造器
-                    //var superClass = config.extend;
-                    //if(superClass) {
-                    //    superClass.call(this, config);
-                    //    this.parent = superClass.prototype;
-                    //}
+                    var superClass = config.extend;
+                    if(superClass) {
+                        superClass.call(this, config);
+                        this.parent = superClass.prototype;
+                    }
                 }
                 (function(scope) {
                     for(var i in config.params) { // 复制属性
                         scope[i] = config.params[i];
                     }
+                    for(var i in params.params) { // 复制属性
+                        scope[i] = params.params[i];
+                    }
                 })(this);
-                (function() {
+                (function(scope) {
                     for(var i in config.proto) { // 复制原型
                         widget.prototype[i] = config.proto[i];
                     }
-                })();
+                })(this);
 
                 this.id = mVar.id(); // 给组件生成唯一的id
-                this.renderTo = $(this.renderTo || document.body); // 渲染节点
+                this.renderTo = $(params.renderTo || config.renderTo || document.body); // 渲染节点
                 this.tpl = config.tpl; // 生成结构的模板
 
                 this._status = 0; // 0：未初始化，1：inited，2：rendered，3：unrendered，4：destoryed
@@ -50,7 +72,7 @@ define(function(require, exports, module) {
                 (function(scope) {
                     for(var i = 0, len = AOP.length; i < len; i++) {
                         var name = AOP[i];
-                        var fn = config[name];
+                        var fn = params[name] || config[name];
                         if(fn) {
                             scope._aop[name] = fn;
                         }
@@ -178,12 +200,9 @@ define(function(require, exports, module) {
                     return this;
                 }
             };
+
             return function(obj) {
-                params.params = params.params || {};
-                for(var key in obj) {
-                    params.params[key] = obj[key];
-                }
-                return new widget(params);
+                return new widget(params, obj || {});
             };
         }
     };

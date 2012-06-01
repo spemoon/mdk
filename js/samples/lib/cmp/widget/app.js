@@ -10,9 +10,6 @@ define(function(require, exports, module) {
          * 实例1： 构建一个window弹出层基类
          * --------------------------------------------*/
         (function() {
-            var btn1 = $('#btn1');
-            var btn2 = $('#btn2');
-            var btn3 = $('#btn3');
             var win = widget.create({
                 tpl: function() {
                     var html = '';
@@ -80,11 +77,13 @@ define(function(require, exports, module) {
                 afterDestory: function() {
 
                 },
-                events: [{
-                    close: function(e) {
-                        this.unrender();
+                events: [
+                    {
+                        close: function(e) {
+                            this.unrender();
+                        }
                     }
-                }],
+                ],
                 proto: {
                     center: function() {
                         var width = this.element.width();
@@ -105,9 +104,18 @@ define(function(require, exports, module) {
                 }
             });
 
+
+            var btn1 = $('#btn1');
+            var btn2 = $('#btn2');
+            var btn3 = $('#btn3');
+            var btn4 = $('#btn4');
+            var btn5 = $('#btn5');
+            var btn6 = $('#btn6');
             var w1 = new win({
-                title: 'hello',
-                minHeight: 100
+                params: {
+                    title: 'hello',
+                    minHeight: 100
+                }
             });
 
             btn1.click(function() {
@@ -120,14 +128,24 @@ define(function(require, exports, module) {
                 w1.destory();
             });
 
+            var w2 = new win({
+                params: {
+                    title: 'world',
+                    minWidth: 300
+                }
+            });
+            w2.render();
 
-
-            var winExt = widget.create({
-                extend: win
+            btn4.click(function() {
+                w2.render();
+            });
+            btn5.click(function() {
+                w2.unrender();
+            });
+            btn6.click(function() {
+                w2.destory();
             });
 
-            var w2 = new winExt();
-            w2.render();
         })();
     });
 });
