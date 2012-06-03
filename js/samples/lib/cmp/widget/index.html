@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <title>widget sample</title>
 		<link href="../../../../../themes/global.css" rel="stylesheet" type="text/css"/>
+        <link href="../../../../../themes/default/lib.util.core.dom.resize.css" rel="stylesheet" type="text/css"/>
         <link href="../../../sample.css" rel="stylesheet" type="text/css"/>
 		<link href="style.css" rel="stylesheet" type="text/css"/>
         <script src="../../../../../js/lib/sea.js" data-main="./app.js"></script>
@@ -11,31 +12,112 @@
     <body>
     	<!------------------------------------------------------------------------------------------------->
 	    <div class="modual">
-	        <h2>package.name</h2>
+	        <h2>widget.create_1</h2>
 	        <div class="introduce">
 	            <em>说明</em>
-	            <p>some introductions</p>
+	            <p>简单创建一个widget并多个实例化</p>
 	        </div>
 	        <div class="usage">
 	            <em>用法</em>
 	            <pre class="brush: js;">//code</pre>
 	        </div>
 	        <div class="example">
-	            <em>示例</em>
+	            <em>示例1</em>
 				<span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
 	            <div class="demo">
-                    <p>
+                    <div class="item">
+                        <p>实例1：一个window widget实例</p>
                         <input type="button" id="btn1" value="显示窗口1"/>
                         <input type="button" id="btn2" value="隐藏窗口1"/>
                         <input type="button" id="btn3" value="销毁窗口1"/>
-                    </p>
-                    <p>
+                    </div>
+                    <div class="item">
+                        <p>实例2：再实例化一个，直接展示，重写切面</p>
                         <input type="button" id="btn4" value="显示窗口2"/>
                         <input type="button" id="btn5" value="隐藏窗口2"/>
                         <input type="button" id="btn6" value="销毁窗口2"/>
-                    </p>
+                    </div>
 	            </div>
 	        </div>
 	    </div>
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>widget.create_2</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>继承的使用（含重写父类方法，访问父类被重写的方法，继承的继承）</p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+                <pre class="brush: js;">//code</pre>
+            </div>
+            <div class="example">
+                <em>示例2</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <div class="item">
+                        <p>继承实例1中的window widget，得到winExt，重写模板等</p>
+                        <input type="button" id="btn7" value="显示窗口1"/>
+                        <input type="button" id="btn8" value="隐藏窗口1"/>
+                        <input type="button" id="btn9" value="销毁窗口1"/>
+                    </div>
+                    <div class="item">
+                        <p>继承winExt</p>
+                        <input type="button" id="btn10" value="显示窗口2"/>
+                        <input type="button" id="btn11" value="隐藏窗口2"/>
+                        <input type="button" id="btn12" value="销毁窗口2"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>widget.create_3</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>单例的使用（含单例模式的继承）</p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+                <pre class="brush: js;">//code</pre>
+            </div>
+            <div class="example">
+                <em>示例</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <p>
+                        <input type="button" id="btn13" value="显示窗口1"/>
+                        <input type="button" id="btn14" value="隐藏窗口1"/>
+                        <input type="button" id="btn15" value="销毁窗口1"/>
+                    </p>
+                    <p>
+                        <input type="button" id="btn16" value="显示窗口2"/>
+                        <input type="button" id="btn17" value="隐藏窗口2"/>
+                        <input type="button" id="btn18" value="销毁窗口2"/>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>widget.create_4</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>widget的模板原先就存在页面上的情况</p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+                <pre class="brush: js;">//code</pre>
+            </div>
+            <div class="example">
+                <em>示例</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                </div>
+            </div>
+        </div>
     </body>
 </html>

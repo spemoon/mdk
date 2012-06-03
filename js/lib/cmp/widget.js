@@ -12,7 +12,6 @@ define(function(require, exports, module) {
          * @return {Function}
          */
         create: function(params) {
-
             /**
              * widget构造器
              * @param config 由widget组件提供
@@ -26,64 +25,72 @@ define(function(require, exports, module) {
              *     params: 绑在this上的成员变量
              *     renderTo: 渲染的父节点
              */
-            var widget = function(config, params) {
-                if(config.singleton === true) { // 单例模式
+            var widget = function(config) {
+                config = config || {};
+
+                if(params.singleton === true) { // 单例模式
                     if(this.singleton === true) { // 判断是否已经实例化
                         return this;
                     }
                 }
-                if(config.extend) { // 继承构造器
-                    var superClass = config.extend;
+
+                if(params.extend) { // 继承构造器
+                    var superClass = params.extend;
                     if(superClass) {
-                        superClass.call(this, config);
+                        superClass.call(this, params);
                         this.parent = superClass.prototype;
+
+                        for(var method in superClass.prototype) {
+                            widget.prototype[method] = superClass.prototype[method];
+                        }
                     }
                 }
+                if(params.tpl) {
+                    this.tpl = params.tpl; // 生成结构的模板
+                }
+
                 (function(scope) {
-                    for(var i in config.params) { // 复制属性
-                        scope[i] = config.params[i];
-                    }
                     for(var i in params.params) { // 复制属性
                         scope[i] = params.params[i];
                     }
-                })(this);
-                (function(scope) {
-                    for(var i in config.proto) { // 复制原型
-                        widget.prototype[i] = config.proto[i];
+
+                    for(var i in config.params) { // 复制属性
+                        scope[i] = config.params[i];
                     }
                 })(this);
 
                 this.id = mVar.id(); // 给组件生成唯一的id
-                this.renderTo = $(params.renderTo || config.renderTo || document.body); // 渲染节点
-                this.tpl = config.tpl; // 生成结构的模板
-
+                this.renderTo = $(config.renderTo || params.renderTo || document.body); // 渲染节点
                 this._status = 0; // 0：未初始化，1：inited，2：rendered，3：unrendered，4：destoryed
                 this._widgets = {}; // 存放外界注入的组件实例，用于组件之间的交互
-                this._events = []; // 事件
-                this._eventId = 0; // 标识事件ID，主要提供给解绑时候使用
-                this._aop = {}; // 保存切面函数
-                if(config.events) {
+
+                console.log(this._events)
+                if(!this._events) {
+                    this._events = [];
+                    this._eventId = 0; // 标识事件ID，主要提供给解绑时候使用
+                }
+                if(params.events) {
                     (function(events, scope) {
                         for(var i = 0, len = events.length; i < len; i++) {
                             scope._events[i] = events[i];
                         }
-                    })(config.events, this);
+                    })(params.events, this);
+                }
+
+                if(!this._aop) {
+                    this._aop = {}; // 保存切面函数
                 }
                 (function(scope) {
                     for(var i = 0, len = AOP.length; i < len; i++) {
                         var name = AOP[i];
-                        var fn = params[name] || config[name];
+                        var fn = config[name] || params[name];
                         if(fn) {
                             scope._aop[name] = fn;
                         }
                     }
                 })(this);
 
-                if(config.autoInit !== false) { // 默认自动初始化
-                    this.init();
-                }
-
-                if(config.singleton === true) { // 标识单例已经实例化
+                if(params.singleton === true) { // 标识单例已经实例化
                     this.singleton = true;
                 }
             };
@@ -145,7 +152,7 @@ define(function(require, exports, module) {
                     return this;
                 },
                 destory: function() {
-                    if(lang.callback(this._aop.beforeUnrender, {scope: this})) {
+                    if(lang.callback(this._aop.beforeDestory, {scope: this})) {
                         this.element.hide();
                         this._status = 4;
 
@@ -153,7 +160,7 @@ define(function(require, exports, module) {
                             this.unbind(this._events[i]);
                         }
                         this.element.unbind();
-                        lang.callback(this._aop.afterUnrender, {scope: this});
+                        lang.callback(this._aop.afterDestory, {scope: this});
                         this.element.trigger('destoryed', [this]);
                         for(var p in this) {
                             if(this.hasOwnProperty(p)) {
@@ -201,9 +208,15 @@ define(function(require, exports, module) {
                 }
             };
 
-            return function(obj) {
-                return new widget(params, obj || {});
-            };
+            (function() {
+                (function() {
+                    for(var i in params.proto) { // 复制原型
+                        widget.prototype[i] = params.proto[i];
+                    }
+                })();
+            })();
+
+            return widget;
         }
     };
 });

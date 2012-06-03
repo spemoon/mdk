@@ -31,12 +31,14 @@ define(function(require, exports, module) {
             var marginRight = params.marginRight;
             var paddingRight = params.paddingRight;
             var paddingBottom = params.paddingBottom;
-            var paddingRightCopy = paddingRight;
-            var paddingBottomCopy = paddingBottom;
+            var paddingRightCopy = 0;
+            var paddingBottomCopy = 0;
             var node = params.node;
             var sizeNode = params.sizeNode;
             var position = params.position;
             if(isProxy) {
+                paddingRightCopy = paddingRight;
+                paddingBottomCopy = paddingBottom;
                 paddingBottom = 0;
                 paddingRight = 0;
             }
@@ -44,23 +46,17 @@ define(function(require, exports, module) {
             var top, left, width, height;
             if(dir.indexOf('n') != -1) { // north,处理top和height
                 top = Math.min(Math.max(scroll ? 0 : doc.scrollTop(), position.y + position.height - maxHeight, y), position.y + position.height - minHeight);
-                height = position.y - top + position.height;
-                if(isProxy) {
-                    height += paddingBottomCopy;
-                }
+                height = position.y - top + position.height + paddingBottomCopy;
             }
             if(dir.indexOf('e') != -1) { // east,处理width
-                width = Math.min(maxWidth, Math.max(minWidth, Math.max(Math.min((scroll ? doc.width() : doc.scrollLeft() + win.width()) - marginLeft - marginRight, x), position.x + minWidth) - position.x - paddingRight));
+                width = Math.min(maxWidth, Math.max(minWidth, Math.max(Math.min((scroll ? doc.width() : doc.scrollLeft() + win.width()) - marginLeft - marginRight, x), position.x + minWidth + paddingRightCopy) - position.x - paddingRight));
             }
             if(dir.indexOf('s') != -1) { // south,处理height
-                height = Math.min(maxHeight, Math.max(minHeight, Math.max(Math.min((scroll ? doc.height() : doc.scrollTop() + win.height()) - marginTop - marginBottom, y), position.y + minHeight) - position.y - paddingBottom));
+                height = Math.min(maxHeight, Math.max(minHeight, Math.max(Math.min((scroll ? doc.height() : doc.scrollTop() + win.height()) - marginTop - marginBottom, y), position.y + minHeight + paddingBottomCopy) - position.y - paddingBottom));
             }
             if(dir.indexOf('w') != -1) { // west,处理left和width
                 left = Math.min(Math.max((scroll ? 0 : doc.scrollLeft()), position.x + position.width - maxWidth, x), position.x + position.width - minWidth);
-                width = position.x - left + position.width;
-                if(isProxy) {
-                    width += paddingRightCopy;
-                }
+                width = position.x - left + position.width + paddingRightCopy;
             }
             helper.style('top', top, node);
             helper.style('left', left, node);

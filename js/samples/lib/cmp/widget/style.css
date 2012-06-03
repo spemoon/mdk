@@ -34,3 +34,22 @@
     height: 24px;
     line-height: 24px;
 }
+
+.item {
+    margin-bottom: 25px;
+}
+
+.ext-dialog {
+    border: 1px solid #555;
+    width: 300px;
+    height: 200px;
+    background: #ddd;
+    position: absolute;
+    display: none;
+}
+.ext-dialog h2 {
+    background: green;
+    color: #fff;
+    height: 24px;
+    line-height: 24px;
+}
