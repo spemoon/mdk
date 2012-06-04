@@ -37,9 +37,8 @@ define(function(require, exports, module) {
                         } else {
                             this.element = $('<div/>');
                         }
+                        this.renderTo.append(this.element);
                     }
-                    element = this.element;
-                    this.renderTo.append(this.element);
                     (function(events, scope) {
                         for(var i = 0, event; event = events[i]; i++) {
                             scope.bind(event);
@@ -79,7 +78,6 @@ define(function(require, exports, module) {
                 if(lang.callback(this._aop.beforeDestory, {scope: this})) {
                     this.element.hide();
                     this._status = 4;
-
                     for(var i = 0, len = this._events.length; i < len; i++) {
                         this.unbind(this._events[i]);
                     }

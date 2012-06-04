@@ -284,12 +284,12 @@ define(function(require, exports, module) {
             var t1 = new tabview({
                 element: $('#tabview')
             });
-            t1.init();
+            t1.init().render();
 
             var t2 = new tabview({
                 element: $('#tabview2')
             });
-            t2.init();
+            t2.init().render();
         })();
     });
 });
