@@ -53,3 +53,28 @@
     height: 24px;
     line-height: 24px;
 }
+
+.tabview {
+    margin: 20px;
+}
+.tabview .tab-title li{
+    display: inline-block;
+    border: 1px solid #999;
+    border-bottom: 0;
+    margin: auto 15px auto 5px;
+    padding: 3px;
+    font-size: 14px;
+    cursor: pointer;
+    min-width: 40px;
+    font-weight: bold;
+}
+.tabview .tab-title li.active{
+    background: #006400;
+    color: #fff;
+}
+.tabview .tab-content {
+    border: 1px solid #999;
+    min-height: 100px;
+    max-width: 400px;
+
+}

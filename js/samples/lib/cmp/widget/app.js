@@ -21,10 +21,10 @@ define(function(require, exports, module) {
                 html += '            <td>';
                 html += '                <table>';
                 html += '                    <tr>';
-                html += '                        <td><div class="header">' + (this.title || '{header}') + '<a href="#" data-action="close" class="close" title="关闭">X</a></div></td>';
+                html += '                        <td><div class="header">' + this.title + '<a href="#" data-action="close" class="close" title="关闭">X</a></div></td>';
                 html += '                    </tr>';
                 html += '                    <tr>';
-                html += '                        <td class="content">{content}</td>';
+                html += '                        <td class="content">' + this.content + '</td>';
                 html += '                    </tr>';
                 html += '                    <tr>';
                 html += '                        <td class="footer"><input type="button" value="关闭" data-action="close"/></td>';
@@ -70,8 +70,9 @@ define(function(require, exports, module) {
             afterRender: function() { // 展示后切面，居中
                 this.center();
             },
-            afterDestory: function() { // 销毁后切面
-                console.log('destoryed');
+            params: {
+                title: '这是标题',
+                content: '这是内容'
             },
             events: [
                 // 事件
@@ -101,11 +102,13 @@ define(function(require, exports, module) {
             }
         });
 
+        $('input:button').removeAttr('disabled');
+
         /**--------------------------------------------
          * 实例1： 构建一个window弹出层基类
          * --------------------------------------------*/
 
-/*         (function() {
+        (function() {
             var btn1 = $('#btn1');
             var btn2 = $('#btn2');
             var btn3 = $('#btn3');
@@ -115,8 +118,12 @@ define(function(require, exports, module) {
 
             var w1 = new win({ // 实例1
                 params: {
-                    title: 'hello',
                     minHeight: 100
+                },
+                afterDestory: function() {
+                    btn1.attr('disabled', 'disabled');
+                    btn2.attr('disabled', 'disabled');
+                    btn3.attr('disabled', 'disabled');
                 }
             });
             w1.init();
@@ -137,7 +144,9 @@ define(function(require, exports, module) {
                     minWidth: 300
                 },
                 afterDestory: function() { // 实例重写切面
-                    console.log('my destoryed');
+                    btn4.attr('disabled', 'disabled');
+                    btn5.attr('disabled', 'disabled');
+                    btn6.attr('disabled', 'disabled');
                 }
             });
             w2.init().render();
@@ -152,22 +161,23 @@ define(function(require, exports, module) {
                 w2.destory();
             });
         })();
-*/
         /**--------------------------------------------
          * 实例2： 继承
          * --------------------------------------------*/
         (function() {
             var winExt = widget.create({
                 extend: win, // 继承
-                tpl: '<div class="ext-dialog"><h2 class="header">hello, world</h2> <div><input type="button" data-action="close" value="点击关闭"/><input type="button" data-action="load" value="点击载入"/></div></div>', // 重写tpl模板
-                afterDestory: function() { // 重写切面
-                    console.log('ext destoryed');
+                tpl: '<div class="ext-dialog"><h2 class="header">hello, world</h2> <div><input type="button" data-action="close" value="点击关闭"/><input type="button" data-action="load" value="点击载入"/></div><div class="load-content"></div></div>', // 重写tpl模板
+                beforeRender: function() {
+                    this.element.find('.load-content').html('');
                 },
-                events: [{
-                    load: function() {
-                        alert('load')
+                events: [
+                    {
+                        load: function() {
+                            this.element.find('.load-content').html('载入的数据');
+                        }
                     }
-                }]
+                ]
             });
 
             var btn7 = $('#btn7');
@@ -177,7 +187,13 @@ define(function(require, exports, module) {
             var btn11 = $('#btn11');
             var btn12 = $('#btn12');
 
-            var we1 = new winExt();
+            var we1 = new winExt({
+                afterDestory: function() {
+                    btn7.attr('disabled', 'disabled');
+                    btn8.attr('disabled', 'disabled');
+                    btn9.attr('disabled', 'disabled');
+                }
+            });
             we1.init();
 
             btn7.click(function() {
@@ -189,7 +205,7 @@ define(function(require, exports, module) {
             btn9.click(function() {
                 we1.destory();
             });
-/*
+
             var winExt2 = widget.create({
                 extend: winExt, // 继承
                 afterInit: function() {
@@ -207,13 +223,19 @@ define(function(require, exports, module) {
                     });
                 }
             });
-            winExt2.prototype.center = function() {
-                alert('center');
+            winExt2.prototype.center = function() { // 重写父类的方法
+                alert('重写了父类居中方法，然后再调用父类居中方法');
+                this.parent.center.call(this); // 调用父类方法，需要强制指定作用域
             };
 
-            var we2 = new winExt2();
+            var we2 = new winExt2({
+                afterDestory: function() {
+                    btn10.attr('disabled', 'disabled');
+                    btn11.attr('disabled', 'disabled');
+                    btn12.attr('disabled', 'disabled');
+                }
+            });
             we2.init();
-            console.log(we2);
 
             btn10.click(function() {
                 we2.render();
@@ -224,7 +246,50 @@ define(function(require, exports, module) {
             btn12.click(function() {
                 we2.destory();
             });
-*/
+        })();
+
+        /**--------------------------------------------
+         * 实例3： 已有节点上组件处理
+         * --------------------------------------------*/
+        (function() {
+            var tabview = widget.create({
+                events: [
+                    {
+                        active: function(e) {
+                            this.active($(e.target));
+                        }
+                    }
+                ],
+                proto: {
+                    active: function(node) {
+                        var contentNode = this.element.find('.tab-content').eq(0);
+                        var preNode = this.element.find('li.active');
+                        if(preNode[0] != node[0]) {
+                            var type = node.attr('data-type');
+                            preNode.removeClass('active');
+                            node.addClass('active');
+                            if(type == 'literature') {
+                                contentNode.html('鸡鸡复鸡鸡，木兰当户织');
+                            } else if(type == 'sports') {
+                                contentNode.html('曼联再次崛起');
+                            } else if(type == 'political') {
+                                contentNode.html('所有政治家都是骗子');
+                            }
+                        }
+
+                    }
+                }
+            });
+
+            var t1 = new tabview({
+                element: $('#tabview')
+            });
+            t1.init();
+
+            var t2 = new tabview({
+                element: $('#tabview2')
+            });
+            t2.init();
         })();
     });
 });

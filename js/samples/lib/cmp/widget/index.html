@@ -26,16 +26,16 @@
 				<span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
 	            <div class="demo">
                     <div class="item">
-                        <p>实例1：一个window widget实例</p>
-                        <input type="button" id="btn1" value="显示窗口1"/>
-                        <input type="button" id="btn2" value="隐藏窗口1"/>
-                        <input type="button" id="btn3" value="销毁窗口1"/>
+                        <p>实例1：一个window widget实例：一个window弹出层，可以拖拽，resize，关闭等功能</p>
+                        <input type="button" id="btn1" value="显示窗口"/>
+                        <input type="button" id="btn2" value="隐藏窗口"/>
+                        <input type="button" id="btn3" value="销毁窗口"/>
                     </div>
                     <div class="item">
                         <p>实例2：再实例化一个，直接展示，重写切面</p>
-                        <input type="button" id="btn4" value="显示窗口2"/>
-                        <input type="button" id="btn5" value="隐藏窗口2"/>
-                        <input type="button" id="btn6" value="销毁窗口2"/>
+                        <input type="button" id="btn4" value="显示窗口"/>
+                        <input type="button" id="btn5" value="隐藏窗口"/>
+                        <input type="button" id="btn6" value="销毁窗口"/>
                     </div>
 	            </div>
 	        </div>
@@ -58,15 +58,15 @@
                 <div class="demo">
                     <div class="item">
                         <p>继承实例1中的window widget，得到winExt，重写模板等</p>
-                        <input type="button" id="btn7" value="显示窗口1"/>
-                        <input type="button" id="btn8" value="隐藏窗口1"/>
-                        <input type="button" id="btn9" value="销毁窗口1"/>
+                        <input type="button" id="btn7" value="显示窗口"/>
+                        <input type="button" id="btn8" value="隐藏窗口"/>
+                        <input type="button" id="btn9" value="销毁窗口"/>
                     </div>
                     <div class="item">
-                        <p>继承winExt</p>
-                        <input type="button" id="btn10" value="显示窗口2"/>
-                        <input type="button" id="btn11" value="隐藏窗口2"/>
-                        <input type="button" id="btn12" value="销毁窗口2"/>
+                        <p>继承winExt，重写父类方法</p>
+                        <input type="button" id="btn10" value="显示窗口"/>
+                        <input type="button" id="btn11" value="隐藏窗口"/>
+                        <input type="button" id="btn12" value="销毁窗口"/>
                     </div>
                 </div>
             </div>
@@ -75,35 +75,6 @@
         <!------------------------------------------------------------------------------------------------->
         <div class="modual">
             <h2>widget.create_3</h2>
-            <div class="introduce">
-                <em>说明</em>
-                <p>单例的使用（含单例模式的继承）</p>
-            </div>
-            <div class="usage">
-                <em>用法</em>
-                <pre class="brush: js;">//code</pre>
-            </div>
-            <div class="example">
-                <em>示例</em>
-                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
-                <div class="demo">
-                    <p>
-                        <input type="button" id="btn13" value="显示窗口1"/>
-                        <input type="button" id="btn14" value="隐藏窗口1"/>
-                        <input type="button" id="btn15" value="销毁窗口1"/>
-                    </p>
-                    <p>
-                        <input type="button" id="btn16" value="显示窗口2"/>
-                        <input type="button" id="btn17" value="隐藏窗口2"/>
-                        <input type="button" id="btn18" value="销毁窗口2"/>
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!------------------------------------------------------------------------------------------------->
-        <div class="modual">
-            <h2>widget.create_4</h2>
             <div class="introduce">
                 <em>说明</em>
                 <p>widget的模板原先就存在页面上的情况</p>
@@ -116,6 +87,29 @@
                 <em>示例</em>
                 <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
                 <div class="demo">
+                    <div class="tabview" id="tabview">
+                        <ul class="tab-title">
+                            <li class="active" data-action="active" data-type="literature">文学</li>
+                            <li data-action="active" data-type="sports">体育</li>
+                            <li data-action="active" data-type="political">政治</li>
+                        </ul>
+                        <div class="tab-content">
+                            鸡鸡复鸡鸡，木兰当户织
+                        </div>
+                    </div>
+                </div>
+
+                <div class="demo">
+                    <div class="tabview" id="tabview2">
+                        <ul class="tab-title">
+                            <li class="active" data-action="active" data-type="literature">文学</li>
+                            <li data-action="active" data-type="sports">体育</li>
+                            <li data-action="active" data-type="political">政治</li>
+                        </ul>
+                        <div class="tab-content">
+                            鸡鸡复鸡鸡，木兰当户织
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
