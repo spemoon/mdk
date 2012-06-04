@@ -126,10 +126,9 @@ define(function(require, exports, module) {
                     btn3.attr('disabled', 'disabled');
                 }
             });
-            w1.init();
 
             btn1.click(function() {
-                w1.render();
+                w1.init().render();
             });
             btn2.click(function() {
                 w1.unrender();
@@ -149,10 +148,9 @@ define(function(require, exports, module) {
                     btn6.attr('disabled', 'disabled');
                 }
             });
-            w2.init().render();
 
             btn4.click(function() {
-                w2.render();
+                w2.init().render();
             });
             btn5.click(function() {
                 w2.unrender();
@@ -167,7 +165,17 @@ define(function(require, exports, module) {
         (function() {
             var winExt = widget.create({
                 extend: win, // 继承
-                tpl: '<div class="ext-dialog"><h2 class="header">hello, world</h2> <div><input type="button" data-action="close" value="点击关闭"/><input type="button" data-action="load" value="点击载入"/></div><div class="load-content"></div></div>', // 重写tpl模板
+                tpl: function() {
+                    var html = '<div class="ext-dialog">';
+                    html += '<h2 class="header">' + this.title + '</h2>';
+                    html += '<div>';
+                    html += '<input type="button" data-action="close" value="点击关闭"/>';
+                    html += '<input type="button" data-action="load" value="点击载入"/>';
+                    html += '</div>';
+                    html += '<div class="load-content">' + this.content + '</div>';
+                    html += '</div>';
+                    return html;
+                },
                 beforeRender: function() {
                     this.element.find('.load-content').html('');
                 },
@@ -178,32 +186,6 @@ define(function(require, exports, module) {
                         }
                     }
                 ]
-            });
-
-            var btn7 = $('#btn7');
-            var btn8 = $('#btn8');
-            var btn9 = $('#btn9');
-            var btn10 = $('#btn10');
-            var btn11 = $('#btn11');
-            var btn12 = $('#btn12');
-
-            var we1 = new winExt({
-                afterDestory: function() {
-                    btn7.attr('disabled', 'disabled');
-                    btn8.attr('disabled', 'disabled');
-                    btn9.attr('disabled', 'disabled');
-                }
-            });
-            we1.init();
-
-            btn7.click(function() {
-                we1.render();
-            });
-            btn8.click(function() {
-                we1.unrender();
-            });
-            btn9.click(function() {
-                we1.destory();
             });
 
             var winExt2 = widget.create({
@@ -223,6 +205,32 @@ define(function(require, exports, module) {
                     });
                 }
             });
+
+            var btn7 = $('#btn7');
+            var btn8 = $('#btn8');
+            var btn9 = $('#btn9');
+            var btn10 = $('#btn10');
+            var btn11 = $('#btn11');
+            var btn12 = $('#btn12');
+
+            var we1 = new winExt({
+                afterDestory: function() {
+                    btn7.attr('disabled', 'disabled');
+                    btn8.attr('disabled', 'disabled');
+                    btn9.attr('disabled', 'disabled');
+                }
+            });
+
+            btn7.click(function() {
+                we1.init().render();
+            });
+            btn8.click(function() {
+                we1.unrender();
+            });
+            btn9.click(function() {
+                we1.destory();
+            });
+
             winExt2.prototype.center = function() { // 重写父类的方法
                 alert('重写了父类居中方法，然后再调用父类居中方法');
                 this.parent.center.call(this); // 调用父类方法，需要强制指定作用域
@@ -235,10 +243,9 @@ define(function(require, exports, module) {
                     btn12.attr('disabled', 'disabled');
                 }
             });
-            we2.init();
 
             btn10.click(function() {
-                we2.render();
+                we2.init().render();
             });
             btn11.click(function() {
                 we2.unrender();
@@ -290,6 +297,53 @@ define(function(require, exports, module) {
                 element: $('#tabview2')
             });
             t2.init().render();
+        })();
+
+        /**--------------------------------------------
+         * 实例4： 組件之間的交互
+         * --------------------------------------------*/
+        (function() {
+            var winExt1 = widget.create({
+                extend: win, // 继承
+                beforeRender: function() {
+                    this.element.find('.content').html('<input type="button" data-action="openOther" value="打开另一个窗口，并将其坐标设置为左上角"/><input type="button" data-action="closeOther" value="关闭另一个窗口"/>');
+                },
+                events: [
+                    {
+                        openOther: function() {
+                            var otherWin = this.widgets['otherWin'];
+                            otherWin.render();
+                            otherWin.element.css({
+                                top: 0,
+                                left: 0
+                            });
+                        }
+                    },
+                    {
+                        closeOther: function() {
+                            this.widgets['otherWin'].unrender();
+                        }
+                    }
+                ]
+            });
+
+            var w1 = new win();
+            w1.init();
+            var we1 = new winExt1();
+            we1.inject({
+                otherWin: w1
+            });
+
+            var btn13 = $('#btn13');
+            var btn14 = $('#btn14');
+
+            btn13.click(function() {
+                w1.render();
+            });
+
+            btn14.click(function() {
+                we1.init().render();
+            });
         })();
     });
 });

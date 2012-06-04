@@ -5,19 +5,8 @@ define(function(require, exports, module) {
     var action = require('../util/core/dom/action.js');
     var AOP = ['beforeInit', 'afterInit', 'beforeRender', 'afterRender', 'beforeUnrender', 'afterUnrender', 'beforeDestory', 'afterDestory'];
 
-    /**
-     * widget构造器
-     * @param config 由widget组件提供
-     *     singleton: 是否使用单例模式
-     *     extend: 父类
-     *     params: 绑在this上的成员变量
-     *     renderTo: 渲染的父节点
-     *     tpl: 模板
-     *     events:
-     */
     var widget = function() {
     };
-
     widget.prototype = {
         constructor: widget,
         /**
@@ -125,7 +114,7 @@ define(function(require, exports, module) {
         },
         inject: function(widgets) {
             for(var key in widgets) {
-                this._widgets[key] = widgets[key];
+                this.widgets[key] = widgets[key];
             }
             return this;
         }
@@ -133,9 +122,14 @@ define(function(require, exports, module) {
 
     return {
         /**
-         * 构建一个widget
-         * @param params
-         * @return {Function}
+         * widget构造器
+         * @param params 由widget组件提供
+         *     extend: 父类
+         *     params: 绑在this上的成员变量
+         *     proto: 绑在原型链上的方法
+         *     renderTo: 渲染的父节点
+         *     tpl: 模板
+         *     events: 事件列表
          */
         create: function(params) {
             var superClass = params.extend;
@@ -189,7 +183,7 @@ define(function(require, exports, module) {
                 this.id = mVar.id(); // 给组件生成唯一的id
                 this.renderTo = $(config.renderTo || params.renderTo || document.body); // 渲染节点
                 this._status = 0; // 0：未初始化，1：inited，2：rendered，3：unrendered，4：destoryed
-                this._widgets = {}; // 存放外界注入的组件实例，用于组件之间的交互
+                this.widgets = {}; // 存放外界注入的组件实例，用于组件之间的交互
             };
             Class.prototype = new widget();
             Class.prototype.constructor = Class;
