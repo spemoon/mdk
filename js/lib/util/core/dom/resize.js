@@ -11,7 +11,7 @@ define(function(require, exports, module) {
     var eventSpace = +new Date();
     var helper = {
         style: function(type, val, node) {
-            if(typeof val != 'undefined') {
+            if(!lang.isUndefined(val)) {
                 node[0].style[type] = val + 'px';
             }
         },

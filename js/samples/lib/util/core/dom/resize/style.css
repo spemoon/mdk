@@ -14,6 +14,9 @@
     background: #b0e0e6;
     position: absolute;
 }
+.box-fixed {
+    position: fixed;
+}
 
 .dialog {
     background: #C4E3FD;
