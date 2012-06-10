@@ -9,8 +9,14 @@ define(function(require, exports, module) {
          * --------------------------------------------*/
         (function() {
             var box1 = $('#box1');
+            var box8 = $('#box8');
             resize.reg({
                 node: box1,
+                all: true
+            });
+
+            resize.reg({
+                node: box8,
                 all: true
             });
         })();
@@ -120,17 +126,6 @@ define(function(require, exports, module) {
                         console.log('end');
                     }
                 });
-        })();
-
-        /**--------------------------------------------
-         * 实例8：
-         * --------------------------------------------*/
-        (function() {
-            var box8 = $('#box8');
-            resize.reg({
-                node: box8,
-                all: true
-            });
         })();
     });
 });

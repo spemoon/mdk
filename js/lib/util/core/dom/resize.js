@@ -183,23 +183,34 @@ define(function(require, exports, module) {
                                                 startPosition.width = sizeNode.width();
                                                 startPosition.height = sizeNode.height();
                                                 startPosition.position = node.css('position');
+                                                startPosition.margin = {
+                                                    top: parseFloat(node.css('margin-top')),
+                                                    right: parseFloat(node.css('margin-right')),
+                                                    bottom: parseFloat(node.css('margin-bottom')),
+                                                    left: parseFloat(node.css('margin-left'))
+                                                };
+                                                startPosition.padding = {
+                                                    top: parseFloat(node.css('padding-top')),
+                                                    right: parseFloat(node.css('padding-right')),
+                                                    bottom: parseFloat(node.css('padding-bottom')),
+                                                    left: parseFloat(node.css('padding-left'))
+                                                };
+                                                startPosition.border = {
+                                                    top: parseFloat(node.css('border-top-width')),
+                                                    right: parseFloat(node.css('border-right-width')),
+                                                    bottom: parseFloat(node.css('border-bottom-width')),
+                                                    left: parseFloat(node.css('border-left-width'))
+                                                };
                                                 if(startPosition.position == 'static' || !startPosition.position) {
                                                     startPosition.position = 'relative';
                                                     node.css('position', startPosition.position);
+                                                } else if(startPosition.position == 'fixed') {
+                                                    startPosition.x -= doc.scrollLeft();
+                                                    startPosition.y -= doc.scrollTop();
                                                 }
                                             })();
                                             if(!isProxy) { //
-                                                if(params.keepPosition === true) { // 保持住position，适合下/右以及右下角resize的情况，其他情况情况并不适用
-                                                    node.css('outline', 'none');
-                                                } else {
-                                                    node.css({
-                                                        position: 'absolute',
-                                                        left: startPosition.x,
-                                                        top: startPosition.y,
-                                                        outline: 'none'
-                                                    });
-                                                }
-                                                node.attr('tabindex', '1').attr('hidefocus', 'true').focus();
+                                                node.css('outline', 'none').attr('tabindex', '1').attr('hidefocus', 'true').focus();
                                             }
                                             marginTop = (params.marginTop || 0) + parseFloat(targetNode.css('border-top-width'));
                                             marginBottom = (params.marginBottom || 0) + parseFloat(targetNode.css('border-bottom-width'));
