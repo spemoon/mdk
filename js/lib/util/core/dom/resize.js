@@ -17,46 +17,79 @@ define(function(require, exports, module) {
         },
         resize: function(params) {
             var isProxy = params.isProxy;
-            var x = params.event.pageX;
-            var y = params.event.pageY;
             var dir = params.dir;
             var maxHeight = params.maxHeight;
             var maxWidth = params.maxWidth;
             var minHeight = params.minHeight;
             var minWidth = params.minWidth;
             var scroll = params.scroll;
-            var marginTop = params.marginTop;
-            var marginBottom = params.marginBottom;
-            var marginLeft = params.marginLeft;
-            var marginRight = params.marginRight;
-            var paddingRight = params.paddingRight;
-            var paddingBottom = params.paddingBottom;
-            var paddingRightCopy = 0;
-            var paddingBottomCopy = 0;
             var node = params.node;
             var sizeNode = params.sizeNode;
             var position = params.position;
-            if(isProxy) {
-                paddingRightCopy = paddingRight;
-                paddingBottomCopy = paddingBottom;
-                paddingBottom = 0;
-                paddingRight = 0;
-            }
+            var paddingBottom = 0;
+            var paddingRight = 0;
 
             var top, left, width, height;
+            var x = params.event.pageX;
+            var y = params.event.pageY;
+            var deltaX, deltaY;
             if(dir.indexOf('n') != -1) { // north,处理top和height
-                top = Math.min(Math.max(scroll ? 0 : doc.scrollTop(), position.y + position.height - maxHeight, y), position.y + position.height - minHeight);
-                height = position.y - top + position.height + paddingBottomCopy;
+                y = Math.max(y, scroll ? 0 : doc.scrollTop());
+                if(!lang.isUndefined(maxHeight)) {
+                    y = Math.max(y, position.offsetBottom - maxHeight);
+                }
+                y = Math.min(y, position.offsetBottom - minHeight);
+                top = y - position.offsetParent.top - position.margin.top;
+                if(position.position == 'fixed') {
+                    top -= doc.scrollTop();
+                }
+                height = position.top - top + position.height;
+                if(isProxy) {
+                    height += params.padding.bottom;
+                }
+                if(position.position == 'fixed') {
+                    height -= doc.scrollTop();
+                }
             }
             if(dir.indexOf('e') != -1) { // east,处理width
-                width = Math.min(maxWidth, Math.max(minWidth, Math.max(Math.min((scroll ? doc.width() : doc.scrollLeft() + win.width()) - marginLeft - marginRight, x), position.x + minWidth + paddingRightCopy) - position.x - paddingRight));
+                x = Math.min(x, scroll ? doc.width() : doc.scrollLeft() + win.width());
+                if(!lang.isUndefined(maxWidth)) {
+                    x = Math.min(x, position.offsetLeft + maxWidth);
+                }
+                x = Math.max(x, position.offsetLeft + minWidth + params.padding.right + position.border.left + position.border.right);
+                width = x - position.offsetParent.left - position.left - position.border.left - position.border.right - position.margin.left - position.padding.left - position.padding.right;
+                if(!isProxy) {
+                    width -= params.padding.right;
+                }
             }
             if(dir.indexOf('s') != -1) { // south,处理height
-                height = Math.min(maxHeight, Math.max(minHeight, Math.max(Math.min((scroll ? doc.height() : doc.scrollTop() + win.height()) - marginTop - marginBottom, y), position.y + minHeight + paddingBottomCopy) - position.y - paddingBottom));
+                y = Math.min(y, scroll ? doc.height() : doc.scrollTop() + win.height());
+                if(!lang.isUndefined(maxHeight)) {
+                    y = Math.min(y, position.offsetTop + maxHeight);
+                }
+                y = Math.max(y, position.offsetTop + minHeight + params.padding.bottom + position.border.bottom + position.border.top);
+                height = y - position.offsetParent.top - position.top - position.border.top - position.border.bottom - position.margin.top - position.padding.top - position.padding.bottom;
+                if(!isProxy) {
+                    width -= params.padding.bottom;
+                }
             }
             if(dir.indexOf('w') != -1) { // west,处理left和width
-                left = Math.min(Math.max((scroll ? 0 : doc.scrollLeft()), position.x + position.width - maxWidth, x), position.x + position.width - minWidth);
-                width = position.x - left + position.width + paddingRightCopy;
+                x = Math.max(x, scroll ? 0 : doc.scrollLeft());
+                if(!lang.isUndefined(maxWidth)) {
+                    x = Math.max(x, position.offsetRight - maxWidth);
+                }
+                x = Math.min(x, position.offsetRight - minWidth);
+                left = x - position.offsetParent.left - position.margin.left;
+                if(position.position == 'fixed') {
+                    left -= doc.scrollLeft();
+                }
+                width = position.left - left + position.width;
+                if(isProxy) {
+                    width += params.padding.right;
+                }
+                if(position.position == 'fixed') {
+                    width -= doc.scrollLeft();
+                }
             }
             helper.style('top', top, node);
             helper.style('left', left, node);
@@ -75,23 +108,30 @@ define(function(require, exports, module) {
             var node = params.node;
             var sizeNode = params.sizeNode || node;
             var isProxy = !!params.proxy;
-            var paddingRight = params.paddingRight || 0;
-            var paddingBottom = params.paddingBottom || 0;
             var minHeight = params.minHeight || 30;
             var minWidth = params.minWidth || 30;
             var maxHeight;
             var maxWidth;
+            var paddingRight = params.paddingRight || 0;
+            var paddingBottom = params.paddingBottom || 0;
             var event = $({}); // 用来绑定事件
             var handles = {};
-            var marginTop, marginBottom, marginLeft, marginRight;
 
             var scroll = params.scroll === true;
-            if(sizeNode.height() < minHeight) {
-                sizeNode.height(minHeight);
-            }
-            if(sizeNode.width() < minWidth) {
-                sizeNode.width(minWidth);
-            }
+            (function() {
+                var initHeight = sizeNode.height();
+                var initWidth = sizeNode.width();
+                if(initHeight < minHeight) {
+                    sizeNode.height(minHeight);
+                } else if(initHeight > maxHeight) {
+                    sizeNode.height(maxHeight);
+                }
+                if(initWidth < minWidth) {
+                    sizeNode.width(minWidth);
+                } else if(initWidth > maxWidth) {
+                    sizeNode.width(maxWidth);
+                }
+            })();
 
             if(node[0].tagName.toUpperCase() == 'TEXTAREA') {
                 params.type = 'textarea';
@@ -149,8 +189,8 @@ define(function(require, exports, module) {
                                 var targetSizeNode = sizeNode;
                                 var result;
                                 var scope = $(this); // handle
-                                maxHeight = params.maxHeight || win.height();
-                                maxWidth = params.maxWidth || win.width();
+                                maxHeight = params.maxHeight || doc.height();
+                                maxWidth = params.maxWidth || doc.width();
                                 if(e.which == 1) { // 限制左键拖动
                                     var random = +new Date(); // 时间戳用来做事件命名空间
                                     var mouseX = e.pageX, mouseY = e.pageY;
@@ -178,10 +218,23 @@ define(function(require, exports, module) {
                                             }
                                             (function() {
                                                 var offset = node.offset();
-                                                startPosition.x = offset.left;
-                                                startPosition.y = offset.top;
+                                                var offsetParent = node.offsetParent().offset();
+                                                startPosition.offsetParent = {
+                                                    top: offsetParent.top,
+                                                    left: offsetParent.left
+                                                };
+                                                startPosition.offsetTop = offset.top;
+                                                startPosition.offsetLeft = offset.left;
+                                                offset = node.position();
+                                                startPosition.top = offset.top;
+                                                startPosition.left = offset.left;
+
+                                                startPosition.x = e.pageX;
+                                                startPosition.y = e.pageY;
                                                 startPosition.width = sizeNode.width();
                                                 startPosition.height = sizeNode.height();
+                                                startPosition.offsetBottom = startPosition.offsetTop + startPosition.height;
+                                                startPosition.offsetRight = startPosition.offsetLeft + startPosition.width;
                                                 startPosition.position = node.css('position');
                                                 startPosition.margin = {
                                                     top: parseFloat(node.css('margin-top')),
@@ -204,18 +257,11 @@ define(function(require, exports, module) {
                                                 if(startPosition.position == 'static' || !startPosition.position) {
                                                     startPosition.position = 'relative';
                                                     node.css('position', startPosition.position);
-                                                } else if(startPosition.position == 'fixed') {
-                                                    startPosition.x -= doc.scrollLeft();
-                                                    startPosition.y -= doc.scrollTop();
                                                 }
                                             })();
                                             if(!isProxy) { //
                                                 node.css('outline', 'none').attr('tabindex', '1').attr('hidefocus', 'true').focus();
                                             }
-                                            marginTop = (params.marginTop || 0) + parseFloat(targetNode.css('border-top-width'));
-                                            marginBottom = (params.marginBottom || 0) + parseFloat(targetNode.css('border-bottom-width'));
-                                            marginLeft = (params.marginLeft || 0) + parseFloat(targetNode.css('border-left-width'));
-                                            marginRight = (params.marginRight || 0) + parseFloat(targetNode.css('border-right-width'));
                                             win.bind('blur.' + random, action.end); // 失去焦点时候触发mouseup，防止resize过程光标被其他程序抢夺后导致回到界面鼠标其实处于mouseup状态却可以resize);
                                             if(scope[0].setCapture) {
                                                 scope[0].setCapture();
@@ -239,12 +285,10 @@ define(function(require, exports, module) {
                                                     minWidth: minWidth,
                                                     maxHeight: maxHeight,
                                                     maxWidth: maxWidth,
-                                                    marginTop: marginTop,
-                                                    marginBottom: marginBottom,
-                                                    marginLeft: marginLeft,
-                                                    marginRight: marginRight,
-                                                    paddingBottom: paddingBottom,
-                                                    paddingRight: paddingRight,
+                                                    padding: {
+                                                        right: paddingRight,
+                                                        bottom: paddingBottom
+                                                    },
                                                     scroll: scroll,
                                                     isProxy: isProxy,
                                                     params: params

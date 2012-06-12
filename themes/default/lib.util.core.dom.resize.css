@@ -8,53 +8,57 @@
 .resize-nw {
     top: 0;
     left: 0;
-    z-index: 1;
+    z-index: 2;
 }
 
 .resize-n {
     top: 0;
     left: 0;
     width: 100%;
+    z-index: 1;
 }
 
 .resize-ne {
     top: 0;
     right: 0;
-    z-index: 1;
+    z-index: 2;
 }
 
 .resize-w {
     top: 0;
     left: 0;
     height: 100%;
+    z-index: 1;
 }
 
 .resize-e {
     top: 0;
     right: 0;
     height: 100%;
+    z-index: 1;
 }
 
 .resize-sw {
     bottom: 0;
     left: 0;
-    z-index: 1;
+    z-index: 2;
 }
 
 .resize-s {
     left: 0;
     bottom: 0;
     width: 100%;
+    z-index: 1;
 }
 
 .resize-se {
     bottom: 0;
     right: 0;
-    z-index: 1;
+    z-index: 2;
 }
 
 .resize-proxy {
-    border: 2px dashed #555;
+    border: 1px dashed #000;
     background: transparent;
     position: absolute;
 }

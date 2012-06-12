@@ -2,6 +2,7 @@
 .example {
     border-bottom: 1px dashed purple;
     padding-bottom: 5px;
+    position: relative;
 }
 
 .demo {
@@ -20,10 +21,16 @@
 .box-fixed {
     position: fixed;
     margin-left: 250px;
+    z-index: 9999;
+}
+
+.box-relative {
+    position: relative;
+    margin-left: 850px;
 }
 
 .box-space {
-    margin: 50px 500px;
+    margin: 50px 100px auto 500px;
     padding: 20px;
     border: 10px solid;
 }

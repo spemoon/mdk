@@ -10,6 +10,8 @@ define(function(require, exports, module) {
         (function() {
             var box1 = $('#box1');
             var box8 = $('#box8');
+            var box9 = $('#box9');
+            var box10 = $('#box10');
             resize.reg({
                 node: box1,
                 all: true
@@ -17,6 +19,16 @@ define(function(require, exports, module) {
 
             resize.reg({
                 node: box8,
+                all: true
+            });
+
+            resize.reg({
+                node: box9,
+                all: true
+            });
+
+            resize.reg({
+                node: box10,
                 all: true
             });
         })();
