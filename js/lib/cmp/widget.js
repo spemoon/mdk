@@ -3,7 +3,7 @@ define(function(require, exports, module) {
     var lang = require('../util/core/lang.js');
     var mVar = require('../util/core/dom/mVar.js');
     var action = require('../util/core/dom/action.js');
-    var AOP = ['beforeInit', 'afterInit', 'beforeRender', 'afterRender', 'beforeUnrender', 'afterUnrender', 'beforeDestory', 'afterDestory'];
+    var AOP = ['beforeInit', 'afterInit', 'beforeRender', 'firstRender', 'afterRender', 'beforeUnrender', 'afterUnrender', 'beforeDestory', 'afterDestory'];
 
     var widget = function() {
     };
@@ -44,6 +44,9 @@ define(function(require, exports, module) {
             if(this._status == 1 || this._status == 3) { // 已经初始化或者unrender情况下
                 if(lang.callback(this._aop.beforeRender, {scope: this})) {
                     this.element.show();
+                    if(this._status == 1) {
+                        lang.callback(this._aop.firstRender, {scope: this});
+                    }
                     this._status = 2;
                     lang.callback(this._aop.afterRender, {scope: this});
                     this.element.trigger('rendered', [this]);
@@ -65,7 +68,6 @@ define(function(require, exports, module) {
         destory: function() {
             if(!lang.isUndefined(this._status)) {
                 if(lang.callback(this._aop.beforeDestory, {scope: this})) {
-                    this.element.hide();
                     this._status = 4;
                     for(var i = 0, len = this._events.length; i < len; i++) {
                         this.unbind(this._events[i]);
@@ -73,6 +75,7 @@ define(function(require, exports, module) {
                     this.element.unbind();
                     lang.callback(this._aop.afterDestory, {scope: this});
                     this.element.trigger('destoryed', [this]);
+                    this.element.remove();
                     for(var p in this) {
                         if(this.hasOwnProperty(p)) {
                             delete this[p];

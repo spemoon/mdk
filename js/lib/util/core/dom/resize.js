@@ -26,13 +26,10 @@ define(function(require, exports, module) {
             var node = params.node;
             var sizeNode = params.sizeNode;
             var position = params.position;
-            var paddingBottom = 0;
-            var paddingRight = 0;
 
             var top, left, width, height;
             var x = params.event.pageX;
             var y = params.event.pageY;
-            var deltaX, deltaY;
             if(dir.indexOf('n') != -1) { // north,处理top和height
                 y = Math.max(y, scroll ? 0 : doc.scrollTop());
                 if(!lang.isUndefined(maxHeight)) {
@@ -70,7 +67,7 @@ define(function(require, exports, module) {
                 y = Math.max(y, position.offsetTop + minHeight + params.padding.bottom + position.border.bottom + position.border.top);
                 height = y - position.offsetParent.top - position.top - position.border.top - position.border.bottom - position.margin.top - position.padding.top - position.padding.bottom;
                 if(!isProxy) {
-                    width -= params.padding.bottom;
+                    height -= params.padding.bottom;
                 }
             }
             if(dir.indexOf('w') != -1) { // west,处理left和width
@@ -192,8 +189,8 @@ define(function(require, exports, module) {
                                 maxHeight = params.maxHeight || doc.height();
                                 maxWidth = params.maxWidth || doc.width();
                                 if(e.which == 1) { // 限制左键拖动
+                                    var zIndex = mVar.zIndex(); // 最高z-index
                                     var random = +new Date(); // 时间戳用来做事件命名空间
-                                    var mouseX = e.pageX, mouseY = e.pageY;
                                     var startPosition = {
                                     };
                                     var proxy;
@@ -215,7 +212,9 @@ define(function(require, exports, module) {
                                                     targetNode = proxy;
                                                     targetSizeNode = proxy;
                                                 })();
+                                                proxy.css('z-index', zIndex);
                                             }
+                                            node.css('z-index', zIndex);
                                             (function() {
                                                 var offset = node.offset();
                                                 var offsetParent = node.offsetParent().offset();

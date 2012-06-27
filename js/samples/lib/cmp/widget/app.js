@@ -4,6 +4,7 @@ define(function(require, exports, module) {
     var widget = require('../../../../lib/cmp/widget.js');
     var drag = require('../../../../lib/util/core/dom/drag.js');
     var resize = require('../../../../lib/util/core/dom/resize.js');
+    var mVar = require('../../../../lib/util/core/dom/mVar.js');
 
     $(function() {
         var win = widget.create({
@@ -42,7 +43,7 @@ define(function(require, exports, module) {
                 html += '</div>';
                 return html;
             },
-            afterInit: function() { // 初始化后切面，注册drag与resize
+            firstRender: function() { // 首次渲染，注册drag与resize
                 var header = this.element.find('.header').eq(0);
                 drag.reg({
                     node: this.element,
@@ -68,6 +69,9 @@ define(function(require, exports, module) {
                 });
             },
             afterRender: function() { // 展示后切面，居中
+                this.element.css({
+                    zIndex: mVar.zIndex()
+                });
                 this.center();
             },
             params: {
