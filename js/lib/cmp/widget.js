@@ -13,7 +13,7 @@ define(function(require, exports, module) {
          * 初始化，负责生成结构，渲染样式，
          */
         init: function() {
-            if(this._status == 0) { // 未初始化才执行初始化
+            if(this._status == 0 && this.singleton !== true) { // 未初始化才执行初始化
                 if(lang.callback(this._aop.beforeInit, {scope: this})) {
                     var element;
                     if(!this.element) {
@@ -61,6 +61,9 @@ define(function(require, exports, module) {
                     this._status = 3;
                     lang.callback(this._aop.afterUnrender, {scope: this});
                     this.element.trigger('unrendered', [this]);
+                    if(this.autoDestory === true) {
+                        this.destory();
+                    }
                 }
             }
             return this;
@@ -76,6 +79,9 @@ define(function(require, exports, module) {
                     lang.callback(this._aop.afterDestory, {scope: this});
                     this.element.trigger('destoryed', [this]);
                     this.element.remove();
+                    if(this.constructor.singleton) {
+                        delete this.constructor.singleton;
+                    }
                     for(var p in this) {
                         if(this.hasOwnProperty(p)) {
                             delete this[p];
@@ -88,10 +94,12 @@ define(function(require, exports, module) {
 
         bind: function(event) {
             if(event.action) {
+                var _this = this;
                 event.node = event.node || this.element;
                 event.type = (event.type || 'click') + ('.' + (this._eventId++));
-                event.node.bind(event.type, event.action);
-                this._events.push(event);
+                event.node.bind(event.type, function(e) {
+                    event.action.call(_this, e);
+                });
             } else {
                 var obj = {};
                 for(var key in event) {
@@ -122,22 +130,35 @@ define(function(require, exports, module) {
             return this;
         }
     };
+    // 当init，render，unrender，destory被重写时，留给外部的接口
+    widget.prototype._init = widget.prototype.init;
+    widget.prototype._render = widget.prototype.render;
+    widget.prototype._unrender = widget.prototype.unrender;
+    widget.prototype._destory = widget.prototype.destory;
 
     return {
         /**
          * widget构造器
          * @param params 由widget组件提供
-         *     extend: 父类
-         *     params: 绑在this上的成员变量
-         *     proto: 绑在原型链上的方法
-         *     renderTo: 渲染的父节点
-         *     tpl: 模板
-         *     events: 事件列表
+         *     create时候提供：
+         *         extend: 父类
+         *         params: 绑在this上的成员变量，一般用来提供初始值
+         *         proto: 绑在原型链上的方法
+         *         renderTo: 渲染的父节点
+         *         tpl: 模板
+         *         events: 事件列表
+         *     切面可以由create或者实例化参数中提供，如果两者都提供，实例化的将覆盖create提供
          */
         create: function(params) {
             var superClass = params.extend;
             var Class = function(config) {
                 config = config || {};
+                if(params.singleton === true) { // 单例模式，单例模式不支持继承
+                    if(Class.singleton) { // 判断是否已经实例化
+                        this.singleton = true;
+                        return Class.singleton;
+                    }
+                }
                 widget.call(this, params); // 基类
                 if(lang.isFunction(superClass)) { // 父类
                     superClass.call(this, config);
@@ -187,6 +208,11 @@ define(function(require, exports, module) {
                 this.renderTo = $(config.renderTo || params.renderTo || document.body); // 渲染节点
                 this._status = 0; // 0：未初始化，1：inited，2：rendered，3：unrendered，4：destoryed
                 this.widgets = {}; // 存放外界注入的组件实例，用于组件之间的交互
+                this.autoDestory = config.autoDestory || params.autoDestory;
+
+                if(params.singleton === true) { // 标识单例已经实例化
+                    Class.singleton = this;
+                }
             };
             Class.prototype = new widget();
             Class.prototype.constructor = Class;
