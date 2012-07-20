@@ -1,0 +1,48 @@
+@charset "utf-8";
+.img-url {
+    border: 1px solid #ddd;
+    width: 450px;
+    height: 24px;
+    line-height: 24px;
+    color: #333;
+}
+.img-box {
+    width: 200px;
+    height: 200px;
+}
+.text {
+    color: #0066cc;
+}
+
+.img-list li {
+    float: left;
+    margin: 5px;
+}
+
+.img-list .image-show {
+    width: 200px;
+    height: 200px;
+    border: 1px solid #ddd;
+    padding: 5px;
+    position: relative;
+}
+.img-box2 {
+    overflow: hidden;
+    border: 1px solid #ddd;
+    margin: 10px;
+    position: relative;
+}
+
+.rotate-box {
+    width: 600px;
+    margin: 10px auto;
+}
+.rotate-img-wrap {
+    position: relative;
+    width: 800px;
+    height: 600px;
+    border: 1px solid #ddd;
+}
+.rotate-img-wrap img {
+    position: absolute;
+}

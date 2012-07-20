@@ -1,0 +1,214 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>image sample</title>
+		<link href="../../../../../../../themes/global.css" rel="stylesheet" type="text/css"/>
+        <link href="../../../../../sample.css" rel="stylesheet" type="text/css"/>
+		<link href="style.css" rel="stylesheet" type="text/css"/>
+        <script src="../../../../../../../js/lib/sea.js" data-main="./app.js"></script>
+    </head>
+    <body>
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>单张载入</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>载入单张图片测试（会自动在图片末尾加随机数清除缓存）</p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+                <pre class="brush: js;">//code</pre>
+            </div>
+            <div class="example">
+                <em>示例</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <div>
+                        <input type="text" id="img_url1" value="http://www.dfqgy.com/UploadFiles/2012218134933200.jpg" class="img-url"/>
+                        <input id="btn1" type="button" value="载入图片"/>
+                        <span id="status" class="text"></span>
+                    </div>
+                    <div>
+                        <div>
+                            <span>获取到图片大小时间（ready）：</span>
+                            <span id="ready_time" class="text"></span>
+                        </div>
+                        <div>
+                            <span>完全载入图片时间（load）：</span>
+                            <span id="load_time" class="text"></span>
+                        </div>
+                        <div>
+                            <span>图在这里（缩放到200x200范围内）：</span>
+                            <div class="img-box" id="img_box1"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>多张载入</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>载入多张图片测试（会自动在图片末尾加随机数清除缓存），图片获取后自动居中</p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+                <pre class="brush: js;">//code</pre>
+            </div>
+            <div class="example">
+                <em>示例</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <div class="img-list">
+                        <p>加速获取宽高模式：</p>
+                        <input id="btn2" type="button" value="加载"/>
+                        <ul id="img_list1">
+                            <li>
+                                <div class="image-show"></div>
+                                <div>
+                                    <p>状态:<span class="status"></span></p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="image-show"></div>
+                                <div>
+                                    <p>状态:<span class="status"></span></p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="image-show"></div>
+                                <div>
+                                    <p>状态:<span class="status"></span></p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="image-show"></div>
+                                <div>
+                                    <p>状态:<span class="status"></span></p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="image-show"></div>
+                                <div>
+                                    <p>状态:<span class="status"></span></p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="image-show"></div>
+                                <div>
+                                    <p>状态:<span class="status"></span></p>
+                                </div>
+                            </li>
+                        </ul>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="img-list">
+                        <p>onload模式：</p>
+                        <input id="btn3" type="button" value="加载"/>
+                        <ul id="img_list2">
+                            <li>
+                                <div class="image-show"></div>
+                                <div>
+                                    <p>状态:<span class="status"></span></p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="image-show"></div>
+                                <div>
+                                    <p>状态:<span class="status"></span></p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="image-show"></div>
+                                <div>
+                                    <p>状态:<span class="status"></span></p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="image-show"></div>
+                                <div>
+                                    <p>状态:<span class="status"></span></p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="image-show"></div>
+                                <div>
+                                    <p>状态:<span class="status"></span></p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="image-show"></div>
+                                <div>
+                                    <p>状态:<span class="status"></span></p>
+                                </div>
+                            </li>
+                        </ul>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>自动缩放与居中</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>两种缩放模式：按长边缩放（一般图片都是这种模式），按短边缩放（小图展示时候有时会用到，只能看到图片的一部分）</p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+                <pre class="brush: js;">//code</pre>
+            </div>
+            <div class="example">
+                <em>示例</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <div>
+                        <input type="text" id="img_url2" value="http://www.dfqgy.com/UploadFiles/2012218134933200.jpg" class="img-url"/>
+                        <input id="btn4" type="button" value="载入图片，按长边缩放"/>
+                        <input id="btn5" type="button" value="载入图片，按短边缩放"/>
+                        <div class="img-box img-box2" id="img_box2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>旋转</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>旋转</p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+                <pre class="brush: js;">//code</pre>
+            </div>
+            <div class="example">
+                <em>示例</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <div class="rotate-box">
+                        <p>顶点旋转</p>
+                        <input id="btn6" type="button" value="逆时针"/>
+                        <input id="btn7" type="button" value="顺时针"/>
+                        <div class="rotate-img-wrap">
+                            <img src="http://spaceresource.dadunet.com/artweb/20110307092907389.jpg" id="rotate_img1"/>
+                        </div>
+                    </div>
+                    <div class="rotate-box">
+                        <p>中心旋转</p>
+                        <input id="btn8" type="button" value="逆时针"/>
+                        <input id="btn9" type="button" value="顺时针"/>
+                        <div class="rotate-img-wrap" id="rotate_img_wrap">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

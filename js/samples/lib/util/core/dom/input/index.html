@@ -1,0 +1,169 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>input sample</title>
+		<link href="../../../../../../../themes/global.css" rel="stylesheet" type="text/css"/>
+        <link href="../../../../../sample.css" rel="stylesheet" type="text/css"/>
+		<link href="style.css" rel="stylesheet" type="text/css"/>
+        <script src="../../../../../../../js/lib/sea.js" data-main="./app.js"></script>
+    </head>
+    <body>
+    	<!------------------------------------------------------------------------------------------------->
+	    <div class="modual">
+	        <h2>统计字数</h2>
+	        <div class="introduce">
+	            <em>说明</em>
+	            <p>统计字数</p>
+	        </div>
+	        <div class="usage">
+	            <em>用法</em>
+	            <pre class="brush: js;">//code</pre>
+	        </div>
+	        <div class="example">
+	            <em>示例1</em>
+				<span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+	            <div class="demo">
+                    <span id="num1">0</span>字，全角算2个字符
+                    <textarea id="input1"></textarea>
+                    <span id="num2">0</span>字，半角算半个字符
+                    <textarea id="input2"></textarea>
+                    <span id="num3">0</span>字，全部都按一个字符长度计算
+                    <input id="input3" type="text" class="input-text"/>
+	            </div>
+	        </div>
+	    </div>
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>自动高度</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>自定高度</p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+                <pre class="brush: js;">//code</pre>
+            </div>
+            <div class="example">
+                <em>示例2</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <textarea id="input4"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>实时格式检测</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>实时格式检测</p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+                <pre class="brush: js;">//code</pre>
+            </div>
+            <div class="example">
+                <em>示例3</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <p>
+                        <label for="input5">email</label>
+                        <span class="input-result"></span>
+                        <input id="input5" type="text" class="input-text"/>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>输入响应</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>输入响应</p>
+            </div>
+            <div class="usage">
+                <em>用法4</em>
+                <pre class="brush: js;">//code</pre>
+            </div>
+            <div class="example">
+                <em>示例</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <div>
+                        <label for="input6">响应@</label>
+                        <span class="input-result"></span>
+                        <input id="input6" type="text" class="input-text"/>
+                    </div>
+                    <div>
+                        <label for="input7">响应@或#，并获取坐标</label>
+                        <span class="input-result"></span>
+                        <textarea id="input7"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>插入</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>插入</p>
+            </div>
+            <div class="usage">
+                <em>用法5</em>
+                <pre class="brush: js;">//code</pre>
+            </div>
+            <div class="example">
+                <em>示例</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <div>
+                        <label for="input8">光标处插入内容（表情）</label>
+                        <textarea id="input8"></textarea>
+                        <input type="button" id="btn3" value="选择表情"/>
+                        <div class="face" id="face">
+                            <a href="#">:)</a>
+                            <a href="#">:(</a>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="input9">光标处插入内容并选择（话题）</label>
+                        <textarea id="input9"></textarea>
+                        话题：<input type="text" id="topic"/>
+                        <input type="button" id="btn4" value="插入话题"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>选择</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>选择</p>
+            </div>
+            <div class="usage">
+                <em>用法6</em>
+                <pre class="brush: js;">//code</pre>
+            </div>
+            <div class="example">
+                <em>示例</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <p>
+                        <textarea id="input10">离离原上草，一岁一枯荣。野火烧不尽，春风吹又生</textarea>
+                        开始位置：<input type="text" class="input-text" value="0" id="text1" class="input-val"/>
+                        结束位置：<input type="text" class="input-text" value="5" id="text2" class="input-val"/>
+                        <input type="button" id="btn1" value="选中从开始到结束之间的内容"/>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

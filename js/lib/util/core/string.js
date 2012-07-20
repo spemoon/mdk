@@ -41,13 +41,17 @@ define(function(require, exports, module) {
          * @param {String} 待处理的字符串
          * @return {Object}
          */
-        parseJSON: JSON.parse || $.parseJSON,
+        parseJSON: $.parseJSON,
         /**
          * 返回字符串的长度,全角字符算两个长度
          * @param {String} string 需要计算长度的字符串
          */
-        blength: function(string) {
-            return string.replace(/[^\x00-\xff]/g, '**').length;
+        blength: function(string, flag) {
+            var len = string.replace(/[^\x00-\xff]/g, '**').length;
+            if(flag === true) {
+                len = Math.ceil(len / 2);
+            }
+            return len;
         },
         /**
          * 从字符串的左边或者右边截取需要长度的字符串(默认左边)

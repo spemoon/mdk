@@ -1,0 +1,39 @@
+@charset "utf-8";
+
+.input-text {
+    width:300px;
+    height: 24px;
+    line-height: 24px;
+    margin-bottom: 10px;
+    border: 1px solid #aaa;
+    display: block;
+}
+
+textarea {
+    width:300px;
+    height: 100px;
+    border: 1px solid #aaa;
+    display: block;
+    overflow: hidden;
+    margin-bottom: 10px;
+    resize: none;
+}
+
+.face {
+    height: 24px;
+    margin-top: 5px;
+    display: none;
+}
+.face a {
+    border: 1px solid #ddd;
+    padding: 2px;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    text-decoration: none;
+    color: #555;
+}
+
+.face a:hover {
+    background: #ddd;
+}

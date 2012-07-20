@@ -1,9 +1,8 @@
-define(function(require, exports) {
+define(function(require, exports, module) {
     var $ = require('../lib/jquery/sea_jquery.js');
     // 语法高亮
-    var highlighter = require('../lib/external/syntaxHighlighter/shBrushJScript.js');
-    highlighter.highlight();
-    
+    //var highlighter = require('../lib/external/syntaxHighlighter/shBrushJScript.js');
+    //highlighter.highlight();
     // 每项标题
     $('.modual>h2').bind('selectstart', function() { // 不可选择
         return false;
@@ -12,8 +11,8 @@ define(function(require, exports) {
     }).wrapInner(function() { // 包裹成锚链接
         return '<a href="#' + $(this).text() + '"/>';
     });
-    
-    // 生成导航菜单 
+
+    // 生成导航菜单
     $(document.body).append(function() {
         var html = '<div class="navigation"><div class="nav-bar"><em>目录</em> [<a href="#" class="nav-toggle">收起</a>]</div><ul>';
         $('.modual>h2').each(function(i, item) {
@@ -27,7 +26,7 @@ define(function(require, exports) {
         return html;
     });
     $('.navigation:last').width($('.navigation:last').width());
-    
+
     // 导航菜单的toggle
     $('.nav-toggle:last').click(function() {
         var node = $(this);
@@ -43,7 +42,7 @@ define(function(require, exports) {
         }
         return false;
     });
-    
+
     // 导航菜单定位的缓动
     var navigationNode = $('.navigation:last');
     var navActiveCls = 'nav-active';
@@ -75,7 +74,7 @@ define(function(require, exports) {
         });
         return false;
     });
-    
+
     // 滚动条滚动响应
     $(document).scroll(function() {
         var top = $(this).scrollTop();
@@ -87,7 +86,7 @@ define(function(require, exports) {
             }
         });
     });
-    
+
     // 进入页面时候如果有hash则滚动至该处
     scrollFn(location.hash);
     highlightItem(location.hash);
