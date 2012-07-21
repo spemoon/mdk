@@ -211,30 +211,67 @@ define(function(require, exports, module) {
             var btn7 = $('#btn7');
             var btn8 = $('#btn8');
             var btn9 = $('#btn9');
-            var rotateImg1 = $('#rotate_img1');
-            var rotateImg2 = $('#rotate_img2');
+            var rotateImgWrap1 = $('#rotate_img_wrap1');
+            var rotateImgWrap2 = $('#rotate_img_wrap2');
+            var url1 = 'http://ww1.sinaimg.cn/bmiddle/7fbd5c93gw1dv4bwg47y2j.jpg';
+            var url2 = 'http://img208.poco.cn/mypoco/myphoto/20110116/21/54860814201101162117203744039468315_035.jpg';
 
-            btn6.click(function() {
-                image.rotate({
-                    node: rotateImg1,
-                    dir: true
-                });
-            });
 
-            btn7.click(function() {
-                image.rotate({
-                    node: rotateImg1
-                });
-            });
-
-            var rotateImgWrap = $('#rotate_img_wrap');
-            var url = 'http://img208.poco.cn/mypoco/myphoto/20110116/21/54860814201101162117203744039468315_035.jpg'
             image.load({
-                url: url,
+                url: url1,
                 ready: function() {
-                    helper.show(rotateImgWrap, this, url);
+                    image.zoom({
+                        node: this,
+                        max: Math.min(rotateImgWrap1.width(), rotateImgWrap1.height()),
+                        callback: function(width, height) {
+                            rotateImgWrap1.html('<img src="' + url1 + '" width="' + width + '" height="' + height + '"/>');
+                        }
+                    });
 
-                    var img = rotateImgWrap.find('img').eq(0);
+                    var img = rotateImgWrap1.find('img').eq(0);
+                    btn6.click(function() {
+                        image.rotate({
+                            node: img,
+                            center: false,
+                            dir: true
+                        });
+                    });
+                    btn7.click(function() {
+                        image.rotate({
+                            center: false,
+                            node: img
+                        });
+                    });
+                }
+            });
+
+
+            image.load({
+                url: url2,
+                ready: function() {
+                    image.zoom({
+                        node: this,
+                        max: Math.min(rotateImgWrap2.width(), rotateImgWrap2.height()),
+                        callback: function(width, height) {
+                            rotateImgWrap2.html('<img src="' + url2 + '" width="' + width + '" height="' + height + '"/>');
+                            image.center({
+                                node: rotateImgWrap2.find('img').eq(0),
+                                width: rotateImgWrap2.width(),
+                                height: rotateImgWrap2.height(),
+                                callback: function(top, left) {
+                                    var node = $(this);
+                                    var css = {
+                                        top: top,
+                                        left: left,
+                                        position: 'absolute'
+                                    };
+                                    node.css(css);
+                                }
+                            });
+                        }
+                    });
+
+                    var img = rotateImgWrap2.find('img').eq(0);
                     btn8.click(function() {
                         image.rotate({
                             node: img,
@@ -242,8 +279,8 @@ define(function(require, exports, module) {
                             callback: function(top, left) {
                                 image.center({
                                     node: this,
-                                    width: rotateImgWrap.width(),
-                                    height: rotateImgWrap.height(),
+                                    width: rotateImgWrap2.width(),
+                                    height: rotateImgWrap2.height(),
                                     callback: function(top, left) {
                                         $(this).css({
                                             top: top,

@@ -2,6 +2,22 @@ define(function(require, exports, module) {
     var $ = require('../../../../../js/lib/jquery/sea_jquery.js');
 
     var helper = {
+        getCssPrefix: (function() {
+            var prefix = false; // 前缀类型,false表示不支持
+            return function() {
+                var node = document.createElement('div');
+                if(typeof node.style.MozTransform !== 'undefined') {
+                    prefix = 'Moz';
+                } else if(typeof node.style.webkitTransform !== 'undefined') {
+                    prefix = 'webkit';
+                } else if(typeof node.style.OTransform !== 'undefined') {
+                    prefix = 'O';
+                } else {
+                    prefix = '';
+                }
+                return prefix;
+            }
+        })(),
         isSupportCanvas: (function() {
             var supportCanvas; // 是否支持canvas
             return function() {
@@ -169,8 +185,18 @@ define(function(require, exports, module) {
             var node = $(image);
             var dir = params.dir;
             var degree;
+            var prefix = helper.getCssPrefix();
             if(typeof image.degree == 'undefined') {
                 image.degree = 0;
+                if(params.animate !== false) {
+                    if(prefix !== false) {
+                        if(prefix) {
+                            image.style[prefix + 'Transition'] = '-' + prefix.toLowerCase() + '-transform .2s ease-in';
+                        } else {
+                            image.style.transition = 'transform .2s ease-in';
+                        }
+                    }
+                }
             }
             degree = image.degree;
             if(dir === true) { // 逆时针
@@ -178,44 +204,52 @@ define(function(require, exports, module) {
             } else { // 顺时针
                 degree += 90;
             }
-            degree += 360;
-            degree %= 360;
             image.degree = degree;
 
-            if(helper.isSupportCanvas()) {
-                var canvas = node.next('canvas').eq(0)[0];
-                if(!canvas) {
-                    canvas = document.createElement('canvas');
-                    canvas.style.position = image.style.position;
-                    $(image).after(canvas);
+            if(prefix !== false || helper.isSupportCanvas()) {
+                if(params.center !== false) {
+                    var str = 'rotate(' + degree + 'deg)';
+                    if(prefix) {
+                        image.style[prefix + 'Transform'] = str;
+                    } else {
+                        image.style.transform = str;
+                    }
+                } else {
+                    var canvas = node.next('canvas').eq(0)[0];
+                    if(!canvas) {
+                        canvas = document.createElement('canvas');
+                        canvas.style.position = image.style.position;
+                        $(image).after(canvas);
+                    }
+                    var ctx = canvas.getContext('2d');
+                    var width = image.width;
+                    var height = image.height;
+                    var x = 0;
+                    var y = 0;
+                    var temp = degree % 360 + 360;
+                    switch(temp) {
+                        case 90:
+                            width = image.height;
+                            height = image.width;
+                            y = image.height * (-1);
+                            break;
+                        case 180:
+                            x = image.width * (-1);
+                            y = image.height * (-1);
+                            break;
+                        case 270:
+                            width = image.height;
+                            height = image.width;
+                            x = image.width * (-1);
+                            break;
+                    }
+                    canvas.setAttribute('width', width);
+                    canvas.setAttribute('height', height);
+                    ctx.rotate(degree * Math.PI / 180);
+                    ctx.drawImage(image, x, y);
+                    image.style.display = 'none';
                 }
-                var ctx = canvas.getContext('2d');
-                var width = image.width;
-                var height = image.height;
-                var x = 0;
-                var y = 0;
-                switch(degree) {
-                    case 90:
-                        width = image.height;
-                        height = image.width;
-                        y = image.height * (-1);
-                        break;
-                    case 180:
-                        x = image.width * (-1);
-                        y = image.height * (-1);
-                        break;
-                    case 270:
-                        width = image.height;
-                        height = image.width;
-                        x = image.width * (-1);
-                        break;
-                }
-                canvas.setAttribute('width', width);
-                canvas.setAttribute('height', height);
-                ctx.rotate(degree * Math.PI / 180);
-                ctx.drawImage(image, x, y);
-                image.style.display = 'none';
-                params.callback && params.callback.call(canvas);
+                params.callback && params.callback.call(image);
             } else {
                 image.style.filter = 'progid:DXImageTransform.Microsoft.BasicImage(rotation=' + degree / 90 + ')';
                 params.callback && params.callback.call(image);
