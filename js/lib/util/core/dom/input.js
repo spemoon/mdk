@@ -238,7 +238,7 @@ define(function(require, exports, module) {
                 textarea.style.height = 0;
             }
             var min = Math.max(params.min || 40, 40);
-            var max = Math.max(params.max || 450, 450);
+            var max = Math.max(params.max || 250, 250);
             var scrollHeight = textarea.scrollHeight;
             if(scrollHeight >= min && scrollHeight <= max) {
                 textarea.style.height = scrollHeight + 'px';

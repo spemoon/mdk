@@ -28,7 +28,7 @@ define(function(require, exports, module) {
          * @param type 事件类型，默认是click
          * @return {object} jQuery对象，父节点
          */
-        listener:function(actions, node, type) {
+        listen:function(actions, node, type) {
             actions = actions || {};
             node = node && node[0] ? node : $(document);
             type = type || 'click';

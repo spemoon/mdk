@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>section sample</title>
+        <link href="http://pre.momo.im//style/v2_1280.css" rel="stylesheet" type="text/css"/>
+        <link href="http://momo.im/themes/global/global_114.css?v=1.35.12" rel="stylesheet" type="text/css"/>
+        <link href="http://momo.im/themes/app/home_114.css?v=1.35.12" rel="stylesheet" type="text/css"/>
+        <link href="http://momo.im/themes/app/group.css?v=1.35.12" rel="stylesheet" type="text/css"/>
+        <link href="http://momo.im/themes/app/page.css?v=1.35.12" rel="stylesheet" type="text/css"/>
+		<link href="../../../../../../../themes/global.css" rel="stylesheet" type="text/css"/>
+        <link href="../../../../../sample.css" rel="stylesheet" type="text/css"/>
+		<link href="style.css" rel="stylesheet" type="text/css"/>
+        <script src="../../../../../../../js/lib/sea-debug.js" data-main="./app.js"></script>
+    </head>
+    <body>
+    	<!------------------------------------------------------------------------------------------------->
+        <div class="momo">
+            <div class="head">
+                <div class="search-bar">
+                    <input type="text" name="keyword"/>
+                    <input type="button" value="search" data-uri="data/search.php" data-view="search" data-type="post"/>
+                </div>
+                <ul>
+                    <li><a href="#" data-uri="http://momo.im/contact" data-mode="iframe" data-width="799" data-height="800">联系人</a></li>
+                    <li><a href="#" data-uri="data/sms.php" data-view="sms">短信</a></li>
+                    <li><a href="#" data-uri="data/timeline.php" data-view="timeline" data-action="highlight">首页</a></li>
+                </ul>
+            </div>
+            <div class="main" id="main">
+                <div class="left">
+                    <div class="timeline">
+                        <ul>
+                            <li class="active" data-uri="data/timeline.php" data-view="timeline">时间线</li>
+                        </ul>
+                    </div>
+                    <div class="group">
+                        <div class="tip">群组</div>
+                        <ul>
+                            <li data-uri="data/group.php?id=1" data-view="group" data-gid="1">中午吃饭</li>
+                            <li data-uri="data/group.php?id=2" data-view="group" data-gid="2">前端交流</li>
+                            <li data-uri="data/group.php?id=3" data-view="group" data-gid="3">Linux</li>
+                            <li data-uri="data/group.php?id=4" data-view="group" data-gid="4">车友俱乐部</li>
+                        </ul>
+                    </div>
+                    <div class="app">
+                        <div class="tip">应用</div>
+                        <ul>
+                            <li data-uri="http://baidu.com/" data-mode="iframe" data-view="baidu" data-width="799" data-height="800">百度搜索</li>
+                            <li data-uri="http://weibo.com/ecma" data-mode="iframe" data-view="sina" data-width="799" data-height="800">新浪微博</li>
+                            <li data-uri="http://wap.91.com/" data-mode="iframe" data-view="nd" data-width="340" data-height="800">ND+说明</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="right" id="content">
+                    <div class="content"></div>
+                    <div class="bar"></div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+
+    </body>
+</html>

@@ -1,0 +1,92 @@
+<!--
+groupId
+syncSina
+-->
+<div class="content">
+    <div class="share">
+        <div class="publish">
+            <div class="publish-body">
+                <textarea class="ta-1"></textarea>
+                <p class="tip" data-action="openPublishBox">
+                    {{if(groupId == 0)}}
+                        输入@+联系人姓名，分享即时送达对方手机
+                    {{else}}
+                        群内分享讨论
+                    {{endif}}
+                </p>
+                <div class="publish-media-link" data-action="openPublishBox">
+                    <div class="share-position-link " title="分享地理位置"></div>
+                    <div class="share-photo-link " title="上传照片"><a href="#"></a></div>
+                    <div class="share-file-link " title="上传文件"><a href="#"></a></div>
+                </div>
+            </div>
+            <div class="map-result-panel hide">
+                <div class="map-area-result"></div>
+                <a href="#" class="delete-map-result"></a>
+
+                <div class="clear"></div>
+            </div>
+            <div class="map-panel hide"></div>
+            <div class="upload-panel hide">
+                <div class="upload-progress"></div>
+                <div class="upload-photo hide">
+                    <div class="upload-form">
+                        <div class="upload-photo-list">
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="publish-opt">
+                {{if(groupId == 0)}}
+                    <a href="#" class="at" title="@联系人"></a>
+                {{endif}}
+                <a href="#" id="faceBtn" class="face-btn"></a>
+                {{if(syncSina)}}
+                    <span class="syncto">
+                        <span>同步到：</span>
+                        <input type="button" class="sina-none" title="同步到新浪微博" />
+                    </span>
+                {{endif}}
+                <div class="m-button m-button-dis" tabindex="1">发布</div>
+            </div>
+        </div>
+
+        <div class="dynamic">
+            <div class="dynamic-type-panel hide">
+                <ul>
+                    <li><a href="#" data-uri="data/timeline.php" data-view="feed" data-action="setFeedTabText">全部分享</a></li>
+                    <li><a href="#" data-uri="data/photo.php" data-view="feed" data-action="setFeedTabText">照片分享</a></li>
+                    <li><a href="#" data-uri="data/file.php" data-view="feed" data-action="setFeedTabText">文件分享</a></li>
+                    <li><a href="#" data-uri="data/storage.php" data-view="feed" data-action="setFeedTabText">我的收藏</a></li>
+                    <li><a href="#" data-uri="data/hidden.php" data-view="feed" data-action="setFeedTabText">我的隐藏</a></li>
+                </ul>
+            </div>
+            <div class="tab-1">
+                <ul class="tab-1-hd">
+                    <li class="first active">
+                        <a href="#">
+                            <span data-uri="data/timeline.php" data-view="feed" data-action="highlightTab">全部分享</span>
+                            <em class="dynamic-filter-link" data-action="feedMenu"></em>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-uri="data/noread.php" data-view="noread" data-action="highlightTab">@推短信</a>
+                    </li>
+                    <li>
+                        <a href="#" data-uri="data/mo.php" data-view="mo" data-action="highlightTab">
+                            MO我的
+							<span>
+                                <sub></sub>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="dynamic-panel">
+                <div class="dynamic-list"></div>
+                <div class="scrollloadingtip hide">&nbsp;</div>
+            </div>
+        </div>
+    </div>
+</div>

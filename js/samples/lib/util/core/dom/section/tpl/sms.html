@@ -1,0 +1,66 @@
+<div class="content page mo-chat">
+    <div class="share">
+        <div class="l-hd">
+            <input type="button" class="b-2 mul-sms" value="群发短信"/>
+            <div class="mo-chat-search">
+                <div class="keyword-wrap">
+                    <input type="text" value="" class="ipt-tip"/>
+                    <a href="#" title="搜索" class="btn-search"></a>
+                </div>
+            </div>
+        </div>
+        <div class="l-main">
+            <div class="loading"></div>
+            <div class="mo-chat-list">
+                <ul>
+                    {{for data=data key=i item=json}}
+                    <li data-ownerId="{{json.owner.id}}" data-type="{{json.owner.type}}" data-id="{{json.id}}" class="{{if(!(json.status && json.status.msg_read == 1))}}mo-unread{{endif}}">
+                        <img src="{{json.user[0].avatar || 'http://momo.im/style/images/head_default_48.gif'}}" width="48" height="48" class="avatar"/>
+                        <p class="name">
+                            <strong class="head-tip" data-id="{{json.owner.id}}">{{json.user[0].name}}</strong>
+                        </p>
+                        <p class="desc">{{parse(json.content)}}</p>
+                        <p class="opt">
+                            <span class="time">{{json.dateline}}</span>
+                        </p>
+                        <a href="#" class="delete-icon" data-action="manage"></a>
+                        </li>
+                    {{endfor}}
+                </ul>
+            </div>
+            <div></div><!-- 存放分页 -->
+        </div>
+    </div>
+    <div class="sider">
+        <div class="sms-card-panel welcome-info">
+            <div class="card">
+                <div class="card-info">
+                    <div class="card-major">
+                        <a href="http://momo.im/setting/account/face" class="avatar" target="_self">
+                            <img src="{{user.avatar}}" width="80" height="80" alt="头像" />
+                            <span class="modify-avatar-link">修改头像</span>
+                        </a>
+                        <a href="http://momo.im/setting/info/v" class="modify-card-link" target="_self">修改名片</a>
+                        <div class="card-major-info">
+                            <a href="{{user.weibo}}" class="weibo-link" target="_blank"></a>
+                            <ul>
+                                <li><label></label><a class="username" href="http://momo.im/user/23" target="_self">洪军钊</a></li>
+                                <li><label>性别：</label>{{user.sex}}</li>
+                                <li><label>出生日期：</label>{{user.birthday}}</li>
+                                <li><label>居住地：</label>{{user.address}}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mobile-panel">
+                <p class="desc">下载手机客户端，同步联系人，即时发送分享和短信 到全球200+国家手机，支持图片、文件、语音、名片、 地理位置，对方无需安装注册，就能查看&即时回复。</p>
+                <p class="link"><a href="http://momo.im/client" class="mobile-link" target="_self">手机客户端下载</a><a href="http://momo.im/contact#import" class="import-link" target="_self">导入联系人</a></p>
+                <p class="link"><a href="http://momo.im/faq" class="faq-link" target="_self">玩转MOMO</a></p>
+            </div>
+        </div>
+    </div>
+    <div class="sider"><!-- 右侧展开 -->
+    </div>
+    <div class="clear"></div>
+</div>

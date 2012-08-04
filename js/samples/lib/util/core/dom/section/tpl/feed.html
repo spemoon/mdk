@@ -1,0 +1,181 @@
+<!--
+    json
+    selectedId
+    groupId
+    meId
+    likeBar
+    commentBar
+ -->
+<div class="dynamic-item {{if(selectedId == json.id)}} dynamic-item-active{{endif}}" data-uid="{{json.user.id}}" data-type="{{json.type}}" data-id="{{json.id}}">
+    <a target="_self" href="{{baseurl}}user/{{json.user.id}}" class="avatar">
+        <img width="48" height="48" class="head-tip" alt="{{json.user.name}}" src="{{json.user.avatar}}" data-id="{{json.user.id}}"/>
+    </a>
+    <div class="info">
+        <div class="desc">
+            <a href="{{baseurl}}user/{{json.user.id}}" class="username head-tip" target="_self" data-id="{{json.user.id}}">
+                {{json.user.name}}
+            </a>
+            <p class="summary">
+                <span class="pure-content">{{json.text}}</span>
+                {{if(json.is_long_text == 1)}}
+                    <a href="#" class="expand" data-action="expandText">展开更多</a>
+                {{endif}}
+                {{if(json.location && typeof json.location.longitude != 'undefined')}}
+                    <p class="location">
+                        <span class="location-text">
+                            {{if(json.location.address)}}
+                                {{json.location.address}}
+                            {{else}}
+                                点击显示分享位置
+                            {{endif}}
+                        </span>
+                        <a href="#" class="expand-map" data-action="expandMap" data-lat="{{json.location.latitude}}" data-lng="{{json.location.longitude}}">展示地图</a>
+                        <a href="#" class="collapse-map hide" data-action="collapseMap">收起地图</a>
+                    </p>
+                    <div class="map-box hide"></div>
+                {{endif}}
+                <span class="ext-application">
+                    {{if (json.files && json.files.length > 0)}}
+                        <img src="{{baseurl}}themes/images/global/s.gif" alt="" class="file-ext-all file-ext-{{json.files[0].meta.mime}}"/>
+                        <a href="{{json.files[0].url}}" data-action="none">点击下载</a>
+                    {{endif}}
+                </span>
+            </p>
+        </div>
+
+        {{if(json.images)}}
+            <div class="record-photo">
+                {{for data=json.images key=i item=image}}
+                    {{if(image.meta.width > 110 || image.meta.height > 110)}}
+                        {{if(+image.meta.width >= +image.meta.height)}}
+                            <img src="{{image.url}}" width="110" data-id="{{image.id}}" data-action="photo" data-width="{{image.meta.width}}" data-height="{{image.meta.height}}" data-statusId="{{image.status_id}}"  {{if(i>2)}}class="hide"{{endif}}/>
+                        {{else}}
+                            <img src="{{image.url}}" height="110" data-id="{{image.id}}" data-action="photo" data-width="{{image.meta.width}}" data-height="{{image.meta.height}}" data-statusId="{{image.status_id}}"  {{if(i>2)}}class="hide"{{endif}}/>
+                        {{endif}}
+                    {{else}}
+                        <img src="{{image.url}}" data-id="{{image.id}}" data-action="photo" data-width="{{image.meta.width}}" data-height="{{image.meta.height}}" data-statusId="{{image.status_id}}"  {{if(i>2)}}class="hide"{{endif}}/>
+                    {{endif}}
+                {{endfor}}
+            </div>
+        {{endif}}
+        <div class="dynamic-item-opt">
+            <span class="time">{{json.created_at}}</span>
+            {{if(json.source_name)}}
+                <span class="from">来自</span>
+                <a href="#" class="mobile-link">{{json.source_name}}</a>
+            {{endif}}
+            {{if(json.sync)}}
+                {{if(json.sync.sina == 1)}}
+                    <span class="sync-icon v">
+                        <img rel="{{baseurl}}cc/sina/{{json.user.id}}" src="{{baseurl}}style/images/v3/sina12h.png" title="已同步到新浪微博，点击查看" data-title="新浪微博" data-action="openWeiboSinaWin"/>
+                    </span>
+                {{else if(json.sync.sina == 0)}}
+                    <span class="sync-icon v">
+                        <img src="{{baseurl}}style/images/v3/sina12f.png" title="同步新浪微博失败"/>
+                    </span>
+                {{endif}}
+            {{endif}}
+            {{if(json.allow_comment == 1)}}
+                <a data-action="replyBox" href="#" class="comment-link">评论</a>
+            {{endif}}
+            <a href="#" {{if(json.liked && json.allow_praise == 0)}} data-action="none" class="liked-link"{{else}} data-action="praise" class="like-link"{{endif}}>赞</a>
+            {{if(json.allow_rt == 1 && groupId == 0)}}
+                <a data-action="retweet" href="#" class="rt-link">分享</a>
+            {{endif}}
+            {{if(json.storaged)}}
+                <a class="unfav-link" href="#" data-action="delStorage">取消收藏</a>
+            {{else}}
+                <a class="fav-link" href="#" data-action="storage">收藏</a>
+            {{endif}}
+            {{if(meId==json.user.id && json.allow_del == 1)}}
+                <a class="delete-link" title="删除" href="#" data-action="delete">删除</a>
+            {{else}}
+                {{if(json.hidden)}}
+                    <a class="unhide-link" title="取消隐藏" href="#" data-action="delHide">取消隐藏</a>
+                {{else}}
+                    <a class="hide-link" title="隐藏" href="#" data-action="hide">隐藏</a>
+                {{endif}}
+            {{endif}}
+            {{if(json.group && json.group.id)}}
+                <a href="{{baseurl}}home?gid={{json.group.id}}" class="group-name">{{json.group.name}}</a>
+            {{endif}}
+        </div>
+        <div class="feed {{if(!(likeBar || json.comment_count))}}hide{{endif}}">
+            <div class="comments">
+                <div class="like-panel {{if(!likeBar)}}hide{{endif}}">
+                    {{if (json.like_list && json.like_count > 0)}}
+                        {{for data=json.like_list key=i item=item}}
+                            <a class="head-tip username" target="_self" href="{{baseurl}}/user/{{item.uid}}" data-id="{{item.uid}}">
+                                {{item.name}}
+                            </a>
+                            {{if(i + 1 < json.like_list.length)}}
+                                ,
+                            {{endif}}
+                        {{endfor}}
+                        {{if(json.like_count > json.like_list.length)}}
+                            等{{json.like_count}}人
+                        {{endif}}
+                        觉得挺赞的
+                    {{endif}}
+                </div>
+                <div class="comment-total {{if(!commentBar)}} hide{{endif}}">
+                    {{if(commentBar)}}
+                        <a class="comment-num" href="#" data-action="imComment">
+                            <span class="icon {{if(selectedId == json.id)}} hide{{endif}}" data-action="imComment">
+                                展开
+                                <em data-action="imComment">{{json.comment_count}}</em>
+                                个对话
+                            </span>
+                            {{if(selectedId == json.id)}}
+                                <span class="icon" data-action="imComment">关闭对话</span>
+                            {{endif}}
+                        </a>
+                    {{endif}}
+                </div>
+                <div class="comment-list">
+                    {{if (json.comment_count > 0)}}
+                        {{for data=json.comment_list key=i item=comment}}
+                            <div class="comment-item" data-id="{{comment.id}}" data-uid="{{comment.user.id}}" data-name="{{comment.user.name}}">
+                                <a target="_self" href="{{baseurl}}user/{{comment.user.id}}" class="avatar">
+                                    <img width="48" height="48" class="head-tip" alt="{{comment.user.name}}" src="{{comment.user.avatar}}" data-id="{{comment.user.id}}"/>
+                                </a>
+                                <div class="comment-content">
+                                    <div class="comment-text">
+                                        <a target="_self" class="username head-tip" href="{{baseurl}}user/{{comment.user.id}}" data-id="{{comment.user.id}}">
+                                            {{comment.user.name}}
+                                        </a>
+                                        <p class="summary">
+                                            <span class="pure-content">{{comment.text}}</span>
+                                            {{if(comment.is_long_text)}}
+                                                <a href="#" class="expand">展开更多</a>
+                                            {{endif}}
+                                        </p>
+                                    </div>
+                                    <div class="comment-opt">
+                                        <span class="time">{{comment.created_at}}</span>
+                                        {{if(comment.source_name)}}
+                                            <span class="from">来自</span>
+                                            <a href="#" class="mobile-link">{{comment.source_name}}</a>
+                                        {{endif}}
+                                        {{if (comment.user.id != meId)}}
+                                            <a data-action="replyComment" href="#" class="reply-link"></a>
+                                        {{endif}}
+                                        {{if (comment.user.id == meId || json.user.id == meId)}}
+                                            <a data-action="delComment" href="#" class="delete-link"></a>
+                                        {{endif}}
+                                    </div>
+                                </div>
+                            </div>
+                        {{endfor}}
+                    {{endif}}
+                </div>
+                <div class="comment-post">
+                    <div class="s-post ">
+                        <textarea class="ipt-0" data-action="replyBox">说点什么..</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>

@@ -12,7 +12,7 @@ define(function(require, exports, module) {
             var text = $('#text'); // 下拉结果存放
             var list = $('#list'); // 新闻列表
             var index = 1;
-            action.listener({
+            action.listen({
                 select: {
                     is: function(e) {
                         options.toggle();
@@ -31,11 +31,13 @@ define(function(require, exports, module) {
                     this.parents('li').remove();
                 }
             });
-            action.listener({
+            // 后面注册同类型的冒泡事件是无效的
+            action.listen({
                 add: function(e) {
-                    list.children('li').eq(0).after('<li>这是一条插入的最新新闻 ' + (index++) + ' <a href="#" data-action="del">删除</a></li>');
+                    list.children('li').eq(0).after('<li>------这是一条插入的最新新闻 ' + (index++) + ' <a href="#" data-action="del">删除</a></li>');
                 },
                 del: function(e) {
+                    console.log('----------');
                     this.parents('li').remove();
                 }
             });

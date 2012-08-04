@@ -109,7 +109,7 @@ define(function(require, exports, module) {
                     };
                     break;
                 }
-                action.listener(obj, this.element);
+                action.listen(obj, this.element);
             }
             return this;
         },

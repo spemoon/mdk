@@ -108,6 +108,19 @@ define(function(require, exports, module) {
                 string = string.replace(r[i], s[i]);
             }
             return string;
+        },
+        /**
+         * 解析字符串为可读格式：先转义标签为实体，然后解析空格和换行，最后解析链接
+         * @param string
+         * @return {String}
+         */
+        content: function(string) {
+            string = r.code(string);
+            string = string.replace(/ /g, '&nbsp;').replace(/\n/g, '<br/>');
+            string = string.replace(/((https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?)/g, function($0, $1) {
+                return '<a href="' + $1 + '" target="_blank">' + $1 + '</a>';
+            });
+            return string;
         }
     };
     return r;

@@ -66,7 +66,7 @@ define(function(require, exports, module) {
             params = params || {};
             obj.url = params.url;
             obj.data = params.data;
-            obj.dataType = 'json';
+            obj.dataType = params.dataType || 'json';
             obj.type = params.type || config.type;
             obj.success = function(data) {
                 if(data) {
@@ -228,7 +228,7 @@ define(function(require, exports, module) {
                 abort:function() {
                     if(single[name] && single[name].xhr) {
                         single[name].xhr.abort();
-                        single[name] = null;
+                        single[name].xhr = null;
                     }
                 }
             };

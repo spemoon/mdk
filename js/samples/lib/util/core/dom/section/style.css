@@ -1,0 +1,111 @@
+@charset "utf-8";
+a {
+    color: #10638F;
+    text-decoration: none;
+}
+body {
+    background: none
+}
+
+.momo {
+    width: 1000px;
+    margin: 0 auto;
+}
+/*头部*/
+.head {
+    height: 48px;
+    line-height: 48px;
+    background: #2E2E2E;
+}
+
+.head .search-bar {
+    float: left;
+    margin-left: 40px;
+}
+
+.head li {
+    float: right;
+    margin-right: 15px;
+}
+
+.head li a {
+    color: #fff;
+    font-size: 20px;
+}
+/*主区域*/
+.main {
+    background: #ADDBF0;
+}
+/*左侧*/
+.main .left {
+    float: left;
+    width: 169px;
+    min-height: 1000px;
+    padding: 5px 15px;
+    font-size: 16px;
+    height: 24px;
+    line-height: 24px;
+}
+.left .tip {
+    text-align: center;
+    font-size: 14px;
+    background: #e0f2be;
+    margin-top: 8px;
+
+}
+.left ul {
+}
+
+.left li {
+    margin-top: 5px;
+    cursor: pointer;
+    padding-left: 3px;
+}
+
+.left li.active {
+    color: #fff;
+    background: #10638F;
+    font-weight: bold;
+}
+
+.main .right {
+    float: left;
+    width: 799px;
+    min-height: 1010px;
+}
+
+
+.iframe-lbar {
+    width: 330px;
+    float: left;
+}
+.iframe-rbar {
+    float: left;
+    width: 450px;
+    margin-left: 15px;
+}
+.iframe-rbar p {
+    line-height: 24px;
+    margin-top: 25px;
+    font-size: 14px;
+}
+
+.content .sider {
+    width: 270px;
+}
+
+.mo-chat .sider {
+    width: 310px;
+    position: static;
+    margin-left: -10px;
+}
+
+.group-aside {
+    float: left;
+    padding-left: 10px;
+    width: 285px;
+}
+
+.so-big {
+    font-size: 48px;
+}

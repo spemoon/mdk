@@ -1,0 +1,129 @@
+<!--
+    isCreator
+    isManager
+    data
+-->
+<div class="group-aside">
+    <div class="group-wrap">
+        <div class="group-intro">
+            <h3>
+                <p class="group-option">
+                    {{if(isCreator)}}
+                        <a href="#" data-action="disbandGroup" class="hide">解散该群</a>
+                        <span class="sp">┊</span>
+                    {{else}}
+                        <a href="#" data-action="existGroup">退出该群</a>
+                    {{endif}}
+                    {{if(isManager)}}
+                        <a href="#" data-btn_type="editGroupInfo">群设置</a>
+                    {{endif}}
+                </p>
+                <p class="group-title">
+                    <span class="group-text">{{data.groupInfo.gname}}</span>
+                    <span>
+                        {{if(data.groupInfo.type == 1)}}
+                            <img title="可容纳成员上限500人" alt="公开群" class="open-group" src="' + baseurl + 'style/images/s.gif"/>
+                        {{else if(data.groupInfo.type == 2)}}
+                            <img title="私密群可以看到群内所有成员的联系电话，可容纳成员上限100人" alt="私密群" class="secret-group" src="' + baseurl + 'style/images/s.gif"/>
+                        {{endif}}
+                    </span>
+                </p>
+                <div class="clear"></div>
+            </h3>
+
+            <ul>
+                <li>
+                    <label>群编号：</label>
+                    <span>{{data.groupInfo.gid}}</span>
+                </li>
+                <li>
+                    <label>创建时间：</label>
+                    <span>{{data.groupInfo.create_time}}</span>
+                </li>
+                <li>
+                    <label>创建者：</label>
+                    <a href="{{baseurl}}user/{{data.groupInfo.creator_id}}" target="_blank">{{data.groupInfo.creator_name}}</a>
+                </li>
+                <li>
+                    <label>群人数：</label>
+                    <span>{{data.groupInfo.member_number}}</span>
+                </li>
+                <li>
+                    <div class="board">
+                        <label>群公告：</label>
+                        <div id="show_group_notice_box">
+                            <span id="group_notice_text">{{data.groupInfo.notice}}</span>
+                            {{if(isManager)}}
+                                <a class="modify" href="#" data-btn_type="editGroupNotice">修改</a>
+                            {{endif}}
+                        </div>
+                        {{if(isManager)}}
+                            <div class="edit hide" id="edit_group_notice_box">
+                                <textarea class="ta-7" id="group_notice_input_text"></textarea>
+                                <p class="opt">
+                                    <input type="button" value="保存" class="btn-2" data-btn_type="saveGroupNotice"/>
+                                    <a data-btn_type="cancelGroupNotice" href="#">取消</a>
+                                </p>
+                            </div>
+                        {{endif}}
+                    </div>
+                </li>
+                <li>
+                    <span class="introduction hide">{{data.groupInfo.introduction}}</span>
+                </li>
+            </ul>
+
+            <div class="group-opt-btn clear">
+                {{if (isManager || data.groupInfo.type == 1)}} <!--管理员或者公开群有邀请好友-->
+                <a class="btn-12 addmem" href="#">
+                    <span data-btn_type="inviteUserToGroup" data-invite_url="{{data.group_invite_url ? data.group_invite_url : ''}}">添加成员</span>
+                </a>
+                {{endif}}
+                <div class="clear"></div>
+            </div>
+        </div>
+        {{if (isManager && data.group_invite_url)}}
+            <div class="station-invite">
+                <h3>站外邀请</h3>
+                <div class="group-invite-area">
+                    <label>如果您邀请的朋友还没加入MOMO,复制以下链接发送给他(她)吧~</label>
+                    <div class="copyarea">
+                        <input type="text" class="ipt-8" value="{{data.group_invite_url}}" readonly="readonly"/>
+                    </div>
+                </div>
+            </div>
+        {{endif}}
+
+        <div class="group-number friend-list">
+            <h3>
+                <a href="#" data-action="seeAllGroupMember">群成员</a>
+                <span id="visitor_num" class="num">{{data.groupMembers.count}}</span>
+            </h3>
+
+            <div class="friend-card">
+                <ul>
+                    {{for data=data.groupMembers.data key=i item=item}}
+                        <li>
+                            <div class="avatar">
+                                <a target="_blank" href="{{baseurl}}user/{{item.uid}}" class="p">
+                                    <img width="48" height="48" alt="{{item.name}}" src="{{baseurl}}photo/avatar/{{item.uid}}" class="head-tip"/>
+                                </a>
+                            </div>
+                            <div class="info">
+                                <a target="_blank" title="{{item.name}}" class="username head-tip" href="{{baseurl}}/user/{{item.uid}}">{{item.name}}</a>
+                                {{if(item.grade == 3)}}
+                                    <span class="creator">创建者</span>
+                                {{else if(item.grade == 2)}}
+                                    <span class="manager">管理员</span>
+                                {{endif}}
+                            </div>
+                        </li>
+                    {{endfor}}
+                </ul>
+                <div class="clear"></div>
+            </div>
+
+            <a class="show-all more" href="#" data-action="seeAllGroupMember">显示全部&gt;&gt;</a>
+        </div>
+    </div>
+</div>

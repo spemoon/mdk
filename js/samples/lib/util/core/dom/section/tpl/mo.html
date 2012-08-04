@@ -1,0 +1,52 @@
+<div data-uid="{{data.user.id}}" data-name="{{data.user.name}}" data-id="{{data.statuses_id}}" {{if(data.allow_reply)}}data-commentId="{{data.comment_id || 0}}"{{endif}} class="dynamic-item dynamic-aboutme">
+    <a target="_self" href="{{baseurl}}user/{{data.user.id}}" class="avatar">
+        <img width="48" height="48" class="head-tip" alt="{{data.user.name}}" src="{{data.user.avatar}}" data-id="{{data.user.id}}"/>
+    </a>
+    <div class="info">
+        <div class="desc">
+            <a target="_self" class="username head-tip" href="{{baseurl}}user/{{data.user.id}}" data-id="{{data.user.id}}">
+                {{data.user.name}}
+            </a>
+            <p class="summary">
+                <span class="pure-content">{{data.text}}</span>
+                {{if(data.is_long_text == 1)}}
+                    <a href="#" class="expand">展开更多</a>
+                {{endif}}
+            </p>
+        </div>
+        <div class="opt">
+            <span class="time">{{data.created_at}}</span>
+            {{if(data.source)}}
+                <span class="from">来自</span><a href="#" class="mobile-link">{{data.source}}</a>
+            {{endif}}
+            {{if(data.group && data.group.id)}}
+                <a class="group-name" href="{{baseurl}}home?gid={{data.group.id}}">{{data.group.name}}</a>
+            {{endif}}
+        </div>
+        <div class="from-subject">
+            <div class="m-tip source">
+                <div class="m-anchor-box m-anchor-top">
+                    <div class="m-anchor m-anchor-x"></div>
+                    <div class="m-anchor m-anchor-y"></div>
+                </div>
+                <div class="m-tip-content">
+                    <a href="{{baseurl}}user/{{data.from.user.id}}" target="_self" class="head-tip">{{data.from.user.name}}</a>
+                    {{data.from.text}}
+                </div>
+            </div>
+        </div>
+        {{if(data.allow_reply == 1)}}
+            <div class="feed ">
+                <div class="comments">
+                    <div class="comment-list"></div>
+                    <div class="comment-post">
+                        <div class="s-post">
+                            <textarea class="ipt-0" data-action="replyComment">说点什么..</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {{endif}}
+    </div>
+    <div class="clear"></div>
+</div>
