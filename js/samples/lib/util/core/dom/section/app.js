@@ -15,7 +15,8 @@ define(function(require, exports, module) {
         groupSidebar: require('./tpl/group_sidebar.tpl.js'),
         nd: require('./tpl/nd.tpl.js'),
         noread: require('./tpl/noread.tpl.js'),
-        mo: require('./tpl/mo.tpl.js')
+        mo: require('./tpl/mo.tpl.js'),
+        post: require('./tpl/post.tpl.js')
     };
 
     var baseurl = 'http://momo.im/';
@@ -325,6 +326,29 @@ define(function(require, exports, module) {
             // 回到顶部
             gotoTop: function(e) {
                 scroll.to(window, 0);
+            },
+            // 动态中的回复框展示
+            replyBox: function(e) {
+                var node = $(this);
+                var postNode = node.next('.post');
+                var textarea = postNode.find('textarea');
+                if(!postNode[0]) {
+                    var html = tpl.post.render({
+                        baseurl: baseurl,
+                        user: user
+                    });
+                    node.after(html);
+                    postNode = node.next();
+                    textarea = postNode.find('textarea');
+                    textarea.blur(function() {
+                        node.show();
+                        postNode.hide();
+                    });
+                    helper.textareaListen(textarea, postNode.find('.m-button').eq(0));
+                }
+                node.hide();
+                postNode.show();
+                postNode.find('textarea').focus();
             }
         });
 

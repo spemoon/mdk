@@ -2,6 +2,7 @@ define(function(require, exports, module) {
     var $ = require('../../../../../../../js/lib/jquery/sea_jquery.js');
     var string = require('../../../../../../lib/util/core/string.js');
     var section = require('../../../../../../lib/util/core/dom/section.js');
+    var inputx = require('../../../../../../lib/util/core/dom/input.js');
 
     var baseurl = 'http://momo.im/';
 
@@ -136,6 +137,26 @@ define(function(require, exports, module) {
         },
         mo: function(params) {
             r.noread.call(this, params);
+        },
+        textareaListen: function(textarea, btn) {
+            inputx.reg(textarea, function(val, lastInput, rangeData) {
+                inputx.autoHeight(textarea); // 自动高度
+                var offset = inputx.position.offset(textarea);
+                if(lastInput == '@') {
+                    console.log(rangeData.start + '位置检测输入@，坐标 left:' + offset.left + ', top:' + offset.top);
+                } else if(lastInput == '#') {
+                    console.log(rangeData.start + '位置检测输入#，坐标 left:' + offset.left + ', top:' + offset.top);
+                } else {
+                    console.log('当前输入位置:' + rangeData.start + '，字符：' + lastInput);
+                }
+                if(string.blength($.trim(textarea.val()) || '', true)) {
+                    btn.removeClass('m-button-dis');
+                } else {
+                    btn.addClass('m-button-dis');
+                }
+                console.log('字数统计（半角算半个字长）：' + string.blength(textarea.val() || '', true));
+                console.log('-----------------------------------');
+            });
         }
     };
     return r;
