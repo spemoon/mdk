@@ -194,6 +194,9 @@ define(function(require, exports, module) {
                     }
                 } else if(mode == 'iframe') {
                     var node = $(nodeString).eq(0);
+                    if(!view) {
+                        view = config.action;
+                    }
                     var data = view.before.call(scope, node);
                     var prevent = data === false;
                     var iframe = document.createElement('iframe');
