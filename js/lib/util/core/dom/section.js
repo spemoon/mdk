@@ -3,6 +3,7 @@ define(function(require, exports, module) {
     var lang = require('../../../../../js/lib/util/core/lang.js');
     var string = require('../../../../../js/lib/util/core/string.js');
     var ajax = require('../../../../../js/lib/util/core/ajax.js');
+    var scroll = require('../../../../../js/lib/util/core/dom/scroll.js');
 
     /**
      * 一个节点上满足以下属性，将会被当作载入section的触发器
@@ -50,8 +51,111 @@ define(function(require, exports, module) {
             error: function(node) {},
             complete: function(node) {}
         },
-        mainNode: '#content'
+        mainNode: '#content',
+        pageData: { // 滚动加载时候的分页数据
+            page: 1,
+            pageSize: 15
+        }
     };
+    var helper = {
+        load: function(params, isScroll) {
+            if(params) {
+                var view = params.view;
+                if(!view) {
+                    params.view = config.action;
+                    view = params.view;
+                }
+                if(isScroll) {
+                    if(!view.scroll) {
+                        params.view.scroll = config.action;
+                    }
+                    view = params.view.scroll;
+                }
+
+                var scope = params.scope;
+                var nodeString = params.node;
+                var uri = params.uri;
+                var type = params.type;
+                var script = params.script;
+
+                if(isScroll) {
+                    (function(obj) {
+                        if(obj.scope) {
+                            scope = obj.scope;
+                        }
+                        if(obj.node) {
+                            nodeString = obj.node;
+                        }
+                        if(obj.uri) {
+                            uri = obj.uri;
+                        }
+                        if(obj.type) {
+                            type = obj.type;
+                        }
+                        script = obj.script;
+                    })(params.view.scroll);
+                }
+                var node = $(nodeString).eq(0);
+
+                var uriData = view.before.call(scope, node);
+                var prevent = uriData === false;
+
+                if(isScroll) {
+                    uriData = $.extend(uriData, pageData);
+                }
+
+                if(!prevent) {
+                    var response; // server 返回的 data
+                    var status; // ajax 的状态
+                    ajax.single(nodeString).send({
+                        url: uri,
+                        type: type,
+                        data: uriData,
+                        success: function(data) {
+                            response = data;
+                            status = 'success';
+                            pageData.page++;
+                            lang.callback(view.success, {
+                                scope: scope,
+                                params: [node, data]
+                            });
+                        },
+                        failure: function(data) {
+                            response = data;
+                            status = 'failure';
+                            lang.callback(view.failure, {
+                                scope: scope,
+                                params: [node, data]
+                            });
+                        },
+                        error: function() {
+                            status = 'error';
+                            lang.callback(view.error, {
+                                scope: scope,
+                                params: [node]
+                            });
+                        },
+                        complete: function() {
+                            lang.callback(view.complete, {
+                                scope: scope,
+                                params: [node]
+                            });
+                            if(script) {
+                                require.async(seajs.pluginSDK.util.dirname(location.href) + script, function(fn) {
+                                    if(scope == activeNode) {
+                                        fn.call(scope, node, response, status, view.params);
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    };
+    var activeNode = null; // 最后一个click冒泡到document上的节点
+    var scrollData = false; // 是否支持滚动加载，如果支持scrollData将是一个JSON，以便给加载提供必要的参数
+    var pageData;
     var actions = {};
 
     $(function() {
@@ -59,60 +163,45 @@ define(function(require, exports, module) {
             var scope = e.target;
             var target = $(scope);
             var uri = target.attr('data-uri');
+            activeNode = scope;
             if(uri) {
                 var nodeString = $.trim(target.attr('data-node')) || config.mainNode;
-                var node = $(nodeString).eq(0);
                 var mode = $.trim((target.attr('data-mode') || '').toLowerCase());
                 var type = $.trim((target.attr('data-type') || 'GET'));
+                var script = $.trim(target.attr('data-script') || '');
                 if($.inArray(mode, config.mode) == -1) {
                     mode = 'json';
                 }
-
                 var view = actions[$.trim(target.attr('data-view'))];
-                if(!view) {
-                    view = config.action;
-                }
-                var data = view.before.call(scope, node);
-                var prevent = (data === false);
+
+                scrollData = false;
 
                 if(mode == 'json') {
                     if(!prevent) {
-                        ajax.single(nodeString).send({
-                            url: uri,
+                        var params = {
+                            view: view,
+                            scope: scope,
+                            node: nodeString,
+                            uri: uri,
                             type: type,
-                            data: data,
-                            success: function(data) {
-                                lang.callback(view.success, {
-                                    scope: scope,
-                                    params: [node, data]
-                                });
-                            },
-                            failure: function(data) {
-                                lang.callback(view.failure, {
-                                    scope: scope,
-                                    params: [node, data]
-                                });
-                            },
-                            error: function() {
-                                lang.callback(view.error, {
-                                    scope: scope,
-                                    params: [node]
-                                });
-                            },
-                            complete: function() {
-                                lang.callback(view.complete, {
-                                    scope: scope,
-                                    params: [node]
-                                });
-                            }
-                        });
+                            script: script
+                        };
+                        if(view.scroll) {
+                            scrollData = params;
+                        }
+                        pageData = $.extend({}, config.pageData);
+                        helper.load(params);
                     }
                 } else if(mode == 'iframe') {
-                    ajax.single(nodeString).abort();
+                    var node = $(nodeString).eq(0);
+                    var data = view.before.call(scope, node);
+                    var prevent = data === false;
                     var iframe = document.createElement('iframe');
-                    var flag = view.success == config.action.success; // true表示使用默认行为
+                    var flag = view.before == config.action.before; // 提供before表明手动操作内容，不提供默认会清空节点
                     var width = target.attr('data-width') || config.width;
                     var height = target.attr('data-height') || config.height;
+
+                    ajax.single(nodeString).abort();
                     iframe.src = (function() {
                         var src = uri;
                         if(!prevent) {
@@ -153,27 +242,35 @@ define(function(require, exports, module) {
                 e.preventDefault();
             }
         });
+
+        // 滚动监听
+        scroll.listen(window, {
+            bottom: function(e, scrollTop, dir, status) {
+                if(scrollData) {
+                    helper.load(scrollData, true)
+                }
+            }
+        });
     });
 
     var r = {
         view: function(name, action) {
             if(arguments.length == 2) {
-                if(actions[name]) {
-                    throw new Error(name + ' 已经被占用');
-                } else {
-                    if(lang.isFunction(action)) {
-                        var temp = action;
-                        action = {
-                            success: temp
-                        };
-                    }
-                    for(var key in config.action) {
-                        if(!action[key]) {
-                            action[key] = config.action[key];
-                        }
-                    }
-                    actions[name] = action;
+                if(actions[name] && console && console.warn) {
+                    console.warn('section [' + name + '] 已经被占用');
                 }
+                if(lang.isFunction(action)) {
+                    var temp = action;
+                    action = {
+                        success: temp
+                    };
+                }
+                for(var key in config.action) {
+                    if(!action[key]) {
+                        action[key] = config.action[key];
+                    }
+                }
+                actions[name] = action;
             } else if(arguments.length == 1) {
                 for(var obj in arguments[0]) {
                     r.view(obj, arguments[0][obj]);
@@ -186,6 +283,34 @@ define(function(require, exports, module) {
          */
         setMainNode: function(nodeString) {
             config.mainNode = nodeString;
+        },
+        /**
+         * 获取当前活动的section节点（所有click都会更新activeNode）
+         * @return {*}
+         */
+        getActiveNode: function() {
+            return activeNode;
+        },
+        /**
+         * 给对应name的section注入外部变量
+         * @param name
+         * @param params
+         */
+        inject: function(name, params) {
+            var obj = actions[name];
+            if(!obj.params) {
+                obj.params = {
+                    $: $
+                };
+            }
+            for(var key in params) {
+                obj.params[key] = params[key];
+            }
+        },
+        setPageData: function(params) {
+            for(var key in params) {
+                pageData[key] = params[key];
+            }
         }
     };
     return r;

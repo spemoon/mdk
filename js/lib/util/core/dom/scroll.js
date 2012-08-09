@@ -16,7 +16,7 @@ define(function(require, exports, module) {
             }
             if(scrollTop == 0) {
                 result = 'top';
-            } else if(scrollTop + parseFloat(clientHeight) + 10 >= node.scrollHeight) {
+            } else if(scrollTop + parseInt(clientHeight) + 1 >= node.scrollHeight) { // 一些情况下会小1
                 result = 'bottom';
             }
             return result;
@@ -25,6 +25,10 @@ define(function(require, exports, module) {
 
     var r = {
         to: function(node, n) {
+            // 下面这个判断要写在node[0]前面，当页面存在iframe时候，window[0]会获取到iframe造成问题
+            if(node == window || node == document || node == document.body) {
+                node = document.documentElement;
+            }
             node = node[0] || node;
             if(n == 'top') {
                 n = 0;
@@ -101,7 +105,7 @@ define(function(require, exports, module) {
                 }
             };
             node = node[0] || node;
-            node = (node == window || node == document.body) ? document : node;
+            node = (node == document || node == document.body) ? window : node; // IE下需要$(window).scroll可以监听，用document则不行
             $(node).scroll(function(e) {
                 var scrollTop = $(node).scrollTop();
                 var dir = scrollTop > prevTop ? 'down' : scrollTop < prevTop ? 'up' : '';
@@ -110,7 +114,7 @@ define(function(require, exports, module) {
                     fn(e.originalEvent, dir);
                 }
             });
-            if(node != document && prevent !== false) {
+            if(node != window && prevent !== false) {
                 r.prevent(node);
             }
         }

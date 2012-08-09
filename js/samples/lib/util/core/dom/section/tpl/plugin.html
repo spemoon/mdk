@@ -1,0 +1,21 @@
+<div class="plugin-left">
+    <h2>简介</h2>
+    <div class="plugin-node">
+        <p>页面节点具有以下三个属性：</p>
+        <ul>
+            <li>data-uri: 数据资源地址</li>
+            <li>data-view: section处理函数，本页面统一为plugin，自定义也可以</li>
+            <li>data-script: 处理数据资源的脚本，负责展示页面，事件绑定等</li>
+        </ul>
+        <p>顶部的
+            <a href="#" data-uri="data/sms.php" data-view="plugin" data-script="./sms.js" class="big" data-action="unHighlight">短信(这里也可以点击)</a>
+            也是以插件形式插入</p>
+    </div>
+    <div class="page-time">{{pageTime}}</div>
+</div>
+<div class="plugin-right">
+    <div class="action-button">
+        <input type="button" data-action="getPoem" value="随机展示一首诗歌"/>
+    </div>
+    <div class="plugin-poem">{{poem}}</div>
+</div>

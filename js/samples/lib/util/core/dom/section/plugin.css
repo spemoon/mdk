@@ -1,0 +1,27 @@
+.plugin-left {
+    width: 500px;
+    float: left;
+}
+.plugin-left h2 {
+    text-align: center;
+    font-size: 24px;
+}
+.plugin-left .plugin-node {
+    line-height: 24px;
+}
+.plugin-left .page-time {
+    padding: 10px;
+    color: green;
+}
+.plugin-left .big {
+    font-size: 16px;
+    padding: 5px;
+    color: blue;
+    font-weight: bold;
+    text-decoration: underline;
+}
+.plugin-right {
+    width: 250px;
+    float: left;
+    margin-left: 20px;
+}

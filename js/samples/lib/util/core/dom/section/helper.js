@@ -1,6 +1,7 @@
 define(function(require, exports, module) {
     var $ = require('../../../../../../../js/lib/jquery/sea_jquery.js');
     var string = require('../../../../../../lib/util/core/string.js');
+    var section = require('../../../../../../lib/util/core/dom/section.js');
 
     var baseurl = 'http://momo.im/';
 
@@ -73,7 +74,7 @@ define(function(require, exports, module) {
             } else if(content.audio) {
                 result = '发送了一段音频' + ' 【<a href="' + content.audio.url + '?filetype=mp3" target="_blank">下载</a>】';
             } else if(content.location) {
-                result = '发送了一个地理位置' + ' 【<a href="http://ditu.google.cn/maps?daddr=' + content.location.latitude + ',' + content.location.longitude + '&dirflg=r' + '" target="_blank">查看</a>】' ;
+                result = '发送了一个地理位置' + ' 【<a href="http://ditu.google.cn/maps?daddr=' + content.location.latitude + ',' + content.location.longitude + '&dirflg=r' + '" target="_blank">查看</a>】';
             } else if(content.sender_card) {
                 result = '发送了一张名片' + ' 【<a href="' + baseurl + 'user/' + content.sender_card.id + '" target="_blank">查看</a>】';
             } else if(content.text_long) {
@@ -83,25 +84,58 @@ define(function(require, exports, module) {
             }
             return result;
         },
-        feed: function(node, data, uid, callback) {
-            require.async('./tpl/feed.tpl.js', function(feedTpl) {
-                var html = [];
-                for(var i = 0, len = data.data.length; i < len; i++) {
-                    var json = data.data[i];
-                    html[i] = feedTpl.render({
-                        baseurl: baseurl,
-                        json: json,
-                        selectedId: 0,
-                        groupId: 0,
-                        meId: uid,
-                        likeBar: json.like_list && json.like_count > 0,
-                        commentBar: json.comment_list && json.comment_count > json.comment_list.length
-                    });
-                }
-                node.find('.scrollloadingtip').hide();
-                node.find('.dynamic-list').html(html.join(''));
-                callback && callback.call(this, node, data);
+        feed: function(params) {
+            var node = params.node;
+            var data = params.data;
+            var uid = params.uid;
+            var groupId = params.groupId || 0;
+            var selectedId = params.selectedId || 0;
+            var callback = params.callback;
+            var isAppend = params.append === true;
+            var tpl = params.tpl;
+
+            var scope = this;
+            var html = [];
+            section.setPageData({
+                lasttime: data.lasttime
             });
+            for(var i = 0, len = data.data.length; i < len; i++) {
+                var json = data.data[i];
+                html[i] = tpl.render({
+                    baseurl: baseurl,
+                    json: json,
+                    selectedId: selectedId,
+                    groupId: groupId,
+                    meId: uid,
+                    likeBar: json.like_list && json.like_count > 0,
+                    commentBar: json.comment_list && json.comment_count > json.comment_list.length
+                });
+            }
+            node.find('.scrollloadingtip').hide();
+            node.find('.dynamic-list')[isAppend ? 'append' : 'html'](html.join(''));
+            callback && callback.call(scope, node, data);
+        },
+        noread: function(params) {
+            var node = params.node;
+            var data = params.data;
+            var isAppend = params.append === true;
+            var tpl = params.tpl;
+
+            var html = [];
+            section.setPageData({
+                lasttime: data.lasttime
+            });
+            for(var i = 0, len = data.data.length; i < len; i++) {
+                html[i] = tpl.render({
+                    baseurl: baseurl,
+                    data: data.data[i]
+                });
+            }
+            node.find('.scrollloadingtip').hide();
+            node.find('.dynamic-list')[isAppend ? 'append' : 'html'](html.join(''));
+        },
+        mo: function(params) {
+            r.noread.call(this, params);
         }
     };
     return r;

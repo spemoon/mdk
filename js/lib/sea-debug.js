@@ -1,220 +1,199 @@
-/* SeaJS v1.1.1-dev | seajs.com | MIT Licensed */
-
 /**
- * @fileoverview A CommonJS module loader, focused on web.
- * @author lifesinger@gmail.com (Frank Wang)
+ * @preserve SeaJS - A Module Loader for the Web
+ * v1.3.0-dev | seajs.org | MIT Licensed
  */
 
 
 /**
  * Base namespace for the framework.
  */
-this.seajs = { _seajs: this.seajs };
+this.seajs = { _seajs: this.seajs }
 
 
 /**
- * @type {string} The version of the framework. It will be replaced
- * with "major.minor.patch" when building.
+ * The version of the framework. It will be replaced with "major.minor.patch"
+ * when building.
  */
-seajs.version = '1.1.1-dev';
-
-
-// Module status:
-//  1. downloaded - The script file has been downloaded to the browser.
-//  2. define()d - The define() has been executed.
-//  3. memoize()d - The module info has been added to memoizedMods.
-//  4. require()d -  The module.exports is available.
+seajs.version = '1.3.0-dev'
 
 
 /**
- * The private data. Internal use only.
+ * The private utilities. Internal use only.
  */
-seajs._data = {
+seajs._util = {}
+
+
+/**
+ * The private configuration data. Internal use only.
+ */
+seajs._config = {
 
   /**
-   * The configuration data.
+   * Debug mode. It will be turned off automatically when compressing.
    */
-  config: {
-    /**
-     * Debug mode. It will be turned off automatically when compressing.
-     * @const
-     */
-    debug: '%DEBUG%',
-
-    /**
-     * Modules that are needed to load before all other modules.
-     */
-    preload: []
-  },
+  debug: '%DEBUG%',
 
   /**
-   * Modules that have been memoize()d.
-   * { uri: { dependencies: [], factory: fn, exports: {} }, ... }
+   * Modules that are needed to load before all other modules.
    */
-  memoizedMods: {},
-
-  /**
-   * Modules in current fetching package.
-   */
-  packageMods: []
-};
-
+  preload: []
+}
 
 /**
- * The private utils. Internal use only.
+ * The minimal language enhancement
  */
-seajs._util = {};
+;(function(util) {
 
-
-/**
- * The inner namespace for methods. Internal use only.
- */
-seajs._fn = {};
-
-/**
- * @fileoverview The minimal language enhancement.
- */
-
-(function(util) {
-
-  var toString = Object.prototype.toString;
-  var AP = Array.prototype;
+  var toString = Object.prototype.toString
+  var AP = Array.prototype
 
 
   util.isString = function(val) {
-    return toString.call(val) === '[object String]';
-  };
-
-
-  util.isObject = function(val) {
-    return val === Object(val);
-  };
+    return toString.call(val) === '[object String]'
+  }
 
 
   util.isFunction = function(val) {
-    return toString.call(val) === '[object Function]';
-  };
+    return toString.call(val) === '[object Function]'
+  }
+
+
+  util.isRegExp = function(val) {
+    return toString.call(val) === '[object RegExp]'
+  }
+
+
+  util.isObject = function(val) {
+    return val === Object(val)
+  }
 
 
   util.isArray = Array.isArray || function(val) {
-    return toString.call(val) === '[object Array]';
-  };
+    return toString.call(val) === '[object Array]'
+  }
 
 
   util.indexOf = AP.indexOf ?
       function(arr, item) {
-        return arr.indexOf(item);
+        return arr.indexOf(item)
       } :
       function(arr, item) {
-        for (var i = 0, len = arr.length; i < len; i++) {
+        for (var i = 0; i < arr.length; i++) {
           if (arr[i] === item) {
-            return i;
+            return i
           }
         }
-        return -1;
-      };
+        return -1
+      }
 
 
   var forEach = util.forEach = AP.forEach ?
       function(arr, fn) {
-        arr.forEach(fn);
+        arr.forEach(fn)
       } :
       function(arr, fn) {
-        for (var i = 0, len = arr.length; i < len; i++) {
-          fn(arr[i], i, arr);
+        for (var i = 0; i < arr.length; i++) {
+          fn(arr[i], i, arr)
         }
-      };
+      }
 
 
   util.map = AP.map ?
       function(arr, fn) {
-        return arr.map(fn);
+        return arr.map(fn)
       } :
       function(arr, fn) {
-        var ret = [];
+        var ret = []
         forEach(arr, function(item, i, arr) {
-          ret.push(fn(item, i, arr));
-        });
-        return ret;
-      };
+          ret.push(fn(item, i, arr))
+        })
+        return ret
+      }
 
 
   util.filter = AP.filter ?
       function(arr, fn) {
-        return arr.filter(fn);
+        return arr.filter(fn)
       } :
       function(arr, fn) {
-        var ret = [];
+        var ret = []
         forEach(arr, function(item, i, arr) {
           if (fn(item, i, arr)) {
-            ret.push(item);
+            ret.push(item)
           }
-        });
-        return ret;
-      };
+        })
+        return ret
+      }
 
 
-  util.unique = function(arr) {
-    var ret = [];
-    var o = {};
+  var keys = util.keys = Object.keys || function(o) {
+    var ret = []
 
-    forEach(arr, function(item) {
-      o[item] = 1;
-    });
-
-    if (Object.keys) {
-      ret = Object.keys(o);
-    }
-    else {
-      for (var p in o) {
-        if (o.hasOwnProperty(p)) {
-          ret.push(p);
-        }
+    for (var p in o) {
+      if (o.hasOwnProperty(p)) {
+        ret.push(p)
       }
     }
 
-    return ret;
-  };
+    return ret
+  }
+
+
+  util.unique = function(arr) {
+    var o = {}
+
+    forEach(arr, function(item) {
+      o[item] = 1
+    })
+
+    return keys(o)
+  }
 
 
   util.now = Date.now || function() {
-    return new Date().getTime();
-  };
-
-})(seajs._util);
-
-/**
- * @fileoverview The error handler.
- */
-
-(function(util, data) {
-
-
-  util.error = function() {
-      throw join(arguments);
-  };
-
-
-  util.log = function() {
-    if (data.config.debug && typeof console !== 'undefined') {
-      console.log(join(arguments));
-    }
-  };
-
-
-  function join(args) {
-    return Array.prototype.join.call(args, ' ');
+    return new Date().getTime()
   }
 
-})(seajs._util, seajs._data);
+})(seajs._util)
 
 /**
- * @fileoverview Core utilities for the framework.
+ * The tiny console support
  */
+;(function(util, config) {
 
-(function(util, data, fn, global) {
+  var AP = Array.prototype
 
-  var config = data.config;
+
+  /**
+   * The safe wrapper of console.log/error/...
+   */
+  util.log = function() {
+    if (typeof console !== 'undefined') {
+      var args = AP.slice.call(arguments)
+
+      var type = 'log'
+      var last = args[args.length - 1]
+      console[last] && (type = args.pop())
+
+      // Only show log info in debug mode
+      if (type === 'log' && !config.debug) return
+
+      var out = type === 'dir' ? args[0] : AP.join.call(args, ' ')
+      console[type](out)
+    }
+  }
+
+})(seajs._util, seajs._config)
+
+/**
+ * Path utilities for the framework
+ */
+;(function(util, config, global) {
+
+  var DIRNAME_RE = /.*(?=\/.*$)/
+  var MULTIPLE_SLASH_RE = /([^:\/])\/\/+/g
+  var FILE_EXT_RE = /\.(?:css|js)$/
+  var ROOT_RE = /^(.*?\w)(?:\/|$)/
 
 
   /**
@@ -224,8 +203,8 @@ seajs._fn = {};
    * @see http://jsperf.com/regex-vs-split/2
    */
   function dirname(path) {
-    var s = path.match(/.*(?=\/.*$)/);
-    return (s ? s[0] : '.') + '/';
+    var s = path.match(DIRNAME_RE)
+    return (s ? s[0] : '.') + '/'
   }
 
 
@@ -234,50 +213,66 @@ seajs._fn = {};
    * realpath('./a//b/../c') ==> 'a/c'
    */
   function realpath(path) {
+    MULTIPLE_SLASH_RE.lastIndex = 0
+
     // 'file:///a//b/c' ==> 'file:///a/b/c'
     // 'http://a//b/c' ==> 'http://a/b/c'
-    path = path.replace(/([^:\/])\/+/g, '$1\/');
+    if (MULTIPLE_SLASH_RE.test(path)) {
+      path = path.replace(MULTIPLE_SLASH_RE, '$1\/')
+    }
 
     // 'a/b/c', just return.
     if (path.indexOf('.') === -1) {
-      return path;
+      return path
     }
 
-    var old = path.split('/');
-    var ret = [], part, i = 0, len = old.length;
+    var original = path.split('/')
+    var ret = [], part
 
-    for (; i < len; i++) {
-      part = old[i];
+    for (var i = 0; i < original.length; i++) {
+      part = original[i]
+
       if (part === '..') {
         if (ret.length === 0) {
-          util.error('Invalid path:', path);
+          throw new Error('The path is invalid: ' + path)
         }
-        ret.pop();
+        ret.pop()
       }
       else if (part !== '.') {
-        ret.push(part);
+        ret.push(part)
       }
     }
 
-    return ret.join('/');
+    return ret.join('/')
   }
 
 
   /**
-   * Normalizes an url.
+   * Normalizes an uri.
    */
-  function normalize(url) {
-    url = realpath(url);
+  function normalize(uri) {
+    uri = realpath(uri)
+    var lastChar = uri.charAt(uri.length - 1)
 
-    // Adds the default '.js' extension except that the url ends with #.
-    if (/#$/.test(url)) {
-      url = url.slice(0, -1);
-    }
-    else if (url.indexOf('?') === -1 && !/\.(?:css|js)$/.test(url)) {
-      url += '.js';
+    if (lastChar === '/') {
+      return uri
     }
 
-    return url;
+    // Adds the default '.js' extension except that the uri ends with #.
+    // ref: http://jsperf.com/get-the-last-character
+    if (lastChar === '#') {
+      uri = uri.slice(0, -1)
+    }
+    else if (uri.indexOf('?') === -1 && !FILE_EXT_RE.test(uri)) {
+      uri += '.js'
+    }
+
+    // Remove ':80/' for bug in IE
+    if (uri.indexOf(':80/') > 0) {
+      uri = uri.replace(':80/', '/')
+    }
+
+    return uri
   }
 
 
@@ -285,66 +280,127 @@ seajs._fn = {};
    * Parses alias in the module id. Only parse the first part.
    */
   function parseAlias(id) {
-    // #xxx means xxx is parsed.
+    // #xxx means xxx is already alias-parsed.
     if (id.charAt(0) === '#') {
-      return id.substring(1);
+      return id.substring(1)
     }
 
-    var alias;
+    var alias = config.alias
 
     // Only top-level id needs to parse alias.
-    if (isTopLevel(id) && (alias = config.alias)) {
-      var parts = id.split('/');
-      var first = parts[0];
+    if (alias && isTopLevel(id)) {
+      var parts = id.split('/')
+      var first = parts[0]
 
       if (alias.hasOwnProperty(first)) {
-        parts[0] = alias[first];
-        id = parts.join('/');
+        parts[0] = alias[first]
+        id = parts.join('/')
       }
     }
 
-    return id;
+    return id
   }
 
 
-  var mapCache = {};
+  var mapCache = {}
 
   /**
-   * Maps the module id.
-   * @param {string} url The url string.
-   * @param {Array=} map The optional map array.
+   * Converts the uri according to the map rules.
    */
-  function parseMap(url, map) {
-    // config.map: [[match, replace], ...]
-    map = map || config['map'] || [];
-    if (!map.length) return url;
-    var ret = url;
+  function parseMap(uri) {
+    // map: [[match, replace], ...]
+    var map = config.map || []
+    if (!map.length) return uri
 
-    util.forEach(map, function(rule) {
-      if (rule && rule.length > 1) {
-        ret = ret.replace(rule[0], rule[1]);
+    var ret = uri
+
+    // Apply all matched rules in sequence.
+    for (var i = 0; i < map.length; i++) {
+      var rule = map[i]
+
+      if (util.isArray(rule) && rule.length === 2) {
+        var m = rule[0]
+
+        if (util.isString(m) && ret.indexOf(m) > -1 ||
+            util.isRegExp(m) && m.test(ret)) {
+          ret = ret.replace(m, rule[1])
+        }
       }
-    });
+      else if (util.isFunction(rule)) {
+        ret = rule(ret)
+      }
+    }
 
-    mapCache[ret] = url;
-    return ret;
+    if (ret !== uri) {
+      mapCache[ret] = uri
+    }
+
+    return ret
   }
 
 
   /**
-   * Gets the original url.
-   * @param {string} url The url string.
+   * Gets the original uri.
    */
-  function unParseMap(url) {
-    return mapCache[url] || url;
+  function unParseMap(uri) {
+    return mapCache[uri] || uri
   }
 
 
   /**
-   * Gets the host portion from url.
+   * Converts id to uri.
    */
-  function getHost(url) {
-    return url.replace(/^(\w+:\/\/[^\/]*)\/?.*$/, '$1');
+  function id2Uri(id, refUri) {
+    if (!id) return ''
+
+    id = parseAlias(id)
+    refUri || (refUri = pageUri)
+
+    var ret
+
+    // absolute id
+    if (isAbsolute(id)) {
+      ret = id
+    }
+    // relative id
+    else if (isRelative(id)) {
+      // Converts './a' to 'a', to avoid unnecessary loop in realpath.
+      if (id.indexOf('./') === 0) {
+        id = id.substring(2)
+      }
+      ret = dirname(refUri) + id
+    }
+    // root id
+    else if (isRoot(id)) {
+      ret = refUri.match(ROOT_RE)[1] + id
+    }
+    // top-level id
+    else {
+      ret = config.base + '/' + id
+    }
+
+    return normalize(ret)
+  }
+
+
+  function isAbsolute(id) {
+    return id.indexOf('://') > 0 || id.indexOf('//') === 0
+  }
+
+
+  function isRelative(id) {
+    return id.indexOf('./') === 0 || id.indexOf('../') === 0
+  }
+
+
+  function isRoot(id) {
+    return id.charAt(0) === '/' && id.charAt(1) !== '/'
+  }
+
+
+  function isTopLevel(id) {
+    var c = id.charAt(0)
+    return id.indexOf('://') === -1 && c !== '.' && c !== '/'
   }
 
 
@@ -354,237 +410,163 @@ seajs._fn = {};
    */
   function normalizePathname(pathname) {
     if (pathname.charAt(0) !== '/') {
-      pathname = '/' + pathname;
+      pathname = '/' + pathname
     }
-    return pathname;
+    return pathname
   }
 
 
-  var loc = global['location'];
-  var pageUrl = loc.protocol + '//' + loc.host +
-      normalizePathname(loc.pathname);
+  var loc = global['location']
+  var pageUri = loc.protocol + '//' + loc.host +
+      normalizePathname(loc.pathname)
 
   // local file in IE: C:\path\to\xx.js
-  if (~pageUrl.indexOf('\\')) {
-    pageUrl = pageUrl.replace(/\\/g, '/');
+  if (pageUri.indexOf('\\') > 0) {
+    pageUri = pageUri.replace(/\\/g, '/')
   }
 
 
-  /**
-   * Converts id to uri.
-   * @param {string} id The module id.
-   * @param {string=} refUrl The referenced uri for relative id.
-   */
-  function id2Uri(id, refUrl) {
-    id = parseAlias(id);
-    refUrl = refUrl || pageUrl;
+  util.dirname = dirname
+  util.realpath = realpath
+  util.normalize = normalize
 
-    var ret;
+  util.parseAlias = parseAlias
+  util.parseMap = parseMap
+  util.unParseMap = unParseMap
 
-    // absolute id
-    if (isAbsolute(id)) {
-      ret = id;
-    }
-    // relative id
-    else if (isRelative(id)) {
-      // Converts './a' to 'a', to avoid unnecessary loop in realpath.
-      id = id.replace(/^\.\//, '');
-      ret = dirname(refUrl) + id;
-    }
-    // root id
-    else if (isRoot(id)) {
-      ret = getHost(refUrl) + id;
-    }
-    // top-level id
-    else {
-      ret = config.base + '/' + id;
-    }
+  util.id2Uri = id2Uri
+  util.isAbsolute = isAbsolute
+  util.isRoot = isRoot
+  util.isTopLevel = isTopLevel
 
-    return normalize(ret);
-  }
+  util.pageUri = pageUri
 
-
-  function isAbsolute(id) {
-    return ~id.indexOf('://') || id.indexOf('//') === 0;
-  }
-
-
-  function isRelative(id) {
-    return id.indexOf('./') === 0 || id.indexOf('../') === 0;
-  }
-
-
-  function isRoot(id) {
-    return id.charAt(0) === '/' && id.charAt(1) !== '/';
-  }
-
-
-  function isTopLevel(id) {
-    var c = id.charAt(0);
-    return id.indexOf('://') === -1 && c !== '.' && c !== '/';
-  }
-
-
-  util.dirname = dirname;
-  util.realpath = realpath;
-  util.normalize = normalize;
-
-  util.parseAlias = parseAlias;
-  util.parseMap = parseMap;
-  util.unParseMap = unParseMap;
-
-  util.id2Uri = id2Uri;
-  util.isAbsolute = isAbsolute;
-  util.isTopLevel = isTopLevel;
-
-  util.pageUrl = pageUrl;
-
-})(seajs._util, seajs._data, seajs._fn, this);
+})(seajs._util, seajs._config, this)
 
 /**
- * @fileoverview Utilities for fetching js ans css files.
+ * Utilities for fetching js and css files.
  */
+;(function(util, config) {
 
-(function(util, data) {
+  var doc = document
+  var head = doc.head ||
+      doc.getElementsByTagName('head')[0] ||
+      doc.documentElement
 
-  var head = document.head ||
-      document.getElementsByTagName('head')[0] ||
-      document.documentElement;
+  var baseElement = head.getElementsByTagName('base')[0]
 
-  var UA = navigator.userAgent;
-  var isWebKit = ~UA.indexOf('AppleWebKit');
+  var IS_CSS_RE = /\.css(?:\?|$)/i
+  var READY_STATE_RE = /loaded|complete|undefined/
+
+  var currentlyAddingScript
+  var interactiveScript
 
 
-  util.getAsset = function(url, callback, charset) {
-    var isCSS = /\.css(?:\?|$)/i.test(url);
-    var node = document.createElement(isCSS ? 'link' : 'script');
+  util.fetch = function(url, callback, charset) {
+    var isCSS = IS_CSS_RE.test(url)
+    var node = document.createElement(isCSS ? 'link' : 'script')
 
     if (charset) {
-      node.charset = charset;
+      var cs = util.isFunction(charset) ? charset(url) : charset
+      cs && (node.charset = cs)
     }
 
-    assetOnload(node, callback);
+    assetOnload(node, callback || noop)
 
     if (isCSS) {
-      node.rel = 'stylesheet';
-      node.href = url;
-      head.appendChild(node); // Keep style cascading order
+      node.rel = 'stylesheet'
+      node.href = url
     }
     else {
-      node.async = 'async';
-      node.src = url;
-
-      // For some cache cases in IE 6-9, the script executes IMMEDIATELY after
-      // the end of the insertBefore execution, so use `currentlyAddingScript`
-      // to hold current node, for deriving url in `define`.
-      currentlyAddingScript = node;
-      head.insertBefore(node, head.firstChild);
-      currentlyAddingScript = null;
+      node.async = 'async'
+      node.src = url
     }
-  };
+
+    // For some cache cases in IE 6-9, the script executes IMMEDIATELY after
+    // the end of the insertBefore execution, so use `currentlyAddingScript`
+    // to hold current node, for deriving url in `define`.
+    currentlyAddingScript = node
+
+    // ref: #185 & http://dev.jquery.com/ticket/2709
+    baseElement ?
+        head.insertBefore(node, baseElement) :
+        head.appendChild(node)
+
+    currentlyAddingScript = null
+  }
 
   function assetOnload(node, callback) {
     if (node.nodeName === 'SCRIPT') {
-      scriptOnload(node, cb);
+      scriptOnload(node, callback)
     } else {
-      styleOnload(node, cb);
-    }
-
-    var timer = setTimeout(function() {
-      util.log('Time is out:', node.src);
-      cb();
-    }, data.config.timeout);
-
-    function cb() {
-      if (!cb.isCalled) {
-        cb.isCalled = true;
-        clearTimeout(timer);
-
-        callback();
-      }
+      styleOnload(node, callback)
     }
   }
 
   function scriptOnload(node, callback) {
 
-    node.onload = node.onerror = node.onreadystatechange =
-        function() {
+    node.onload = node.onerror = node.onreadystatechange = function() {
+      if (READY_STATE_RE.test(node.readyState)) {
 
-          if (/loaded|complete|undefined/.test(node.readyState)) {
+        // Ensure only run once and handle memory leak in IE
+        node.onload = node.onerror = node.onreadystatechange = null
 
-            // Ensure only run once
-            node.onload = node.onerror = node.onreadystatechange = null;
+        // Remove the script to reduce memory leak
+        if (node.parentNode && !config.debug) {
+          head.removeChild(node)
+        }
 
-            // Reduce memory leak
-            if (node.parentNode) {
-              try {
-                if (node.clearAttributes) {
-                  node.clearAttributes();
-                }
-                else {
-                  for (var p in node) delete node[p];
-                }
-              } catch (x) {
-              }
+        // Dereference the node
+        node = undefined
 
-              // Remove the script
-              head.removeChild(node);
-            }
+        callback()
+      }
+    }
 
-            // Dereference the node
-            node = undefined;
-
-            callback();
-          }
-        };
-
-    // NOTICE:
-    // Nothing will happen in Opera when the file status is 404. In this case,
-    // the callback will be called when time is out.
   }
 
   function styleOnload(node, callback) {
 
-    // for IE6-9 and Opera
-    if (node.attachEvent) {
-      node.attachEvent('onload', callback);
-      // NOTICE:
-      // 1. "onload" will be fired in IE6-9 when the file is 404, but in
-      // this situation, Opera does nothing, so fallback to timeout.
-      // 2. "onerror" doesn't fire in any browsers!
-    }
+    // for Old WebKit and Old Firefox
+    if (isOldWebKit || isOldFirefox) {
+      util.log('Start poll to fetch css')
 
-    // Polling for Firefox, Chrome, Safari
-    else {
       setTimeout(function() {
-        poll(node, callback);
-      }, 0); // Begin after node insertion
+        poll(node, callback)
+      }, 1) // Begin after node insertion
+    }
+    else {
+      node.onload = node.onerror = function() {
+        node.onload = node.onerror = null
+        node = undefined
+        callback()
+      }
     }
 
   }
 
   function poll(node, callback) {
-    if (callback.isCalled) {
-      return;
-    }
+    var isLoaded
 
-    var isLoaded;
-
-    if (isWebKit) {
+    // for WebKit < 536
+    if (isOldWebKit) {
       if (node['sheet']) {
-        isLoaded = true;
+        isLoaded = true
       }
     }
-    // for Firefox
+    // for Firefox < 9.0
     else if (node['sheet']) {
       try {
         if (node['sheet'].cssRules) {
-          isLoaded = true;
+          isLoaded = true
         }
       } catch (ex) {
-        // NS_ERROR_DOM_SECURITY_ERR
-        if (ex.code === 1000) {
-          isLoaded = true;
+        // The value of `ex.name` is changed from
+        // 'NS_ERROR_DOM_SECURITY_ERR' to 'SecurityError' since Firefox 13.0
+        // But Firefox is less than 9.0 in here, So it is ok to just rely on
+        // 'NS_ERROR_DOM_SECURITY_ERR'
+        if (ex.name === 'NS_ERROR_DOM_SECURITY_ERR') {
+          isLoaded = true
         }
       }
     }
@@ -592,20 +574,20 @@ seajs._fn = {};
     setTimeout(function() {
       if (isLoaded) {
         // Place callback in here due to giving time for style rendering.
-        callback();
+        callback()
       } else {
-        poll(node, callback);
+        poll(node, callback)
       }
-    }, 1);
+    }, 1)
+  }
+
+  function noop() {
   }
 
 
-  var currentlyAddingScript;
-  var interactiveScript;
-
   util.getCurrentScript = function() {
     if (currentlyAddingScript) {
-      return currentlyAddingScript;
+      return currentlyAddingScript
     }
 
     // For IE6-9 browsers, the script onload event may not fire right
@@ -615,138 +597,83 @@ seajs._fn = {};
     // Ref: http://goo.gl/JHfFW
     if (interactiveScript &&
         interactiveScript.readyState === 'interactive') {
-      return interactiveScript;
+      return interactiveScript
     }
 
-    var scripts = head.getElementsByTagName('script');
+    var scripts = head.getElementsByTagName('script')
 
     for (var i = 0; i < scripts.length; i++) {
-      var script = scripts[i];
+      var script = scripts[i]
       if (script.readyState === 'interactive') {
-        interactiveScript = script;
-        return script;
+        interactiveScript = script
+        return script
       }
     }
-  };
-
+  }
 
   util.getScriptAbsoluteSrc = function(node) {
     return node.hasAttribute ? // non-IE6/7
         node.src :
         // see http://msdn.microsoft.com/en-us/library/ms536429(VS.85).aspx
-        node.getAttribute('src', 4);
-  };
-
-
-  util.isOpera = ~UA.indexOf('Opera');
-
-})(seajs._util, seajs._data);
-
-/**
- * References:
- *  - http://unixpapa.com/js/dyna.html
- *  - ../test/research/load-js-css/test.html
- *  - ../test/issues/load-css/test.html
- *  - http://www.blaze.io/technical/ies-premature-execution-problem/
- */
-
-/**
- * @fileoverview Module Constructor.
- */
-
-(function(fn) {
-
-  /**
-   * Module constructor.
-   * @constructor
-   * @param {string=} id The module id.
-   * @param {Array.<string>|string=} deps The module dependencies.
-   * @param {function()|Object} factory The module factory function.
-   */
-  fn.Module = function(id, deps, factory) {
-
-    this.id = id;
-    this.dependencies = deps || [];
-    this.factory = factory;
-
-  };
-
-})(seajs._fn);
-
-/**
- * @fileoverview Module authoring format.
- */
-
-(function(util, data, fn) {
-
-  /**
-   * Defines a module.
-   * @param {string=} id The module id.
-   * @param {Array.<string>|string=} deps The module dependencies.
-   * @param {function()|Object} factory The module factory function.
-   */
-  function define(id, deps, factory) {
-    var argsLen = arguments.length;
-
-    // define(factory)
-    if (argsLen === 1) {
-      factory = id;
-      id = undefined;
-    }
-    // define(id || deps, factory)
-    else if (argsLen === 2) {
-      factory = deps;
-      deps = undefined;
-
-      // define(deps, factory)
-      if (util.isArray(id)) {
-        deps = id;
-        id = undefined;
-      }
-    }
-
-    // Parse dependencies
-    if (!util.isArray(deps) && util.isFunction(factory)) {
-      deps = parseDependencies(factory.toString());
-    }
-
-    // Get url directly for specific modules.
-    if (id) {
-      var uri = util.id2Uri(id);
-    }
-    // Try to derive url in IE6-9 for anonymous modules.
-    else if (document.attachEvent && !util.isOpera) {
-
-      // Try to get the current script
-      var script = util.getCurrentScript();
-      if (script) {
-        uri = util.unParseMap(util.getScriptAbsoluteSrc(script));
-      }
-
-      if (!uri) {
-        util.log('Failed to derive URL from interactive script for:',
-            factory.toString());
-
-        // NOTE: If the id-deriving methods above is failed, then falls back
-        // to use onload event to get the url.
-      }
-    }
-
-    var mod = new fn.Module(id, deps, factory);
-
-    if (uri) {
-      util.memoize(uri, mod);
-      data.packageMods.push(mod);
-    }
-    else {
-      // Saves information for "memoizing" work in the onload event.
-      data.anonymousMod = mod;
-    }
-
+        node.getAttribute('src', 4)
   }
 
 
-  function parseDependencies(code) {
+  util.importStyle = function(cssText, id) {
+    // Don't add multi times
+    if (id && doc.getElementById(id)) return
+
+    var element = doc.createElement('style')
+    id && (element.id = id)
+
+    // Adds to DOM first to avoid the css hack invalid
+    head.appendChild(element)
+
+    // IE
+    if (element.styleSheet) {
+      element.styleSheet.cssText = cssText
+    }
+    // W3C
+    else {
+      element.appendChild(doc.createTextNode(cssText))
+    }
+  }
+
+
+  var UA = navigator.userAgent
+
+  // `onload` event is supported in WebKit since 535.23
+  // Ref:
+  //  - https://bugs.webkit.org/show_activity.cgi?id=38995
+  var isOldWebKit = Number(UA.replace(/.*AppleWebKit\/(\d+)\..*/, '$1')) < 536
+
+  // `onload/onerror` event is supported since Firefox 9.0
+  // Ref:
+  //  - https://bugzilla.mozilla.org/show_bug.cgi?id=185236
+  //  - https://developer.mozilla.org/en/HTML/Element/link#Stylesheet_load_events
+  var isOldFirefox = UA.indexOf('Firefox') > 0 &&
+      !('onload' in document.createElement('link'))
+
+
+  /**
+   * References:
+   *  - http://unixpapa.com/js/dyna.html
+   *  - ../test/research/load-js-css/test.html
+   *  - ../test/issues/load-css/test.html
+   *  - http://www.blaze.io/technical/ies-premature-execution-problem/
+   */
+
+})(seajs._util, seajs._config, this)
+
+/**
+ * The parser for dependencies
+ */
+;(function(util) {
+
+  var REQUIRE_RE = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g
+
+
+  util.parseDependencies = function(code) {
     // Parse these `requires`:
     //   var a = require('a');
     //   someMethod(require('b'));
@@ -754,549 +681,593 @@ seajs._fn = {};
     //   ...
     // Doesn't parse:
     //   someInstance.require(...);
-    var pattern = /(?:^|[^.])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g;
-    var ret = [], match;
+    var ret = [], match
 
-    code = removeComments(code);
-    while ((match = pattern.exec(code))) {
+    code = removeComments(code)
+    REQUIRE_RE.lastIndex = 0
+
+    while ((match = REQUIRE_RE.exec(code))) {
       if (match[2]) {
-        ret.push(match[2]);
+        ret.push(match[2])
       }
     }
 
-    return util.unique(ret);
+    return util.unique(ret)
   }
 
-
-  // http://lifesinger.github.com/lab/2011/remove-comments-safely/
+  // See: research/remove-comments-safely
   function removeComments(code) {
     return code
-        .replace(/(?:^|\n|\r)\s*\/\*[\s\S]*?\*\/\s*(?:\r|\n|$)/g, '\n')
-        .replace(/(?:^|\n|\r)\s*\/\/.*(?:\r|\n|$)/g, '\n');
+        .replace(/^\s*\/\*[\s\S]*?\*\/\s*$/mg, '') // block comments
+        .replace(/^\s*\/\/.*$/mg, '') // line comments
+  }
+
+})(seajs._util)
+
+/**
+ * The Module constructor and its methods
+ */
+;(function(seajs, util, config) {
+
+  var cachedModules = {}
+  var cachedModifiers = {}
+  var compileStack = []
+
+  var STATUS = {
+    'FETCHING': 1,  // The module file is fetching now.
+    'FETCHED': 2,   // The module file has been fetched.
+    'SAVED': 3,     // The module info has been saved.
+    'READY': 4,     // All dependencies and self are ready to compile.
+    'COMPILING': 5, // The module is in compiling now.
+    'COMPILED': 6   // The module is compiled and module.exports is available.
   }
 
 
-  fn.define = define;
+  function Module(uri, status) {
+    this.uri = uri
+    this.status = status || 0
 
-})(seajs._util, seajs._data, seajs._fn);
-
-/**
- * @fileoverview The factory for "require".
- */
-
-(function(util, data, fn) {
-
-  var slice = Array.prototype.slice;
-  var RP = Require.prototype;
+    // this.id is set when saving
+    // this.dependencies is set when saving
+    // this.factory is set when saving
+    // this.exports is set when compiling
+    // this.parent is set when compiling
+    // this.require is set when compiling
+  }
 
 
-  /**
-   * the require constructor function
-   * @param {string} id The module id.
-   */
-  function Require(id) {
-    var context = this.context;
-    var uri, mod;
+  Module.prototype._use = function(ids, callback) {
+    util.isString(ids) && (ids = [ids])
+    var uris = resolve(ids, this.uri)
 
-    // require(mod) ** inner use ONLY.
-    if (util.isObject(id)) {
-      mod = id;
-      uri = mod.id;
+    this._load(uris, function() {
+      var args = util.map(uris, function(uri) {
+        return uri ? cachedModules[uri]._compile() : null
+      })
+
+      if (callback) {
+        callback.apply(null, args)
+      }
+    })
+  }
+
+
+  Module.prototype._load = function(uris, callback) {
+    var unLoadedUris = util.filter(uris, function(uri) {
+      return uri && (!cachedModules[uri] ||
+          cachedModules[uri].status < STATUS.READY)
+    })
+
+    var length = unLoadedUris.length
+    if (length === 0) {
+      callback()
+      return
     }
-    // NOTICE: id maybe undefined in 404 etc cases.
-    else if (util.isString(id)) {
-      uri = RP.resolve(id, context);
-      mod = data.memoizedMods[uri];
+
+    var remain = length
+
+    for (var i = 0; i < length; i++) {
+      (function(uri) {
+        var module = cachedModules[uri] ||
+            (cachedModules[uri] = new Module(uri, STATUS.FETCHING))
+
+        module.status >= STATUS.FETCHED ? onFetched() : fetch(uri, onFetched)
+
+        function onFetched() {
+          // cachedModules[uri] is changed in un-correspondence case
+          module = cachedModules[uri]
+
+          if (module.status >= STATUS.SAVED) {
+            var deps = getPureDependencies(module)
+
+            if (deps.length) {
+              Module.prototype._load(deps, function() {
+                cb(module)
+              })
+            }
+            else {
+              cb(module)
+            }
+          }
+          // Maybe failed to fetch successfully, such as 404 or non-module.
+          // // In these cases, module.status stay at FETCHING or FETCHED.
+          else {
+            util.log('It is not a valid CMD module: ' + uri)
+            cb()
+          }
+        }
+
+      })(unLoadedUris[i])
+    }
+
+    function cb(module) {
+      (module || {}).status < STATUS.READY && (module.status = STATUS.READY)
+      --remain === 0 && callback()
+    }
+  }
+
+
+  Module.prototype._compile = function() {
+    var module = this
+    if (module.status === STATUS.COMPILED) {
+      return module.exports
     }
 
     // Just return null when:
     //  1. the module file is 404.
     //  2. the module file is not written with valid module format.
     //  3. other error cases.
-    if (!mod) {
-      return null;
+    if (module.status < STATUS.READY && !hasModifiers(module)) {
+      return null
     }
 
-    // Checks circular dependencies.
-    if (isCircular(context, uri)) {
-      util.log('Found circular dependencies:', uri);
-      return mod.exports;
+    module.status = STATUS.COMPILING
+
+
+    function require(id) {
+      var uri = resolve(id, module.uri)
+      var child = cachedModules[uri]
+
+      // Just return null when uri is invalid.
+      if (!child) {
+        return null
+      }
+
+      // Avoids circular calls.
+      if (child.status === STATUS.COMPILING) {
+        return child.exports
+      }
+
+      child.parent = module
+      return child._compile()
     }
 
-    // Initializes module exports.
-    if (!mod.exports) {
-      initExports(mod, {
-        uri: uri,
-        parent: context
-      });
+    require.async = function(ids, callback) {
+      module._use(ids, callback)
     }
 
-    return mod.exports;
+    require.resolve = function(id) {
+      return resolve(id, module.uri)
+    }
+
+    require.cache = cachedModules
+
+
+    module.require = require
+    module.exports = {}
+    var factory = module.factory
+
+    if (util.isFunction(factory)) {
+      compileStack.push(module)
+      runInModuleContext(factory, module)
+      compileStack.pop()
+    }
+    else if (factory !== undefined) {
+      module.exports = factory
+    }
+
+    module.status = STATUS.COMPILED
+    execModifiers(module)
+    return module.exports
   }
 
 
-  /**
-   * Use the internal require() machinery to look up the location of a module,
-   * but rather than loading the module, just return the resolved filepath.
-   *
-   * @param {string|Array.<string>} ids The module ids to be resolved.
-   * @param {Object=} context The context of require function.
-   */
-  RP.resolve = function(ids, context) {
+  Module._define = function(id, deps, factory) {
+    var argsLength = arguments.length
+
+    // define(factory)
+    if (argsLength === 1) {
+      factory = id
+      id = undefined
+    }
+    // define(id || deps, factory)
+    else if (argsLength === 2) {
+      factory = deps
+      deps = undefined
+
+      // define(deps, factory)
+      if (util.isArray(id)) {
+        deps = id
+        id = undefined
+      }
+    }
+
+    // Parses dependencies.
+    if (!util.isArray(deps) && util.isFunction(factory)) {
+      deps = util.parseDependencies(factory.toString())
+    }
+
+    var meta = { id: id, dependencies: deps, factory: factory }
+    var derivedUri
+
+    // Try to derive uri in IE6-9 for anonymous modules.
+    if (document.attachEvent) {
+      // Try to get the current script.
+      var script = util.getCurrentScript()
+      if (script) {
+        derivedUri = util.unParseMap(util.getScriptAbsoluteSrc(script))
+      }
+
+      if (!derivedUri) {
+        util.log('Failed to derive URI from interactive script for:',
+            factory.toString(), 'warn')
+
+        // NOTE: If the id-deriving methods above is failed, then falls back
+        // to use onload event to get the uri.
+      }
+    }
+
+    // Gets uri directly for specific module.
+    var resolvedUri = id ? resolve(id) : derivedUri
+
+    if (resolvedUri) {
+      // For IE:
+      // If the first module in a package is not the cachedModules[derivedUri]
+      // self, it should assign to the correct module when found.
+      if (resolvedUri === derivedUri) {
+        var refModule = cachedModules[derivedUri]
+        if (refModule && refModule.realUri &&
+            refModule.status === STATUS.SAVED) {
+          cachedModules[derivedUri] = null
+        }
+      }
+
+      var module = save(resolvedUri, meta)
+
+      // For IE:
+      // Assigns the first module in package to cachedModules[derivedUrl]
+      if (derivedUri) {
+        // cachedModules[derivedUri] may be undefined in combo case.
+        if ((cachedModules[derivedUri] || {}).status === STATUS.FETCHING) {
+          cachedModules[derivedUri] = module
+          module.realUri = derivedUri
+        }
+      }
+      else {
+        firstModuleInPackage || (firstModuleInPackage = module)
+      }
+    }
+    else {
+      // Saves information for "memoizing" work in the onload event.
+      anonymousModuleMeta = meta
+    }
+
+  }
+
+
+  Module._getCompilingModule = function() {
+    return compileStack[compileStack.length - 1]
+  }
+
+
+  Module._find = function(selector) {
+    var matches = []
+
+    util.forEach(util.keys(cachedModules), function(uri) {
+      if (util.isString(selector) && uri.indexOf(selector) > -1 ||
+          util.isRegExp(selector) && selector.test(uri)) {
+        var module = cachedModules[uri]
+        module.exports && matches.push(module.exports)
+      }
+    })
+
+    var length = matches.length
+
+    if (length === 1) {
+      matches = matches[0]
+    }
+    else if (length === 0) {
+      matches = null
+    }
+
+    return matches
+  }
+
+
+  Module._modify = function(id, modifier) {
+    var uri = resolve(id)
+    var module = cachedModules[uri]
+
+    if (module && module.status === STATUS.COMPILED) {
+      runInModuleContext(modifier, module)
+    }
+    else {
+      cachedModifiers[uri] || (cachedModifiers[uri] = [])
+      cachedModifiers[uri].push(modifier)
+    }
+
+    return seajs
+  }
+
+
+  // For plugin developers
+  Module.STATUS = STATUS
+  Module._resolve = util.id2Uri
+  Module._fetch = util.fetch
+  Module.cache = cachedModules
+
+
+  // Helpers
+  // -------
+
+  var fetchingList = {}
+  var fetchedList = {}
+  var callbackList = {}
+  var anonymousModuleMeta = null
+  var firstModuleInPackage = null
+  var circularCheckStack = []
+
+  function resolve(ids, refUri) {
     if (util.isString(ids)) {
-      return util.id2Uri(ids, (context || this.context || {}).uri);
+      return Module._resolve(ids, refUri)
     }
 
     return util.map(ids, function(id) {
-      return RP.resolve(id, context);
-    });
-  };
-
-
-  /**
-   * Loads the specified modules asynchronously and execute the optional
-   * callback when complete.
-   * @param {Array.<string>} ids The specified modules.
-   * @param {function(*)=} callback The optional callback function.
-   */
-  RP.async = function(ids, callback) {
-    fn.load(ids, callback, this.context);
-  };
-
-
-  /**
-   * Plugin can override this method to add custom loading.
-   */
-  RP.load = function(uri, callback, charset) {
-    util.getAsset(uri, callback, charset);
-  };
-
-
-  /**
-   * The factory of "require" function.
-   * @param {Object} context The data related to "require" instance.
-   */
-  function createRequire(context) {
-    // context: {
-    //   uri: '',
-    //   parent: context
-    // }
-    var that = { context: context || {} };
-
-    function require(id) {
-      return Require.call(that, id);
-    }
-
-    require.constructor = Require;
-
-    for (var p in RP) {
-      if (RP.hasOwnProperty(p)) {
-        (function(name) {
-          require[name] = function() {
-            return RP[name].apply(that, slice.call(arguments));
-          };
-        })(p);
-      }
-    }
-
-    return require;
+      return resolve(id, refUri)
+    })
   }
 
-
-  function initExports(mod, context) {
-    var ret;
-    var factory = mod.factory;
-
-    mod.exports = {};
-    delete mod.factory;
-    delete mod.ready;
-
-    if (util.isFunction(factory)) {
-      ret = factory(createRequire(context), mod.exports, mod);
-      if (ret !== undefined) {
-        mod.exports = ret;
-      }
-    }
-    else if (factory !== undefined) {
-      mod.exports = factory;
-    }
-  }
-
-
-  function isCircular(context, uri) {
-    if (context.uri === uri) {
-      return true;
-    }
-    if (context.parent) {
-      return isCircular(context.parent, uri);
-    }
-    return false;
-  }
-
-
-  fn.Require = Require;
-  fn.createRequire = createRequire;
-
-})(seajs._util, seajs._data, seajs._fn);
-/**
- * @fileoverview Loads a module and gets it ready to be require()d.
- */
-
-(function(util, data, fn) {
-
-  var memoizedMods = data.memoizedMods;
-  var config = data.config;
-  var RP = fn.Require.prototype;
-
-  var preloadingCount = 0;
-  var preloadCallbacks = [];
-  var preloadMods = {};
-
-
-  /**
-   * Loads preload modules before callback.
-   * @param {function()} callback The callback function.
-   * @param {string=} onloadUri The uri passed from onLoad callback.
-   */
-  function preload(callback, onloadUri) {
-    var mods = config.preload;
-    var len = mods.length, fn;
-
-    if (len) {
-      preloadingCount += len;
-      config.preload = [];
-
-      util.forEach(RP.resolve(mods), function(uri) {
-        preloadMods[uri] = 1;
-      });
-
-      load(mods, function() {
-        preloadingCount -= len;
-        preload(callback);
-      });
-    }
-    else if (onloadUri && isFromPreload(onloadUri)) {
-      callback();
-    }
-    else {
-      preloadCallbacks.push(callback);
-
-      if (preloadingCount === 0) {
-        while (fn = preloadCallbacks.shift()) {
-          fn();
-        }
-      }
-    }
-  }
-
-
-  /**
-   * Loads modules to the environment.
-   * @param {Array.<string>} ids An array composed of module id.
-   * @param {function(*)=} callback The callback function.
-   * @param {Object=} context The context of current executing environment.
-   */
-  function load(ids, callback, context) {
-    if (util.isString(ids)) {
-      ids = [ids];
-    }
-    var uris = RP.resolve(ids, context);
-
-    provide(uris, function() {
-      var require = fn.createRequire(context);
-
-      var args = util.map(uris, function(uri) {
-        return require(data.memoizedMods[uri]);
-      });
-
-      if (callback) {
-        callback.apply(null, args);
-      }
-    });
-  }
-
-
-  /**
-   * Provides modules to the environment.
-   * @param {Array.<string>} uris An array composed of module uri.
-   * @param {function()=} callback The callback function.
-   */
-  function provide(uris, callback) {
-    var unReadyUris = getUnReadyUris(uris);
-
-    if (unReadyUris.length === 0) {
-      return onProvide();
-    }
-
-    for (var i = 0, n = unReadyUris.length, remain = n; i < n; i++) {
-      (function(uri) {
-
-        if (memoizedMods[uri]) {
-          onLoad();
-        } else {
-          fetch(uri, onLoad);
-        }
-
-        function onLoad() {
-          // Preload here to make sure that:
-          // 1. RP.resolve etc. modified by some preload plugins can be used
-          //    immediately in the id resolving logic.
-          //    Ref: issues/plugin-coffee
-          // 2. The functions provided by the preload modules can be used
-          //    immediately in factories of the following modules.
-          preload(function() {
-            var mod = memoizedMods[uri];
-
-            if (mod) {
-              var deps = mod.dependencies;
-
-              if (deps.length) {
-                // Converts deps to absolute id.
-                deps = mod.dependencies = RP.resolve(deps, {
-                  uri: mod.id
-                });
-              }
-
-              var m = deps.length;
-
-              if (m) {
-                // if a -> [b -> [c -> [a, e], d]]
-                // when use(['a', 'b'])
-                // should remove a from c.deps
-                deps = removeCyclicWaitingUris(uri, deps);
-                m = deps.length;
-              }
-
-              if (m) {
-                remain += m;
-                provide(deps, function() {
-                  remain -= m;
-                  if (remain === 0) onProvide();
-                });
-              }
-            }
-
-            if (--remain === 0) onProvide();
-          }, uri);
-        }
-
-      })(unReadyUris[i]);
-    }
-
-    function onProvide() {
-      setReadyState(unReadyUris);
-      callback();
-    }
-  }
-
-
-  var fetchingList = {};
-  var fetchedList = {};
-  var callbackList = {};
-
-  /**
-   * Fetches a module file.
-   * @param {string} uri The module uri.
-   * @param {function()} callback The callback function.
-   */
   function fetch(uri, callback) {
-    var srcUrl = util.parseMap(uri);
+    var requestUri = util.parseMap(uri)
 
-    if (fetchedList[srcUrl]) {
-      callback();
-      return;
+    if (fetchedList[requestUri]) {
+      // See test/issues/debug-using-map
+      cachedModules[uri] = cachedModules[requestUri]
+      callback()
+      return
     }
 
-    if (fetchingList[srcUrl]) {
-      callbackList[srcUrl].push(callback);
-      return;
+    if (fetchingList[requestUri]) {
+      callbackList[requestUri].push(callback)
+      return
     }
 
-    fetchingList[srcUrl] = true;
-    callbackList[srcUrl] = [callback];
+    fetchingList[requestUri] = true
+    callbackList[requestUri] = [callback]
 
-    RP.load(
-        srcUrl,
+    // Fetches it
+    Module._fetch(
+        requestUri,
 
         function() {
-          fetchedList[srcUrl] = true;
+          fetchedList[requestUri] = true
 
-          // Memoize anonymous module
-          var mod = data.anonymousMod;
-          if (mod) {
-            // Don't override existed module
-            if (!memoizedMods[uri]) {
-              memoize(uri, mod);
-            }
-            data.anonymousMod = null;
+          // Updates module status
+          var module = cachedModules[uri]
+          if (module.status === STATUS.FETCHING) {
+            module.status = STATUS.FETCHED
           }
 
-          // Assign the first module in package to memoizeMos[uri]
+          // Saves anonymous module meta data
+          if (anonymousModuleMeta) {
+            save(uri, anonymousModuleMeta)
+            anonymousModuleMeta = null
+          }
+
+          // Assigns the first module in package to cachedModules[uri]
           // See: test/issues/un-correspondence
-          mod = data.packageMods[0];
-          if (mod && !memoizedMods[uri]) {
-            memoizedMods[uri] = mod;
+          if (firstModuleInPackage && module.status === STATUS.FETCHED) {
+            cachedModules[uri] = firstModuleInPackage
+            firstModuleInPackage.realUri = uri
           }
-          data.packageMods = [];
+          firstModuleInPackage = null
 
-          // Clear
-          if (fetchingList[srcUrl]) {
-            delete fetchingList[srcUrl];
+          // Clears
+          if (fetchingList[requestUri]) {
+            delete fetchingList[requestUri]
           }
 
-          // Call callbackList
-          if (callbackList[srcUrl]) {
-            util.forEach(callbackList[srcUrl], function(fn) {
-              fn();
-            });
-            delete callbackList[srcUrl];
+          // Calls callbackList
+          if (callbackList[requestUri]) {
+            util.forEach(callbackList[requestUri], function(fn) {
+              fn()
+            })
+            delete callbackList[requestUri]
           }
 
         },
 
-        data.config.charset
-    );
+        config.charset
+    )
   }
 
+  function save(uri, meta) {
+    var module = cachedModules[uri] || (cachedModules[uri] = new Module(uri))
 
-  // Helpers
+    // Don't override already saved module
+    if (module.status < STATUS.SAVED) {
+      // Lets anonymous module id equal to its uri
+      module.id = meta.id || uri
 
-  /**
-   * Caches mod info to memoizedMods.
-   */
-  function memoize(uri, mod) {
-    mod.id = uri; // change id to the absolute path.
-    memoizedMods[uri] = mod;
+      module.dependencies = resolve(
+          util.filter(meta.dependencies || [], function(dep) {
+            return !!dep
+          }), uri)
+
+      module.factory = meta.factory
+
+      // Updates module status
+      module.status = STATUS.SAVED
+    }
+
+    return module
   }
 
-  /**
-   * Set mod.ready to true when all the requires of the module is loaded.
-   */
-  function setReadyState(uris) {
-    util.forEach(uris, function(uri) {
-      if (memoizedMods[uri]) {
-        memoizedMods[uri].ready = true;
+  function runInModuleContext(fn, module) {
+    var ret = fn(module.require, module.exports, module)
+    if (ret !== undefined) {
+      module.exports = ret
+    }
+  }
+
+  function hasModifiers(module) {
+    return !!cachedModifiers[module.realUri || module.uri]
+  }
+
+  function execModifiers(module) {
+    var uri = module.realUri || module.uri
+    var modifiers = cachedModifiers[uri]
+
+    if (modifiers) {
+      util.forEach(modifiers, function(modifier) {
+        runInModuleContext(modifier, module)
+      })
+
+      delete cachedModifiers[uri]
+    }
+  }
+
+  function getPureDependencies(module) {
+    var uri = module.uri
+
+    return util.filter(module.dependencies, function(dep) {
+      circularCheckStack = [uri]
+
+      var isCircular = isCircularWaiting(cachedModules[dep], uri)
+      if (isCircular) {
+        circularCheckStack.push(uri)
+        printCircularLog(circularCheckStack)
       }
-    });
+
+      return !isCircular
+    })
   }
 
-  /**
-   * Removes the "ready = true" uris from input.
-   */
-  function getUnReadyUris(uris) {
-    return util.filter(uris, function(uri) {
-      var mod = memoizedMods[uri];
-      return !mod || !mod.ready;
-    });
-  }
+  function isCircularWaiting(module, uri) {
+    if (!module || module.status !== STATUS.SAVED) {
+      return false
+    }
 
-  /**
-   * if a -> [b -> [c -> [a, e], d]]
-   * call removeMemoizedCyclicUris(c, [a, e])
-   * return [e]
-   */
-  function removeCyclicWaitingUris(uri, deps) {
-    return util.filter(deps, function(dep) {
-      return !isCyclicWaiting(memoizedMods[dep], uri);
-    });
-  }
+    circularCheckStack.push(module.uri)
+    var deps = module.dependencies
 
-  function isCyclicWaiting(mod, uri) {
-    if (!mod || mod.ready) return false;
-
-    var deps = mod.dependencies || [];
     if (deps.length) {
-      if (~util.indexOf(deps, uri)) {
-        return true;
+      if (util.indexOf(deps, uri) > -1) {
+        return true
       }
-      else {
-        for (var i = 0; i < deps.length; i++) {
-          if (isCyclicWaiting(memoizedMods[deps[i]], uri)) {
-            return true;
-          }
+
+      for (var i = 0; i < deps.length; i++) {
+        if (isCircularWaiting(cachedModules[deps[i]], uri)) {
+          return true
         }
-        return false;
       }
+
+      return false
     }
 
-    return false;
+    return false
   }
 
-  function isFromPreload(uri) {
-    if (preloadMods[uri]) return true;
-
-    for (var m in preloadMods) {
-      if (memoizedMods[m] &&
-          ~util.indexOf(memoizedMods[m].dependencies, uri)) {
-        return true;
-      }
-    }
-
-    return false;
+  function printCircularLog(stack, type) {
+    util.log('Found circular dependencies:', stack.join(' --> '), type)
   }
 
 
   // Public API
+  // ----------
 
-  util.memoize = memoize;
-  fn.preload = preload;
-  fn.load = load;
+  var globalModule = new Module(util.pageUri, STATUS.COMPILED)
 
-})(seajs._util, seajs._data, seajs._fn);
+  seajs.use = function(ids, callback) {
+    var preloadMods = config.preload
+
+    if (preloadMods.length) {
+      // Loads preload modules before all other modules.
+      globalModule._use(preloadMods, function() {
+        config.preload = []
+        globalModule._use(ids, callback)
+      })
+    }
+    else {
+      globalModule._use(ids, callback)
+    }
+
+    return seajs
+  }
+
+
+  // For normal users
+  seajs.define = Module._define
+  seajs.cache = Module.cache
+  seajs.find = Module._find
+  seajs.modify = Module._modify
+
+
+  // For plugin developers
+  seajs.pluginSDK = {
+    Module: Module,
+    util: util,
+    config: config
+  }
+
+})(seajs, seajs._util, seajs._config)
 
 /**
- * @fileoverview The configuration.
+ * The configuration
  */
+;(function(seajs, util, config) {
 
-(function(host, util, data, fn) {
-
-  var config = data.config;
-
-  var noCachePrefix = 'seajs-ts=';
-  var noCacheTimeStamp = noCachePrefix + util.now();
+  var noCachePrefix = 'seajs-ts='
+  var noCacheTimeStamp = noCachePrefix + util.now()
 
 
-  // Async inserted script.
-  var loaderScript = document.getElementById('seajsnode');
+  // Async inserted script
+  var loaderScript = document.getElementById('seajsnode')
 
-  // Static script.
+  // Static script
   if (!loaderScript) {
-    var scripts = document.getElementsByTagName('script');
-    loaderScript = scripts[scripts.length - 1];
+    var scripts = document.getElementsByTagName('script')
+    loaderScript = scripts[scripts.length - 1]
   }
 
   var loaderSrc = util.getScriptAbsoluteSrc(loaderScript) ||
-      util.pageUrl; // When sea.js is inline, set base to pageUrl.
+      util.pageUri // When sea.js is inline, set base to pageUri.
 
-  var base = util.dirname(loaderSrc);
-  util.loaderDir = base;
+  var base = util.dirname(getLoaderActualSrc(loaderSrc))
+  util.loaderDir = base
 
   // When src is "http://test.com/libs/seajs/1.0.0/sea.js", redirect base
   // to "http://test.com/libs/"
-  var match = base.match(/^(.+\/)seajs\/[\d\.]+\/$/);
+  var match = base.match(/^(.+\/)seajs\/[\d\.]+\/$/)
   if (match) {
-    base = match[1];
+    base = match[1]
   }
 
-  config.base = base;
+  config.base = base
 
 
-  var dataMain = loaderScript.getAttribute('data-main');
+  var dataMain = loaderScript.getAttribute('data-main')
   if (dataMain) {
-    // data-main="abc" is equivalent to data-main="./abc"
-    if (util.isTopLevel(dataMain)) {
-      dataMain = './' + dataMain;
-    }
-    config.main = dataMain;
+    config.main = dataMain
   }
 
 
-  // The max time to load a script file.
-  config.timeout = 20000;
+  // The default charset of module file.
+  config.charset = 'utf-8'
 
 
   /**
-   * The function to configure the framework.
+   * The function to configure the framework
    * config({
    *   'base': 'path/to/base',
    *   'alias': {
@@ -1309,208 +1280,191 @@ seajs._fn = {};
    *   ],
    *   preload: [],
    *   charset: 'utf-8',
-   *   timeout: 20000, // 20s
    *   debug: false
-   * });
+   * })
    *
-   * @param {Object} o The config object.
    */
-  fn.config = function(o) {
+  seajs.config = function(o) {
     for (var k in o) {
-      var previous = config[k];
-      var current = o[k];
+      if (!o.hasOwnProperty(k)) continue
+
+      var previous = config[k]
+      var current = o[k]
 
       if (previous && k === 'alias') {
         for (var p in current) {
           if (current.hasOwnProperty(p)) {
-            checkAliasConflict(previous[p], current[p]);
-            previous[p] = current[p];
+
+            var prevValue = previous[p]
+            var currValue = current[p]
+
+            // Converts {jquery: '1.7.2'} to {jquery: 'jquery/1.7.2/jquery'}
+            if (/^\d+\.\d+\.\d+$/.test(currValue)) {
+              currValue = p + '/' + currValue + '/' + p
+            }
+
+            checkAliasConflict(prevValue, currValue, p)
+            previous[p] = currValue
+
           }
         }
       }
       else if (previous && (k === 'map' || k === 'preload')) {
         // for config({ preload: 'some-module' })
-        if (!util.isArray(current)) {
-          current = [current];
+        if (util.isString(current)) {
+          current = [current]
         }
+
         util.forEach(current, function(item) {
-          if (item) { // Ignore empty string.
-            previous.push(item);
+          if (item) {
+            previous.push(item)
           }
-        });
-        // NOTICE: no need to check conflict for map and preload.
+        })
       }
       else {
-        config[k] = current;
+        config[k] = current
       }
     }
 
-    // Make sure config.base is absolute path.
-    var base = config.base;
+    // Makes sure config.base is an absolute path.
+    var base = config.base
     if (base && !util.isAbsolute(base)) {
-      config.base = util.id2Uri('./' + base + '#');
+      config.base = util.id2Uri((util.isRoot(base) ? '' : './') + base + '/')
     }
 
-    // Use map to implement nocache
+    // Uses map to implement nocache.
     if (config.debug === 2) {
-      config.debug = 1;
-      fn.config({
+      config.debug = 1
+      seajs.config({
         map: [
-          [/.*/, function(url) {
+          [/^.*$/, function(url) {
             if (url.indexOf(noCachePrefix) === -1) {
-              url += (url.indexOf('?') === -1 ? '?' : '&') + noCacheTimeStamp;
+              url += (url.indexOf('?') === -1 ? '?' : '&') + noCacheTimeStamp
             }
-            return url;
+            return url
           }]
         ]
-      });
+      })
     }
 
-    // Sync
+    debugSync()
+
+    return this
+  }
+
+
+  function debugSync() {
     if (config.debug) {
-      host.debug = config.debug;
+      // For convenient reference
+      seajs.debug = !!config.debug
+    }
+  }
+
+  debugSync()
+
+
+  function getLoaderActualSrc(src) {
+    if (src.indexOf('??') === -1) {
+      return src
     }
 
-    return this;
-  };
+    // Such as: http://cdn.com/??seajs/1.2.0/sea.js,jquery/1.7.2/jquery.js
+    // Only support nginx combo style rule. If you use other combo rule, please
+    // explicitly config the base path and the alias for plugins.
+    var parts = src.split('??')
+    var root = parts[0]
+    var paths = util.filter(parts[1].split(','), function(str) {
+      return str.indexOf('sea.js') !== -1
+    })
 
+    return root + paths[0]
+  }
 
-  function checkAliasConflict(previous, current) {
+  function checkAliasConflict(previous, current, key) {
     if (previous && previous !== current) {
-      util.error('Alias is conflicted:', current);
+      util.log('The alias config is conflicted:',
+          'key =', '"' + key + '"',
+          'previous =', '"' + previous + '"',
+          'current =', '"' + current + '"',
+          'warn')
     }
   }
 
-})(seajs, seajs._util, seajs._data, seajs._fn);
+})(seajs, seajs._util, seajs._config)
 
 /**
- * @fileoverview Prepare for plugins environment.
+ * Prepare for debug mode
  */
+;(function(seajs, util, global) {
 
-(function(data, util, fn, global) {
-
-  var config = data.config;
-
-
-  // register plugin names
-  var alias = {};
-  var loaderDir = util.loaderDir;
-
-  util.forEach(
-      ['base', 'map', 'text', 'json', 'coffee', 'less'],
-      function(name) {
-        name = 'plugin-' + name;
-        alias[name] = loaderDir + name;
-      });
-
-  fn.config({
-    alias: alias
-  });
+  // The safe and convenient version of console.log
+  seajs.log = util.log
 
 
-  // handle seajs-debug
-  if (~global.location.search.indexOf('seajs-debug') ||
-      ~document.cookie.indexOf('seajs=1')) {
-    fn.config({ debug: 2 });
-    config.preload.push('plugin-map');
+  // Creates a stylesheet from a text blob of rules.
+  seajs.importStyle = util.importStyle
+
+
+  // Sets a alias to `sea.js` directory for loading plugins.
+  seajs.config({
+    alias: { seajs: util.loaderDir }
+  })
+
+  // Uses `seajs-debug` flag to turn on debug mode.
+  if (global.location.search.indexOf('seajs-debug') > -1 ||
+      document.cookie.indexOf('seajs=1') > -1) {
+    seajs.config({ debug: 2 }).use('seajs/plugin-debug')
+
+    // Delays `seajs.use` calls to the onload of `mapfile`.
+    seajs._use = seajs.use
+    seajs._useArgs = []
+    seajs.use = function() { seajs._useArgs.push(arguments); return seajs }
+  }
+
+})(seajs, seajs._util, this)
+
+/**
+ * The bootstrap and entrances
+ */
+;(function(seajs, config, global) {
+
+  var _seajs = seajs._seajs
+
+  // Avoids conflicting when sea.js is loaded multi times.
+  if (_seajs && !_seajs['args']) {
+    global.seajs = seajs._seajs
+    return
   }
 
 
-})(seajs._data, seajs._util, seajs._fn, this);
-
-/**
- * @fileoverview The bootstrap and entrances.
- */
-
-(function(host, data, fn) {
-
-  /**
-   * Loads modules to the environment.
-   * @param {Array.<string>} ids An array composed of module id.
-   * @param {function(*)=} callback The callback function.
-   */
-  fn.use = function(ids, callback) {
-    fn.preload(function() {
-      fn.load(ids, callback);
-    });
-  };
+  // Assigns to global define.
+  global.define = seajs.define
 
 
-  // data-main
-  var mainModuleId = data.config.main;
-  if (mainModuleId) {
-    fn.use([mainModuleId]);
-  }
-
+  // Loads the data-main module automatically.
+  config.main && seajs.use(config.main)
 
   // Parses the pre-call of seajs.config/seajs.use/define.
   // Ref: test/bootstrap/async-3.html
-  (function(args) {
+  ;(function(args) {
     if (args) {
       var hash = {
         0: 'config',
         1: 'use',
         2: 'define'
-      };
-      for (var i = 0; i < args.length; i += 2) {
-        fn[hash[args[i]]].apply(host, args[i + 1]);
       }
-      delete host._seajs;
+      for (var i = 0; i < args.length; i += 2) {
+        seajs[hash[args[i]]].apply(seajs, args[i + 1])
+      }
     }
-  })((host._seajs || 0)['args']);
-
-})(seajs, seajs._data, seajs._fn);
-
-/**
- * @fileoverview The public api of seajs.
- */
-
-(function(host, data, fn, global) {
-
-  // Avoids conflicting when sea.js is loaded multi times.
-  if (host._seajs) {
-    global.seajs = host._seajs;
-    return;
-  }
-
-  // SeaJS Loader API:
-  host.config = fn.config;
-  host.use = fn.use;
-
-  // Module Authoring API:
-  var previousDefine = global.define;
-  global.define = fn.define;
-
-
-  // For custom loader name.
-  host.noConflict = function(all) {
-    global.seajs = host._seajs;
-    if (all) {
-      global.define = previousDefine;
-      host.define = fn.define;
-    }
-    return host;
-  };
-
-
-  // Keep for plugin developers.
-  host.pluginSDK = {
-    util: host._util,
-    data: host._data
-  };
-
-
-  // For debug.
-  var debug = data.config.debug;
-  if (debug) {
-    host.debug = !!debug;
-  }
+  })((_seajs || 0)['args'])
 
 
   // Keeps clean!
-  delete host._util;
-  delete host._data;
-  delete host._fn;
-  delete host._seajs;
+  delete seajs.define
+  delete seajs._util
+  delete seajs._config
+  delete seajs._seajs
 
-})(seajs, seajs._data, seajs._fn, this);
+})(seajs, seajs._config, this)
+

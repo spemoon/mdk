@@ -30,7 +30,7 @@ define(function(require, exports, module) {
          */
         listen:function(actions, node, type) {
             actions = actions || {};
-            node = node && node[0] ? node : $(document);
+            node = node ? $(node) : $(document);
             type = type || 'click';
             
             var index = array.indexOf(node[0], cache.dom);

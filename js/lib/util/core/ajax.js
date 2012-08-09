@@ -21,6 +21,10 @@ define(function(require, exports, module) {
         }
     });
 
+    if(!!window.ActiveXObject) {// IE清除ajax缓存
+        $.ajaxSetup({cache:false});
+    }
+
     var r = {
         /**
          * 设置登录页面的URL，该方法最多调用一次
