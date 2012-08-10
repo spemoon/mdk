@@ -67,7 +67,7 @@ var program = require('commander');
     doc.sample += '\t\t 如果配置了--css=true，还将包含：/themes/default/lib.util.dom.event.css \n';
     doc.sample += '\t app.js 测试页面的js，该文件默认引入：\n'
     doc.sample += '\t\t /js/samples/samples.js \n';
-    doc.sample += '\t\t /js/lib/jquery/1.7.1/sea_jquery.js \n';
+    doc.sample += '\t\t /js/lib/jquery/x.y.z/jquery.js \n';
     doc.sample += '\t\t /js/lib/util/dom/event.js \n';
     doc.sample += '\t style.css 测试页面样式 \n';
 
@@ -229,7 +229,8 @@ var helper = {
         };
         pathTo.require = {
             seajs: 'js/lib/sea.js',
-            jquery: 'js/lib/jquery/sea_jquery.js',
+            seajs_config: 'js/lib/sea-config.js',
+            //jquery: 'js/lib/jquery/sea_jquery.js',
             globalCss: 'themes/global.css',
             qunitCss: 'js/lib/external/qunit/qunit.css',
             qunit: 'js/lib/external/qunit/sea_qunit.js'
@@ -245,7 +246,8 @@ var helper = {
             var success = helper.console(program.css == 'true');
             helper.mkdir(pathTo.folder.js, function() { // 建立js模块目录
                 helper.create(pathTo.source.js, pathTo.file.js, function(dest, data) { // 建立js模块文件
-                    fs.writeFile(dest, data.replace('{jquery}', helper.relative(pathLen) + pathTo.require.jquery));
+                    //fs.writeFile(dest, data.replace('{jquery}', helper.relative(pathLen) + pathTo.require.jquery));
+                    fs.writeFile(dest, data.replace('{pathToJs}', helper.relative(pathLen) + 'js/'));
                     success.show(pathTo.file.js, 'mod');
                 });
             });
@@ -264,14 +266,16 @@ var helper = {
                             .replace('{global.css}', helper.relative(pathLen + 2) + pathTo.require.globalCss)
                             .replace('{sample.css}', helper.relative(pathLen) + 'sample.css')
                             .replace('{style.css}', helper.relative(pathLen + 2) + 'themes/default/' + cssName)
-                            .replace('{sea.js}', helper.relative(pathLen + 2) + pathTo.require.seajs);
+                            .replace('{sea.js}', helper.relative(pathLen + 2) + pathTo.require.seajs)
+                            .replace('{sea-config.js}', helper.relative(pathLen + 2) + pathTo.require.seajs_config);
                         fs.writeFile(dest, data);
                     });
                     helper.create(pathTo.source.sample.js, pathTo.file.sample.js, function(dest, data) { // 例子JS文件
                         data = data.replace('modName', fileName)
                             .replace('{mod}', helper.relative(pathLen + 1) + mod + '.js')
                             .replace('{sample}', helper.relative(pathLen) + 'sample.js')
-                            .replace('{jquery}', helper.relative(pathLen + 2) + pathTo.require.jquery);
+                            .replace('{pathToJs}', helper.relative(pathLen + 2) + 'js/');
+                            //.replace('{jquery}', helper.relative(pathLen + 2) + pathTo.require.jquery);
                         fs.writeFile(dest, data);
                     });
                     helper.create(pathTo.source.sample.css, pathTo.file.sample.css); // 例子css文件
@@ -288,7 +292,7 @@ var helper = {
                     });
                     helper.create(pathTo.source.test.js, pathTo.file.test.js, function(dest, data) { // 单元测试js文件
                         data = data.replace('{qunit}', helper.relative(pathLen + 2) + pathTo.require.qunit)
-                            .replace('{jquery}', helper.relative(pathLen + 2) + pathTo.require.jquery)
+                            //.replace('{jquery}', helper.relative(pathLen + 2) + pathTo.require.jquery)
                             .replace('modName', fileName)
                             .replace('{mod}', helper.relative(pathLen + 2) + 'js/' + mod + '.js')
                             .replace('{package}', pathArr.join('.'));
