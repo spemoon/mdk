@@ -8,7 +8,11 @@
 		<link href="../../../../../../../themes/default/lib.util.core.dom.resize.css" rel="stylesheet" type="text/css"/>
 		<link href="style.css" rel="stylesheet" type="text/css"/>
         <script src="../../../../../../../js/lib/sea.js"></script>
-        <script>seajs.use(['../../../../../../../js/lib/sea-config.js', './app.js']);</script>
+        <script>
+            seajs.use('../../../../../../../js/lib/sea-config.js', function() {
+                seajs.use('./app.js');
+            });
+        </script>
     </head>
     <body>
     	<!------------------------------------------------------------------------------------------------->

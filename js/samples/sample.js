@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-    var $ = require('../lib/jquery/sea_jquery.js');
+    var $ = require('jquery');
     // 语法高亮
     //var highlighter = require('../lib/external/syntaxHighlighter/shBrushJScript.js');
     //highlighter.highlight();

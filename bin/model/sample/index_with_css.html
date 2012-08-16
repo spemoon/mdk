@@ -8,7 +8,11 @@
 		<link href="{style.css}" rel="stylesheet" type="text/css"/>
 		<link href="style.css" rel="stylesheet" type="text/css"/>
         <script src="{sea.js}"></script>
-        <script>seajs.use(['{sea-config.js}', './app.js']);</script>
+        <script>
+            seajs.use('{sea-config.js}', function() {
+                seajs.use('./app.js');
+            });
+        </script>
     </head>
     <body>
     	<!------------------------------------------------------------------------------------------------->

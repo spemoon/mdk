@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-    var $ = require('../../../../../../../js/lib/jquery/sea_jquery.js');
+    var $ = require('jquery');
     var section = require('../../../../../../lib/util/core/dom/section.js');
     var action = require('../../../../../../lib/util/core/dom/action.js');
     var lang = require('../../../../../../lib/util/core/lang.js');
@@ -364,7 +364,7 @@ define(function(require, exports, module) {
             }
         });
 
-        helper.highlight($('.left').find('li[data-view="nd"]').eq(0)).click();
+        helper.highlight($('.left').find('li').eq(0)).click();
         if($(window).scrollTop() > 50) {
             gotoTopNode.show();
         }

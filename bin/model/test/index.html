@@ -4,7 +4,12 @@
     <meta charset="utf-8"/>
     <title>QUnit Test Suite</title>
     <link rel="stylesheet" href="{qunit.css}" rel="stylesheet" type="text/css"/>
-    <script src="{sea.js}" data-main="./test.js"></script>
+    <script src="{sea.js}"></script>
+    <script>
+        seajs.use('{sea-config.js}', function() {
+            seajs.use('./test.js');
+        });
+    </script>
 </head>
     <body>
         <h1 id="qunit-header">QUnit Test Suite</h1>

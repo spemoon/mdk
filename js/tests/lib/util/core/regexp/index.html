@@ -5,7 +5,11 @@
     <title>QUnit Test Suite</title>
     <link rel="stylesheet" href="../../../../../../js/lib/external/qunit/qunit.css" rel="stylesheet" type="text/css"/>
     <script src="../../../../../../js/lib/sea.js"></script>
-    <script>seajs.use(['../../../../../../js/lib/sea-config.js', './test.js']);</script>
+    <script>
+        seajs.use('../../../../../../js/lib/sea-config.js', function() {
+            seajs.use('./test.js');
+        });
+    </script>
 </head>
     <body>
         <h1 id="qunit-header">QUnit Test Suite</h1>

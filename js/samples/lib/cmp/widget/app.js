@@ -1,6 +1,6 @@
 define(function(require, exports, module) {
     require('../../../sample.js');
-    var $ = require('../../../../../js/lib/jquery/sea_jquery.js');
+    var $ = require('jquery');
     var widget = require('../../../../lib/cmp/widget.js');
     var drag = require('../../../../lib/util/core/dom/drag.js');
     var resize = require('../../../../lib/util/core/dom/resize.js');

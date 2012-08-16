@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>audio sample</title>
+		<link href="../../../../../../../../themes/global.css" rel="stylesheet" type="text/css"/>
+        <link href="../../../../../../sample.css" rel="stylesheet" type="text/css"/>
+		<link href="style.css" rel="stylesheet" type="text/css"/>
+        <script src="../../../../../../../../js/lib/sea.js"></script>
+        <script>
+            seajs.use('../../../../../../../../js/lib/sea-config.js', function() {
+                seajs.use('./app.js');
+            });
+        </script>
+    </head>
+    <body>
+    	<!------------------------------------------------------------------------------------------------->
+	    <div class="modual">
+	        <h2>util.dom.html5.audio</h2>
+	        <div class="introduce">
+	            <em>说明</em>
+	            <p>播放MP3，使用HTML5 audio，不支持时（不支持audio或者播放audio不支持mp3情况）使用flash</p>
+	        </div>
+	        <div class="usage">
+	            <em>用法</em>
+	            <pre class="brush: js;">//code</pre>
+	        </div>
+	        <div class="example">
+	            <em>示例</em>
+				<span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+	            <div class="demo">
+                    <p class="box">
+                        <input type="button" value="载入《可惜不是你.mp3》，并播放" id="btn1"/>
+                        <input type="button" value="暂停" id="btn2"/>
+                        <input type="button" value="跳到50%处" id="btn3"/>
+                        <input type="button" value="播放/暂停" id="btn4"/>
+                        <input type="button" value="结束" id="btn5"/>
+                    </p>
+
+                    <p class="box">
+                        <input type="button" value="载入《光辉岁月.mp3》" id="btn6"/>
+                        <input type="button" value="播放" id="btn7"/>
+                        <input type="button" value="暂停" id="btn8"/>
+                        <input type="button" value="跳到90%处" id="btn9"/>
+                        <input type="button" value="播放/暂停" id="btn10"/>
+                        <input type="button" value="结束" id="btn11"/>
+                    </p>
+
+                    <p class="box">
+                        <input type="button" value="播放列表" id="btn12"/>
+                        <input type="button" value="跳到下一首" id="btn13"/>
+                    </p>
+
+                    <ul>
+                        <li>播放歌曲：<span id="song_name"></span></li>
+                        <li>总长度：<span id="song_time"></span></li>
+                        <li>已载入进度：<span id="song_loaded"></span></li>
+                        <li>当前时间：<span id="song_now"></span></li>
+                        <li>百分比：<span id="song_percent"></span></li>
+                        <li>状态：<span id="song_status"></span></li>
+                    </ul>
+	            </div>
+	        </div>
+	    </div>
+		
+    </body>
+</html>

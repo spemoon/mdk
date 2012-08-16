@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-    var $ = require('../../../jquery/sea_jquery.js');
+    var $ = require('jquery');
 
     var prefix = 'mdk_';
     var id = 0;

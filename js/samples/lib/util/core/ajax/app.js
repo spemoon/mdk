@@ -1,6 +1,6 @@
 define(function(require, exports, module) {
     require('../../../../sample.js');
-    var $ = require('../../../../../lib/jquery/sea_jquery.js');
+    var $ = require('jquery');
     var ajax = require('../../../../../lib/util/core/ajax.js');
 
     $(function() {

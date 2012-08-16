@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-    var $ = require('../../../../../../../js/lib/jquery/sea_jquery.js');
+    var $ = require('jquery');
     var string = require('../../../../../../lib/util/core/string.js');
     var section = require('../../../../../../lib/util/core/dom/section.js');
     var inputx = require('../../../../../../lib/util/core/dom/input.js');

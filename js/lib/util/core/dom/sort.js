@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-    var $ = require('../../../../../js/lib/jquery/sea_jquery.js');
+    var $ = require('jquery');
     var lang = require('../lang.js');
     var array = require('../array.js');
     var drag = require('./drag.js');

@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-    var $ = require('../../jquery/sea_jquery.js');
+    var $ = require('jquery');
 
     var single = {}; // 挂载ajax单例命名空间
     var pool = {}; // 挂载ajax连接池命名空间

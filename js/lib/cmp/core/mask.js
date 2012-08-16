@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-    var $ = require('../../../../js/lib/jquery/sea_jquery.js');
+    var $ = require('jquery');
     var browser = require('../../../lib/util/core/bom/browser.js');
     var widget = require('../widget.js');
     var mVar = require('../../../lib/util/core/dom/mVar.js');

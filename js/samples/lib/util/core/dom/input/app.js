@@ -1,6 +1,6 @@
 define(function(require, exports, module) {
     require('../../../../../sample.js');
-    var $ = require('../../../../../../../js/lib/jquery/sea_jquery.js');
+    var $ = require('jquery');
     var inputx = require('../../../../../../lib/util/core/dom/input.js');
     var string = require('../../../../../../lib/util/core/string.js');
     var regexp = require('../../../../../../lib/util/core/regexp.js');

@@ -1,5 +1,5 @@
 define(function(require, exports, module) {
-    var $ = require('../../jquery/sea_jquery.js');
+    var $ = require('jquery');
     var r = {
         /**
          * 查找数组中是否存在某个值
