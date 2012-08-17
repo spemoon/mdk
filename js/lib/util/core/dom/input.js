@@ -76,6 +76,22 @@ define(function(require, exports, module) {
             }
         },
         /**
+         * 上下按键支持
+         * @param node
+         * @param action
+         */
+        updown: function(node, action) {
+            node = $(node);
+            node.bind('keydown', function(e) {
+                var keyCode = e.keyCode;
+                if(keyCode == 38) { // up
+
+                } else if(keyCode == 40) {// down
+
+                }
+            });
+        },
+        /**
          * 选择一段文本
          * @param node 节点
          * @param start 起始位置

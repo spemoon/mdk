@@ -241,13 +241,14 @@ define(function(require, exports, module) {
         ENTER:13,
         /**
          * 给一个节点绑定ctrl + enter，一般用来提交使用
+         * mac 下支持 apple键 + enter
          * @param node {Object} jQuery节点
          * @param callback {Function} 回调函数
          * @return {Object} jQuery节点
          */
         ctrlEnter:function(node, callback) {
             return node.keydown(function(e) {
-                if(e.ctrlKey && e.keyCode == r.ENTER) {
+                if((e.ctrlKey || e.originalEvent.metaKey) && e.keyCode == r.ENTER) {
                     callback.call(node, e);
                     e.stopPropagation();
                 }
@@ -301,6 +302,7 @@ define(function(require, exports, module) {
             }
         }
     };
+
     $(document).keydown(function(e) {
         var key;
         var temp = [0, 0, 0];
@@ -336,6 +338,7 @@ define(function(require, exports, module) {
             }
         }
     });
+
     $(document).keyup(function(e) {
         delete keydownCache[e.keyCode];
         clearTimeout(timer);
