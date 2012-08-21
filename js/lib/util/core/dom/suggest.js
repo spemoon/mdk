@@ -4,6 +4,7 @@ define(function(require, exports, module) {
     var ajax = require('../../../../../js/lib/util/core/ajax.js');
     var action = require('../../../../../js/lib/util/core/dom/action.js');
     var inputx = require('../../../../../js/lib/util/core/dom/input.js');
+    var placeholder = require('../../../../../js/lib/util/core/dom/html5/placeholder.js');
     var mVar = require('../../../../../js/lib/util/core/dom/mVar.js');
     // var xxx = require('../../../../../js/');
 
@@ -25,8 +26,9 @@ define(function(require, exports, module) {
         reg: function(node, params) {
             var xhr = ajax.single(mVar.id());
             var container = $(params.container); // 承载容器
-            var highlight = params.highlight || 'hover'; // 高亮样式
-            var keyword = params.keyword || 'keyword';
+            var highlight = $.trim(params.highlight) || 'hover'; // 高亮样式
+            var keyword = $.trim(params.keyword) || 'keyword';
+            var emptyAlsoSearch = params.empty === true;
             var loadingFn = function(container) { // 生成视图前的提示
                 if(lang.isFunction(params.loading)) {
                     params.loading.call(node, container);
@@ -38,6 +40,8 @@ define(function(require, exports, module) {
                 } else {
                     container.html('<div class="error">' + ((data && data.msg) || '载入失败') + '</div>');
                 }
+                var undefine;
+                preVal =  undefine; // 清理preVal
             };
             var buildFn = function(container, data) {
                 if(lang.isFunction(params.build)) {
@@ -50,54 +54,63 @@ define(function(require, exports, module) {
                     });
                 }
             };
-            var searchFn = function(keyword) {
-                if(lang.isFunction(params.searchFn)) {
-                    params.searchFn.call(node, container, data);
+            var searchFn = function(keyword, data) {
+                if(lang.isFunction(params.search)) {
+                    return params.search.call(node, container, keyword, data);
                 }
             };
             var timer; // 定时器防止输入太快服务器响应也很快导致请求数过多
+            var showTimer; // blur时候用定时器来处理，定时器处理时间范围内重新触发container.show就要清除隐藏container的定时器
             var preVal; // 上一次输入框内容
             node = $(node);
             params = params || {};
+            if(params.placeholder) {
+                placeholder.reg(node);
+            }
+
             inputx.reg(node, function(val, lastInput, rangeData) {
                 val = $.trim(node.val());
-                if(preVal === val) { // 和上次相同的值
-                    if(container.is(':hidden')) {
-                        container.show();
-                    }
-                } else {
-                    preVal = val;
-                    if(val.length) {
-                        if(params.url) { // 远程数据源模式
-                            var url = lang.isFunction(params.url) ? params.url(node, params) : params.url;
-                            url += url.indexOf('?') == -1 ? '?' : '&';
-                            url += keyword + '=' + val;
-                            clearTimeout(timer);
+                clearTimeout(showTimer);
+                if(val != placeholder) {
+                    if(preVal === val) { // 和上次相同的值
+                        if(container.is(':hidden')) {
                             container.show();
-                            timer = setTimeout(function() {
-                                xhr.send({
-                                    url: url,
-                                    before: function() {
-                                        loadingFn(container);
-                                    },
-                                    error: function(xhr, status) {
-                                        errorFn(container);
-                                    },
-                                    failure: function(data) {
-                                        errorFn(container, data);
-                                    },
-                                    success: function(data) {
-                                        buildFn(container, data);
-                                    }
-                                });
-                            }, 256);
-                        } else if(params.data) { // 本地数据源模式
-                            buildFn(container, data);
                         }
-                    } else { // 空输入
-                        lang.callback(params.empty, {
-                            scope: node
-                        });
+                    } else {
+                        preVal = val;
+                        if(val.length || emptyAlsoSearch) {
+                            if(params.url) { // 远程数据源模式
+                                var url = lang.isFunction(params.url) ? params.url(node, params) : params.url;
+                                url += url.indexOf('?') == -1 ? '?' : '&';
+                                url += keyword + '=' + val;
+                                clearTimeout(timer);
+                                container.show();
+                                timer = setTimeout(function() {
+                                    xhr.send({
+                                        url: url,
+                                        before: function() {
+                                            loadingFn(container);
+                                        },
+                                        error: function(xhr, status) {
+                                            errorFn(container);
+                                        },
+                                        failure: function(data) {
+                                            errorFn(container, data);
+                                        },
+                                        success: function(data) {
+                                            buildFn(container, data);
+                                        }
+                                    });
+                                }, 256);
+                            } else if(params.data) { // 本地数据源模式
+                                buildFn(container, searchFn(val, params.data));
+                            }
+                        } else { // 空输入且没有显示设定空可以搜索
+                            lang.callback(params.empty, {
+                                scope: node,
+                                params: [container]
+                            });
+                        }
                     }
                 }
             });
@@ -133,18 +146,19 @@ define(function(require, exports, module) {
                     } else if(keyCode == 13) { // 回车选择
                         var item = container.find('.' + highlight).eq(0);
                         if(item[0]) {
-                            lang.callback(params.select, {
-                                scope: node,
-                                params: [item]
-                            });
+                            if(lang.isFunction(params.select)) {
+                                preVal = params.select.call(node, item);
+                            }
                             container.hide();
                         }
                     }
                 },
                 blur: function(e) {
-                    setTimeout(function() {
+                    clearTimeout(showTimer);
+                    // 延时隐藏list容器是防止在容器上点击触发blur，而且比click早，导致不能获取到container上的数据
+                    showTimer = setTimeout(function() {
                         container.hide();
-                    }, 512);
+                    }, 256);
                 }
             });
 
@@ -152,12 +166,10 @@ define(function(require, exports, module) {
                 click: function(e) {
                     var target = $(e.target);
                     if(!target.attr('data-action')) {
-                        var item = target.hasClass(params.list) ? target : target.parents(params.list).eq(0);
-                        console.log(item);
-                        lang.callback(params.select, {
-                            scope: node,
-                            params: [item]
-                        });
+                        var item = target.hasClass(params.list.replace('.', '')) ? target : target.parents(params.list).eq(0);
+                        if(lang.isFunction(params.select)) {
+                            preVal = params.select.call(node, item);
+                        }
                         container.hide();
                         return false;
                     }

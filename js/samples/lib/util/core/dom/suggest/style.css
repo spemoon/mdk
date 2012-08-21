@@ -12,3 +12,18 @@
 .data-list .hover {
     background: #ddd;
 }
+
+.select-item {
+    float: left;
+    padding: 3px;
+    border: 1px solid #aaa;
+    background: #f0f8ff;
+    margin: 3px;
+}
+
+.select-del {
+    margin-left: 5px;
+    font-size: 14px;
+    visibility: hidden;
+    cursor: pointer;
+}

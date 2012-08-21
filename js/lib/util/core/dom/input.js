@@ -27,14 +27,20 @@ define(function(require, exports, module) {
      *     findText 在文本中搜索文本并将范围的开始和结束点设置为包围搜索字符串
      */
     var r = {
-        reg: function(node, action) {
+        /**
+         *
+         * @param node 监听的节点
+         * @param action 触发的函数
+         * @param mode IE678使用可能会触发太多，mode为true时使用keydown方式
+         */
+        reg: function(node, action, mode) {
             node = $(node);
             if(browser.ie) {
                 // IE9 input事件不支持退格，删除，剪切响应。退格和删除通过keydown事件来响应，剪切通过cut事件响应
                 // IE9 cut事件需要通过addEventListener来绑定才有效
                 // IE6，7，8 通过propertychange来监听内容改变
                 if(browser.ie9) {
-                    node.bind('input click', function(e) {
+                    node.bind('input focus', function(e) {
                         var rangeData = r.position.get(this);
                         var lastInput = this.value.charAt(rangeData.end - 1) || '';
                         action.call(this, this.value, lastInput, rangeData);
@@ -61,14 +67,14 @@ define(function(require, exports, module) {
                         }
                     });
                 } else {
-                    node.bind('propertychange click', function(e) {
+                    node.bind((mode === true ? 'keydown' : 'propertychange') + ' focus', function(e) {
                         var rangeData = r.position.get(this);
                         var lastInput = this.value.charAt(rangeData.end - 1) || '';
                         action.call(this, this.value, lastInput, rangeData);
                     });
                 }
             } else {
-                node.bind('input click', function(e) {
+                node.bind('input focus', function(e) {
                     var rangeData = r.position.get(this);
                     var lastInput = this.value.charAt(rangeData.end - 1) || '';
                     action.call(this, this.value, lastInput, rangeData);
@@ -159,28 +165,30 @@ define(function(require, exports, module) {
                     rangeData.end = node.selectionEnd;
                     rangeData.text = (rangeData.start != rangeData.end) ? node.value.substring(rangeData.start, rangeData.end) : '';
                 } else if(document.selection) { // IE
-                    var oS = document.selection.createRange();
-                    var tagName = node.tagName.toUpperCase();
-                    var val = node.value;
-                    if(tagName == 'TEXTAREA') {
-                        var i;
-                        var oR = document.body.createTextRange(); // Don't: oR = node.createTextRange()
-                        oR.moveToElementText(node);
-                        rangeData.text = oS.text;
-                        rangeData.bookmark = oS.getBookmark();
-                        for(i = 0; oR.compareEndPoints('StartToStart', oS) < 0 && oS.moveStart('character', -1) !== 0; i++) {
-                            if(val.charAt(i) == '\n') {
-                                i++;
+                    try { // blur状态下IE会抛出 参数错误异常
+                        var oS = document.selection.createRange();
+                        var tagName = node.tagName.toUpperCase();
+                        var val = node.value;
+                        if(tagName == 'TEXTAREA') {
+                            var i;
+                            var oR = document.body.createTextRange(); // Don't: oR = node.createTextRange()
+                            oR.moveToElementText(node);
+                            rangeData.text = oS.text;
+                            rangeData.bookmark = oS.getBookmark();
+                            for(i = 0; oR.compareEndPoints('StartToStart', oS) < 0 && oS.moveStart('character', -1) !== 0; i++) {
+                                if(val.charAt(i) == '\n') {
+                                    i++;
+                                }
                             }
+                            rangeData.start = i;
+                            rangeData.end = rangeData.text.length + rangeData.start;
+                            rangeData.text = val.substring(0, i);
+                        } else if(tagName == 'INPUT') {
+                            oS.setEndPoint('StartToStart', node.createTextRange());
+                            rangeData.start = rangeData.end = oS.text.length;
+                            rangeData.text = '';
                         }
-                        rangeData.start = i;
-                        rangeData.end = rangeData.text.length + rangeData.start;
-                        rangeData.text = val.substring(0, i);
-                    } else if(tagName == 'INPUT') {
-                        oS.setEndPoint('StartToStart', node.createTextRange());
-                        rangeData.start = rangeData.end = oS.text.length;
-                        rangeData.text = '';
-                    }
+                    } catch(e) {}
                 }
                 return rangeData;
             },

@@ -79,3 +79,8 @@ body {
 .ie .clearfix {
     zoom: 1
 }
+
+/* firefox下防止自定义input颜色导致placeholder颜色改变*/
+input:-moz-placeholder {
+    color: #999;
+}

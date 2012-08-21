@@ -16,10 +16,10 @@
     <body>
     	<!------------------------------------------------------------------------------------------------->
 	    <div class="modual">
-	        <h2>package.name</h2>
+	        <h2>简单ajax suggest</h2>
 	        <div class="introduce">
 	            <em>说明</em>
-	            <p>some introductions</p>
+	            <p>简单ajax请求，输入为空时不请求</p>
 	        </div>
 	        <div class="usage">
 	            <em>用法</em>
@@ -34,6 +34,55 @@
 	            </div>
 	        </div>
 	    </div>
-		
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>ajax suggest 2</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>简单ajax请求，输入为空也请求，含placeholder，并对选择后做处理</p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+                <pre class="brush: js;">//code</pre>
+            </div>
+            <div class="example">
+                <em>示例</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <div id="result1">
+                    </div>
+                    <div class="clearfix"></div>
+                    <div>
+                        <input type="text" class="search" id="input2" placeholder="输入搜索"/>
+                        <div class="data-list" id="container2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>ajax suggest 3</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p>数据源是本地模式，输入为空自定义处理函数</p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+                <pre class="brush: js;">//code</pre>
+            </div>
+            <div class="example">
+                <em>示例</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <div>
+                        <input type="text" class="search" id="input3" placeholder="输入搜索"/>
+                        <div class="data-list" id="container3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </body>
 </html>
