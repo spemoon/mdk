@@ -1,16 +1,16 @@
-###ajax.js  —— ajax连接池相关处理###
-|--- setLoginPage             设置登录页面的URL，该方法最多调用一次 
-|--- setNoPermissionAction    设置无权限时候的默认动作，默认是跳转到登录页面，该方法最多调用一次 
-|--- setErrorAction 
-|--- base                     基类ajax
-|--- pool                     构建ajax连接池，存放在pool中(保证多个ajax请求处理的顺序) 
-|--- single                   AJAX单例模式 
+###ajax.js  —— ajax连接池相关处理
+* setLoginPage             设置登录页面的URL，该方法最多调用一次 
+* setNoPermissionAction    设置无权限时候的默认动作，默认是跳转到登录页面，该方法最多调用一次
+* setErrorAction 
+* base                     基类ajax
+* pool                     构建ajax连接池，存放在pool中(保证多个ajax请求处理的顺序) 
+* single                   AJAX单例模式 
 
-###array.js —— 数组扩展### 
-|--- indexOf                  查找数组中是否存在某个值
-|--- forEach                  遍历一个数组，每个元素执行callback，callback作用域是scope 
+###array.js —— 数组扩展
+* indexOf                  查找数组中是否存在某个值
+* forEach                  遍历一个数组，每个元素执行callback，callback作用域是scope
 
-###date.js —— 日期工具类### 
+###date.js —— 日期工具类
 |--- isLeap                   判断是否是闰年
 |--- check                    检测是否是一个符合格式的日期字符串 
 |--- compare                  比较两个日期的前后顺序 
