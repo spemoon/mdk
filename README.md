@@ -1,1 +1,1 @@
-#my front end develop kit
+#my front end develop kit###目录结构说明###core ——[js/lib](https://github.com/spemoon/mdk/tree/master/js/lib)
