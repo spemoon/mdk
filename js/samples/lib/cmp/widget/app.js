@@ -4,6 +4,7 @@ define(function(require, exports, module) {
     var widget = require('../../../../lib/cmp/widget.js');
     var drag = require('../../../../lib/util/core/dom/drag.js');
     var resize = require('../../../../lib/util/core/dom/resize.js');
+    var position = require('../../../../lib/util/core/dom/position.js');
     var mVar = require('../../../../lib/util/core/dom/mVar.js');
 
     $(function() {
@@ -84,23 +85,17 @@ define(function(require, exports, module) {
                     close: function(e) { // 关闭
                         this.unrender();
                     }
+                }, {
+                    node: $(window),
+                    type: 'resize',
+                    action: function() {
+                        position.center(this.element);
+                    }
                 }
             ],
             proto: { // 原型链增加方法
                 center: function() {
-                    var width = this.element.width();
-                    var height = this.element.height();
-                    var doc = $(document);
-                    var scrollTop = doc.scrollTop();
-                    var scrollLeft = doc.scrollLeft();
-                    var win = $(window);
-                    var winHeight = win.height();
-                    var winWidth = win.width();
-                    var isFixed = this.element.css('position') == 'fixed';
-                    this.element.css({
-                        top: (winHeight - height) / 2 + (isFixed ? 0 : scrollTop),
-                        left: (winWidth - width) / 2 + (isFixed ? 0 : scrollLeft)
-                    });
+                    position.center(this.element);
                     return this;
                 }
             }

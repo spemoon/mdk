@@ -1,7 +1,6 @@
 define(function(require, exports, module) {
     var $ = require('jquery');
-    var mVar = require('../../../../../../js/lib/util/core/dom/mVar.js');
-    // var xxx = require('../../../../../../js/');
+    var mVar = require('../mVar');
     var helper = {
         flashInstanceName: 'myAudioJs',
         useFlash: (function() {

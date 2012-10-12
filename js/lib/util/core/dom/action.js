@@ -1,7 +1,7 @@
 define(function(require, exports, module) {
     var $ = require('jquery');
-    var lang = require('../lang.js');
-    var array = require('../array.js');
+    var lang = require('../lang');
+    var array = require('../array');
     
     var cache = {
         dom: [],

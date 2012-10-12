@@ -1,6 +1,6 @@
 define(function(require, exports, module) {
     var $ = require('jquery');
-    var browser = require('../bom/browser.js');
+    var browser = require('../bom/browser');
 
     var helper = {
         detect: function(node) {

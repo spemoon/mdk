@@ -1,12 +1,11 @@
 define(function(require, exports, module) {
     var $ = require('jquery');
-    var lang = require('../../../../../js/lib/util/core/lang.js');
-    var ajax = require('../../../../../js/lib/util/core/ajax.js');
-    var action = require('../../../../../js/lib/util/core/dom/action.js');
-    var inputx = require('../../../../../js/lib/util/core/dom/input.js');
-    var placeholder = require('../../../../../js/lib/util/core/dom/html5/placeholder.js');
-    var mVar = require('../../../../../js/lib/util/core/dom/mVar.js');
-    // var xxx = require('../../../../../js/');
+    var lang = require('../lang');
+    var ajax = require('../ajax');
+    var action = require('../dom/action');
+    var inputx = require('../dom/input');
+    var placeholder = require('../dom/html5/placeholder');
+    var mVar = require('../dom/mVar');
 
     var helper = {
         getIndex: function(list, cls) {

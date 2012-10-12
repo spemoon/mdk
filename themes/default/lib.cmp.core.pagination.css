@@ -1,0 +1,26 @@
+.m-pagination {
+    margin-top: 15px;
+    text-align: center;
+	line-height: 18px;
+}
+
+.m-pagination a {
+    margin: 0 4px;
+    padding: 2px 4px;
+    background-color: #eee;
+    border: 1px solid #dcdcdc;
+    color: #10638F;
+    text-decoration: none;
+}
+
+.m-pagination a:hover {
+    text-decoration: none;
+    background-color: #fff;
+}
+
+.m-pagination a.disabled, .m-pagination a.active {
+    color: #888;
+    background-color: #fff;
+    border: 1px solid #fff;
+    cursor: default
+}

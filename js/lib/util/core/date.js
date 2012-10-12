@@ -367,6 +367,10 @@ define(function(require, exports, module) {
                     } else {
                         day = day > 28 ? 28 : day;
                     }
+                } else if(month == 4 || month == 6 || month == 9 || month == 11) {
+                    day = day > 30 ? 30 : day;
+                } else {
+                    day = day > 31 ? 31 : day;
                 }
                 return r.stringToDate(year + '-' + leftZero(month) + '-' + day + ' ' + tt[1], 'yyyy-MM-dd HH:mm:ss');
             } else if(unit == 'h') { // 时

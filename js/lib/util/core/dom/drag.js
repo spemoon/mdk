@@ -1,8 +1,8 @@
 define(function(require, exports, module) {
     var $ = require('jquery');
-    var lang = require('../lang.js');
-    var array = require('../array.js');
-    var mVar = require('./mVar.js');
+    var lang = require('../lang');
+    var array = require('../array');
+    var mVar = require('./mVar');
 
     var doc = $(document);
     var win = $(window);

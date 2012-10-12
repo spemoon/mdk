@@ -12,6 +12,7 @@ define(function(require, exports, module) {
             var u1 = new upload({
                 url: 'upload.php',
                 container: document.getElementById('upload_box'),
+                fileType: 'jpg, gif',
                 beforeAdd: function(file, files) {
                     var size = file.size;
                     var flag = true;

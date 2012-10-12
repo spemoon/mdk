@@ -1,9 +1,9 @@
 define(function(require, exports, module) {
     var $ = require('jquery');
-    var lang = require('../lang.js');
-    var string = require('../string.js');
-    var browser = require('../bom/browser.js');
-    var mVar = require('./mVar.js');
+    var lang = require('../lang');
+    var string = require('../string');
+    var browser = require('../bom/browser');
+    var mVar = require('./mVar');
 
     var isW3C = window.getSelection ? true : false;
     var cursorId = mVar.id();

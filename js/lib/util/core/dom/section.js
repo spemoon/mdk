@@ -1,9 +1,9 @@
 define(function(require, exports, module) {
     var $ = require('jquery');
-    var lang = require('../../../../../js/lib/util/core/lang.js');
-    var string = require('../../../../../js/lib/util/core/string.js');
-    var ajax = require('../../../../../js/lib/util/core/ajax.js');
-    var scroll = require('../../../../../js/lib/util/core/dom/scroll.js');
+    var lang = require('../lang');
+    var string = require('../string');
+    var ajax = require('../ajax');
+    var scroll = require('./scroll');
 
     /**
      * 一个节点上满足以下属性，将会被当作载入section的触发器

@@ -1,8 +1,8 @@
 define(function(require, exports, module) {
     var $ = require('jquery');
-    var lang = require('../lang.js');
-    var array = require('../array.js');
-    var drag = require('./drag.js');
+    var lang = require('../lang');
+    var array = require('../array');
+    var drag = require('./drag');
 
     var helper = {
         filter: function(items, filter) {

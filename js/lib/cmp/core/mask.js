@@ -1,8 +1,8 @@
 define(function(require, exports, module) {
     var $ = require('jquery');
-    var browser = require('../../../lib/util/core/bom/browser.js');
-    var widget = require('../widget.js');
-    var mVar = require('../../../lib/util/core/dom/mVar.js');
+    var browser = require('../../util/core/bom/browser');
+    var widget = require('../widget');
+    var mVar = require('../../util/core/dom/mVar');
 
     var helper = {
         render: function(zIndex) {
@@ -83,6 +83,11 @@ define(function(require, exports, module) {
     var cache = [];
     var cacheData = [];
     var mask = widget.create({
+        params: {
+            opacity: 0.5, // 遮罩透明度
+            icon: true, // 是否使用图标
+            overflow: true // 默认true隐藏超出遮罩的东西，极少数情况下需要显示超出遮罩的部分，设置为false
+        },
         tpl: function() {
             var html = '';
             html += '<div class="m-mask-box">';
@@ -95,11 +100,6 @@ define(function(require, exports, module) {
             }
             html += '</div>';
             return html;
-        },
-        params: {
-            opacity: 0.5, // 遮罩透明度
-            icon: true, // 是否使用图标
-            overflow: true // 默认true隐藏超出遮罩的东西，极少数情况下需要显示超出遮罩的部分，设置为false
         },
         beforeInit: function() {
             var pos = helper.cache.find(this.renderTo[0]);
@@ -126,7 +126,7 @@ define(function(require, exports, module) {
                 return this;
             },
             unrender: function() {
-                if(this._status == 2) {
+                if(this._status == widget.STATUS.RENDERED) {
                     this.zIndex.pop();
                     var len = this.zIndex.length;
                     if(len) {
