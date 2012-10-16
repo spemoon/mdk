@@ -47,7 +47,7 @@ define(function(require, exports, module) {
                 if(lang.callback(this._aop.beforeRender, {scope: this})) {
                     this.element.show();
                     if(this._status == widget.STATUS.INITED) {
-                        lang.callback(this._aop.firstRender, {scope: this});
+                        lang.callback(this._aop.firstRender, {scope: this}); //
                     }
                     (function(events, scope) {
                         for(var i = 0, event; event = events[i]; i++) {
@@ -103,14 +103,20 @@ define(function(require, exports, module) {
             }
             return this;
         },
+        getStatus: function() {
+            return this._status;
+        },
 
         bind: function(event) {
             if(event.action) {
                 var _this = this;
                 event.node = event.node || this.element;
-                event.type = (event.type || 'click') + ('.' + (this._eventId++));
+                event.type = event.type || ('click.es' + this._eventId++); // 绑定了命名空间，方便unbind
+                if(event.type.indexOf('.es') == -1) {
+                    event.type += '.es' + this._eventId++;
+                }
                 event.node.bind(event.type, function(e) {
-                    event.action.call(_this, e);
+                    return event.action.call(_this, e);
                 });
             } else {
                 var obj = {};
@@ -119,7 +125,6 @@ define(function(require, exports, module) {
                         action: event.action || event[key],
                         scope: event.scope || this
                     };
-                    break;
                 }
                 action.listen(obj, this.element);
             }
@@ -132,7 +137,7 @@ define(function(require, exports, module) {
             return this;
         },
         trigger: function(name) {
-            this.element.trigger(name, Array.prototype.slice.apply(arguments, 1));
+            this.element.trigger(name, Array.prototype.slice.call(arguments, 1));
             return this;
         },
         inject: function(widgets) {
@@ -197,8 +202,17 @@ define(function(require, exports, module) {
                 }
                 if(params.events) {
                     (function(events, scope) {
+                        /**
+                         * bugfix: 原先直接使用scope._events.push(events[i])而未进行一次拷贝
+                         * 由于后面对事件的对象会直接进行修改，会导致多个实例之间的事件互相访问
+                         * 因此事件对传入的事件每次实例化时进行一次拷贝
+                         */
                         for(var i = 0, len = events.length; i < len; i++) {
-                            scope._events.push(events[i]);
+                            var obj = {};
+                            for(var key in events[i]) {
+                                obj[key] = events[i][key];
+                            }
+                            scope._events.push(obj);
                         }
                     })(params.events, this);
                 }

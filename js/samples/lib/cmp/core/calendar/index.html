@@ -1,0 +1,202 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>calendar sample</title>
+		<link href="../../../../../../themes/global.css" rel="stylesheet" type="text/css"/>
+        <link href="../../../../sample.css" rel="stylesheet" type="text/css"/>
+		<link href="../../../../../../themes/default/lib.cmp.core.calendar.css" rel="stylesheet" type="text/css"/>
+		<link href="style.css" rel="stylesheet" type="text/css"/>
+        <script src="../../../../../../js/lib/sea.js"></script>
+        <script>
+            seajs.use('../../../../../../js/lib/sea-config.js', function() {
+                seajs.use('./app.js');
+            });
+        </script>
+    </head>
+    <body>
+    	<!------------------------------------------------------------------------------------------------->
+	    <div class="modual">
+	        <h2>常用方式</h2>
+	        <div class="introduce">
+	            <em>使用</em>
+	            <p>
+                    一个输入框，绑定一个日期选择器
+	            </p>
+	        </div>
+	        <div class="usage">
+	            <em>用法</em>
+	            <pre class="brush: js;">//code</pre>
+	        </div>
+	        <div class="example">
+	            <em>示例</em>
+				<span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+	            <div class="demo">
+                    <div class="box">
+                        <input type="text" id="input1"/><span id="tip1"></span>
+                    </div>
+	            </div>
+	        </div>
+	    </div>
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>直接显示</h2>
+            <div class="introduce">
+                <em>使用</em>
+                <p>
+                    直接展示在页面上
+                </p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+                <pre class="brush: js;">//code</pre>
+            </div>
+            <div class="example">
+                <em>示例</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <div id="box1" class="box"></div>
+                </div>
+            </div>
+        </div>
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>节点触发</h2>
+            <div class="introduce">
+                <em>使用</em>
+                <p>
+                    通过某个节点来触发
+                </p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+                <pre class="brush: js;">//code</pre>
+            </div>
+            <div class="example">
+                <em>示例</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <input id="btn1" type="button" value="点击显示 / 隐藏日期选择器"/>
+                    <div class="box" id="box2"></div>
+                </div>
+            </div>
+        </div>
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>包含时分</h2>
+            <div class="introduce">
+                <em>使用</em>
+                <p>
+                </p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+                <pre class="brush: js;">//code</pre>
+            </div>
+            <div class="example">
+                <em>示例</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <div class="box">
+                        <input type="text" id="input2"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>禁用日期</h2>
+            <div class="introduce">
+                <em>使用</em>
+                <p>
+                    1. 禁用星期几<br/>
+                    2. 禁用之后<br/>
+                    3. 禁用之前<br/>
+                    4. 禁用数组匹配<br/>
+                    5. 禁用函数匹配<br/>
+                </p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+                <pre class="brush: js;">//code</pre>
+            </div>
+            <div class="example">
+                <em>示例</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <div>
+                        <p>
+                            <label><input type="radio" value="1" name="disdate"/>禁用星期一和星期四</label>
+                            <label><input type="radio" value="2" name="disdate"/>禁用今天之后的日期</label>
+                            <label><input type="radio" value="3" name="disdate"/>禁用昨天之前的日期</label>
+                            <label><input type="radio" value="4" name="disdate"/>禁用[2012-10-13,2012-10-15,2012-10-17,2012-10-19]</label>
+                            <label><input type="radio" value="5" name="disdate"/>禁用日期号数可以整除月份的</label>
+                        </p>
+                        <p>
+                            <input id="btn2" type="button" value="确定"/>
+                        </p>
+                    </div>
+                    <span id="tip2"></span>
+                    <div class="box" id="box3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>双日历级联</h2>
+            <div class="introduce">
+                <em>使用</em>
+                <p>
+                    前者日期不能大于后者日期，后者日期不能小于前者日期
+                </p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+                <pre class="brush: js;">//code</pre>
+            </div>
+            <div class="example">
+                <em>示例</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <div class="box">
+                        <div id="box4" class="fbox"></div>
+                        <div id="box5" class="fbox"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>外部设定日期</h2>
+            <div class="introduce">
+                <em>使用</em>
+                <p>
+                    外界传值进入设定日历展示
+                </p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+                <pre class="brush: js;">//code</pre>
+            </div>
+            <div class="example">
+                <em>示例</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <div>
+                        <input id="txt1" type="text" value="2012-12-22"/>
+                        <input id="btn3" type="button" value="设定日期给下面的日历"/>
+                        <input id="btn4" type="button" value="获取下面的日历的时间"/>
+                    </div>
+                    <div class="box" id="box6">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

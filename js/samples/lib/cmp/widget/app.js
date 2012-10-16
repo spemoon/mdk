@@ -85,7 +85,8 @@ define(function(require, exports, module) {
                     close: function(e) { // 关闭
                         this.unrender();
                     }
-                }, {
+                },
+                {
                     node: $(window),
                     type: 'resize',
                     action: function() {

@@ -20,7 +20,10 @@
 	        <h2>ajax方式</h2>
 	        <div class="introduce">
 	            <em>使用</em>
-	            <p>some introductions</p>
+	            <p>
+                    分页会在点击后就生效，如果后端返回的总条数发生了改变，会重绘。<br/>
+                    快速点击分页，在后端返回数据之前，利用ajax.single会放弃上一次请求
+	            </p>
 	        </div>
 	        <div class="usage">
 	            <em>用法</em>
@@ -42,7 +45,7 @@
             <h2>链接跳转方式</h2>
             <div class="introduce">
                 <em>使用</em>
-                <p>some introductions</p>
+                <p>传统方式点击跳转分页，将分页中的ajax属性设置为false</p>
             </div>
             <div class="usage">
                 <em>用法</em>
