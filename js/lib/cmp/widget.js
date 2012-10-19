@@ -154,6 +154,7 @@ define(function(require, exports, module) {
     widget.prototype._destory = widget.prototype.destory;
 
     return {
+        STATUS: widget.STATUS,
         /**
          * widget构造器
          * @param params 由widget组件提供

@@ -339,15 +339,33 @@ define(function(require, exports, module) {
                                     }
                                 }
                             });
-
                         }
                     })(key, handles[key]);
                 }
             })();
-            return event;
-        },
-        unreg: function(node, handle) {
-            (handle ? node.find(handle) : node).css('cursor', 'default').removeData('resizable').unbind('mousedown.' + eventSpace);
+            return {
+                set: function(config) {
+                    for(var key in config) {
+                        params[key] = config[key];
+                    }
+                    minHeight = params.minHeight || 30;
+                    minWidth = params.minWidth || 30;
+                    maxHeight = params.maxHeight;
+                    maxWidth = params.maxWidth;
+                    paddingRight = params.paddingRight || 0;
+                    paddingBottom = params.paddingBottom || 0;
+                },
+                unreg: function() {
+                    (function() {
+                        for(var key in handles) {
+                            (function(dir, handle) {
+                                $(handle).css('cursor', 'default').removeData('resizable').unbind('mousedown.' + eventSpace);
+                            })(key, handles[key]);
+                        }
+                    })();
+                },
+                event: event
+            };
         }
     };
     return r;

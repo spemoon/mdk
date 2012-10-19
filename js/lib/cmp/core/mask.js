@@ -121,6 +121,7 @@ define(function(require, exports, module) {
                 } else {
                     this.zIndex.push(zIndex);
                 }
+                this.element.find('.m-mask').css('opacity', this.opacity);
                 this._render();
                 helper.render.call(this, zIndex);
                 return this;

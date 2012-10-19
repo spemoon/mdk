@@ -345,10 +345,12 @@ define(function(require, exports, module) {
                     });
                 }
             });
-            return event;
-        },
-        unreg: function(node, handle) {
-            (handle ? node.find(handle) : node).css('cursor', 'default').removeData('draggable').unbind('mousedown.' + eventSpace);
+            return {
+                event: event,
+                unreg: function() {
+                    handle.css('cursor', 'default').removeData('draggable').unbind('mousedown.' + eventSpace)
+                }
+            };
         }
     };
     return r;

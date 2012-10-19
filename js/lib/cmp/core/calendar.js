@@ -127,8 +127,6 @@ define(function (require, exports, module) {
                 this.disabled.max = this.disabled.max || this.maxDate;
                 this.disabled.min = date.stringToDate(date.format(lang.isString(this.disabled.min) ? date.stringToDate(this.disabled.min, this.disabled.format) : this.disabled.min, config.date), config.date);
                 this.disabled.max = date.stringToDate(date.format(lang.isString(this.disabled.max) ? date.stringToDate(this.disabled.max, this.disabled.format) : this.disabled.max, config.date), config.date);
-                this.minDate = this.disabled.min;
-                this.maxDate = this.disabled.max;
             }
             html.push('<tr>');
             if (this.showWeek) {
