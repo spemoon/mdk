@@ -46,14 +46,14 @@ define(function(require, exports, module) {
             if(this._status == widget.STATUS.INITED || this._status == widget.STATUS.UNRENDERED) { // 已经初始化或者unrender情况下
                 if(lang.callback(this._aop.beforeRender, {scope: this})) {
                     this.element.show();
-                    if(this._status == widget.STATUS.INITED) {
-                        lang.callback(this._aop.firstRender, {scope: this}); //
-                    }
                     (function(events, scope) {
                         for(var i = 0, event; event = events[i]; i++) {
                             scope.bind(event);
                         }
                     })(this._events, this);
+                    if(this._status == widget.STATUS.INITED) {
+                        lang.callback(this._aop.firstRender, {scope: this}); //
+                    }
                     this._status = widget.STATUS.RENDERED;
                     lang.callback(this._aop.afterRender, {scope: this});
                     this.element.trigger('rendered', [this]);
