@@ -81,7 +81,7 @@ define(function(require, exports, module) {
             return this;
         },
         destory: function() {
-            if(!lang.isUndefined(this._status)) {
+            if(this._status > 0) {
                 if(lang.callback(this._aop.beforeDestory, {scope: this})) {
                     this._status = widget.STATUS.DESTORYED;
                     for(var i = 0, len = this._events.length; i < len; i++) {
@@ -112,6 +112,9 @@ define(function(require, exports, module) {
                 var _this = this;
                 event.node = event.node || this.element;
                 event.type = event.type || ('click.es' + this._eventId++); // 绑定了命名空间，方便unbind
+                if(lang.isFunction(event.node)) {
+                    event.node = event.node.call(this);
+                }
                 if(event.type.indexOf('.es') == -1) {
                     event.type += '.es' + this._eventId++;
                 }
@@ -132,6 +135,9 @@ define(function(require, exports, module) {
         },
         unbind: function(event) {
             if(event.node) {
+                if(lang.isFunction(event.node)) {
+                    event.node = event.node.call(this);
+                }
                 event.node.unbind(event.type);
             }
             return this;

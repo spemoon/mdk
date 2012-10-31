@@ -214,10 +214,10 @@ define(function(require, exports, module) {
                                             } else {
                                                 var offsetParent = v.offsetParent();
                                                 var offsetParentPosition = offsetParent.position();
-                                                minX = doc.scrollLeft() - offsetParentPosition.left - parseFloat(offsetParent.css('margin-left')) - parseFloat(v.css('margin-left'));
-                                                maxX = minX + win.width() - targetSize.outerWidth;
-                                                minY = doc.scrollTop() - offsetParentPosition.top - parseFloat(offsetParent.css('margin-top')) - parseFloat(v.css('margin-top'));
-                                                maxY = minY + win.height() - targetSize.outerHeight;
+                                                minX = lang.isUndefined(params.minX) ? (doc.scrollLeft() - offsetParentPosition.left - parseFloat(offsetParent.css('margin-left')) - parseFloat(v.css('margin-left'))) : params.minX;
+                                                maxX = lang.isUndefined(params.maxX) ? (minX + win.width() - targetSize.outerWidth) : params.maxX;
+                                                minY = lang.isUndefined(params.minY) ? (doc.scrollTop() - offsetParentPosition.top - parseFloat(offsetParent.css('margin-top')) - parseFloat(v.css('margin-top'))) : params.minY;
+                                                maxY = lang.isUndefined(params.maxY) ? (minY + win.height() - targetSize.outerHeight) : params.maxY;
                                             }
                                             if(params.axisX) {
                                                 minY = maxY = startPosition[i].y;

@@ -8,7 +8,7 @@ define(function (require, exports, module) {
     var mask = require('./mask');
     var position = require('../../util/core/dom/position');
     var mVar = require('../../util/core/dom/mVar');
-    var tpl = require('./tpl/dialog.tpl.js');
+    var tpl = require('./tpl/dialogtpl');
 
     var helper = {
         resize:{
