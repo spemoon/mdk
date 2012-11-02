@@ -1,8 +1,13 @@
 <?php
 header('Content-type: application/json');
-$fn = (isset($_SERVER['HTTP_X-FILENAME']) ? $_SERVER['HTTP_X-FILENAME'] : false);
-if ($fn) {
-    $id = rand(100000, 999999);
-    file_put_contents("./data/$fn", file_get_contents("php://input"));
-    echo '{"code": 200, "data": {"id": "'.$id.'"}}';
-}
+$id = rand(100000, 999999);
+move_uploaded_file($_FILES["upfile"]["tmp_name"], "/home/home/Desktop/temp/upload" . $_FILES["upfile"]["name"]);
+$result = Array(
+    "code" => 200,
+    "data" => Array(
+        "id" => $id,
+        "post" => $_POST,
+        "file" => $_FILES
+    )
+);
+echo json_encode($result);

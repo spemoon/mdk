@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>upload sample</title>
+		<link href="../../../../../../../../themes/global.css" rel="stylesheet" type="text/css"/>
+        <link href="../../../../../../../../themes/default/lib.util.core.dom.upload.css" rel="stylesheet" type="text/css"/>
+        <link href="../../../../../../sample.css" rel="stylesheet" type="text/css"/>
+		<link href="style.css" rel="stylesheet" type="text/css"/>
+        <script src="../../../../../../../../js/lib/sea.js"></script>
+        <script>
+            seajs.use('../../../../../../../../js/lib/sea-config.js', function() {
+                seajs.use('./facade.js');
+            });
+        </script>
+    </head>
+    <body>
+        <!------------------------------------------------------------------------------------------------->
+        <div class="modual">
+            <h2>facade</h2>
+            <div class="introduce">
+                <em>说明</em>
+                <p></p>
+            </div>
+            <div class="usage">
+                <em>用法</em>
+                <pre class="brush: js;">//code</pre>
+            </div>
+            <div class="example">
+                <em>示例</em>
+                <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+                <div class="demo">
+                    <p class="bar">上传jpg/gif图片，单张不能超过2M，最多上传5张</p>
+                    <p class="bar">
+                        <input id="reset" type="button" value="重置"/>
+                        <input id="disable" type="button" value="禁用"/>
+                        <input id="enable" type="button" value="启用"/>
+                        <input id="submit" type="button" value="提交"/>
+                    </p>
+                    <div class="upload-box2" id="upload_box2">
+                        <input id="btn" class="btn" type="button" value="选择文件"/>
+                        <div id="result"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -3,13 +3,6 @@ define(function (require, exports, module) {
     var $ = require('jquery');
     var slider = require('../../../../../lib/cmp/core/slider');
 
-    var helper = {
-        random:function (n) {
-            n = n || 800;
-            return Math.ceil(Math.random() * n);
-        }
-    };
-
     $(function () {
         /**--------------------------------------------
          * 实例1：

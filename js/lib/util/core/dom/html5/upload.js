@@ -28,9 +28,10 @@ define(function(require, exports, module) {
         this.dragable = lang.isUndefined(params.dragable) ? true : !!this.dragable; // 是否允许拖拽上传，默认允许
         this.url = params.url || '';
         this.overLimit = params.overLimit;
+        this.notAllowType = params.notAllowType;
         this.beforeAdd = params.beforeAdd;
-        // 文件类型，使用扩展名，统配所有所占名用*，统配多个扩展名用半角逗号,隔开
-        this.fileType = (params.fileType && params.fileType.split(',')) || ['*'];
+        // 文件类型，使用扩展名，统配所有所占名用*，统配多个扩展名用半角封号;隔开
+        this.fileType = (params.fileType && params.fileType.split(';')) || ['*'];
         (function(arr) {
             for(var i = 0, len = arr.length; i < len; i++) {
                 arr[i] = $.trim(arr[i].toLowerCase()); // 把扩展名全部转小写
@@ -115,6 +116,7 @@ define(function(require, exports, module) {
                                 _this.failureList.push(file);
                             } finally {
                                 finish(file);
+                                scope.trigger('fninish', [file]);
                             }
                         };
                         xhr.onerror = function(e) {
@@ -182,6 +184,7 @@ define(function(require, exports, module) {
          */
         add: function(files) {
             var scope = $(this);
+            var _this = this;
             var arr = files.length ? files : [files];
             if(files.length + this.successList.length > this.limit) {
                 if(lang.isFunction(this.overLimit)) {
@@ -189,21 +192,28 @@ define(function(require, exports, module) {
                 }
             } else {
                 if(this.fileType[0] != '*') { // 过滤扩展名
-                    (function(extArr) {
+                    (function(extArr, _this) {
                         var temp = [];
                         for(var i = 0, file; file = arr[i]; i++) {
                             var ext = file.name.split('.');
                             ext = ext[ext.length - 1].toLowerCase();
+                            ext = '*.' + ext;
                             if($.inArray(ext, extArr) != -1) {
                                 temp.push(file);
+                            } else {
+                                if(lang.isFunction(_this.notAllowType)) {
+                                    _this.notAllowType(file);
+                                    file.error = true;
+                                    scope.trigger('failureAdd', [file, files]);
+                                }
                             }
+                            file.index = _this.index++;
                         }
                         arr = temp;
-                    })(this.fileType);
+                    })(this.fileType, this);
                 }
                 if(arr !== false) {
                     for(var i = 0, file; file = arr[i]; i++) {
-                        file.index = this.index++;
                         if(lang.isFunction(this.beforeAdd)) {
                             if(lang.callback(this.beforeAdd, {
                                 scope: this,
@@ -229,11 +239,11 @@ define(function(require, exports, module) {
         /**
          * 重启一次上传，一般用于提交之后
          */
-        reset: function() {
+        reset: function(callback) {
             this.successList = []; // 上传成功文件队列
             this.failureList = []; // 上传失败文件队列
-            this.index = 0;
             this.status = 0; // 上传整体状态标识 0：未开始上传或上传完成，1：正在上传
+            callback && callback.call(this);
             return this;
         }
     };

@@ -80,9 +80,10 @@ define(function (require, exports, module) {
              */
             setValue:function (val) {
                 val = Math.min(Math.max(this.min, val), this.max);
+                var node = this.element.find('.m-slider-handle');
                 this.val = val;
                 this.element.find('.m-slider-range').css('width', this.val + '%');
-                this.element.find('.m-slider-handle').css('left', this.val + '%');
+                node.css('left', this.val + '%').focus();
                 lang.callback(this.afterSetValue, {
                     scope:this,
                     params:[this.val]

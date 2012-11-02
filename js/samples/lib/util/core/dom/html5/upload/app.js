@@ -1,32 +1,30 @@
-define(function(require, exports, module) {
+define(function (require, exports, module) {
     require('../../../../../../sample.js');
     var $ = require('jquery');
-    // var xxx = require('{../../../../../../../../js/}');
-    var upload = require('../../../../../../../lib/util/core/dom/html5/upload.js');
-
-    $(function() {
+    var upload = require('../../../../../../../lib/util/core/dom/html5/upload');
+    $(function () {
         /**--------------------------------------------
          * 实例1：
          * --------------------------------------------*/
-        (function() {
+        (function () {
             var u1 = new upload({
-                url: 'upload.php',
-                container: document.getElementById('upload_box'),
-                fileType: 'jpg, gif',
-                beforeAdd: function(file, files) {
+                url:'upload.php',
+                container:document.getElementById('upload_box'),
+                fileType:'jpg, gif',
+                beforeAdd:function (file, files) {
                     var size = file.size;
                     var flag = true;
-                    if(size == 0) {
+                    if (size == 0) {
                         flag = false;
                         console.log(file, '空文件');
-                    } else if(size > 1024 * 1024 * 50) {
+                    } else if (size > 1024 * 1024 * 50) {
                         flag = false;
                         console.log(file, '大于50M');
                     }
                     return flag;
                 },
-                filter: function(files, fileList) {
-                    if(files.length + this.successList.length > 10) {
+                filter:function (files, fileList) {
+                    if (files.length + this.successList.length > 10) {
                         alert('文件上传不能超过10个');
                         return false;
                     }
@@ -34,38 +32,38 @@ define(function(require, exports, module) {
             });
 
             $(u1).bind({
-                dragenter: function(event, e, files, fileList) {
+                dragenter:function (event, e, files, fileList) {
                     console.log('dragenter');
                 },
-                dragover: function(event, e, files, fileList) {
+                dragover:function (event, e, files, fileList) {
                     //console.log('dragover');
                 },
-                dragleave: function(event, e, files, fileList) {
+                dragleave:function (event, e, files, fileList) {
                     console.log('dragleave');
                 },
-                drop: function(event, e, files, fileList) {
+                drop:function (event, e, files, fileList) {
                     console.log('drop', files);
                 },
-                successAdd: function(event, file, files) {
+                successAdd:function (event, file, files) {
                     console.log('successAdd', file);
                     u1.upload();
                 },
-                failureAdd: function(event, file, files) {
+                failureAdd:function (event, file, files) {
                     console.log('failureAdd', file);
                 },
-                progress: function(event, e, file, loaded, total) {
+                progress:function (event, e, file, loaded, total) {
                     console.log('progress', file, loaded / total);
                 },
-                success: function(event, file, data) {
+                success:function (event, file, data) {
                     console.log('success', file, data);
                 },
-                failure: function(event, file, data) {
+                failure:function (event, file, data) {
                     console.log('failure', file, data);
                 },
-                error: function(event, file, data) {
+                error:function (event, file, data) {
                     console.log('error', file, data);
                 },
-                complete: function(event, file) {
+                complete:function (event, file) {
                     console.log('complete');
                 }
             });
