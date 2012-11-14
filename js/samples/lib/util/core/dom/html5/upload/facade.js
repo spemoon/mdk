@@ -87,9 +87,6 @@ define(function (require, exports, module) {
                 },
                 success:function (file, data) {
                     helper.tip(file, 'success');
-                    if(typeof data === 'string') {
-                        data = $.parseJSON(data);
-                    }
                     data = data.data;
                     $('#upfile_' + file.index).attr('data-id', data.id);
                 },

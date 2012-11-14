@@ -24,8 +24,8 @@ define(function(require, exports, module) {
         this.max = parseInt(params.max); // 同时上传数量
         this.max = this.max ? this.max : 2;
         this.limit = params.limit || 40; // 最多上传的数量
-        this.container = lang.isUndefined(params.container) ? $(params.container)[0] : document.body;
-        this.dragable = lang.isUndefined(params.dragable) ? true : !!this.dragable; // 是否允许拖拽上传，默认允许
+        this.container = lang.isUndefined(params.container) ? document.body : $(params.container)[0];
+        this.dragable = lang.isUndefined(params.dragable) ? true : !!params.dragable; // 是否允许拖拽上传，默认允许
         this.url = params.url || '';
         this.overLimit = params.overLimit;
         this.notAllowType = params.notAllowType;
@@ -116,7 +116,7 @@ define(function(require, exports, module) {
                                 _this.failureList.push(file);
                             } finally {
                                 finish(file);
-                                scope.trigger('fninish', [file]);
+                                scope.trigger('finish', [file]);
                             }
                         };
                         xhr.onerror = function(e) {

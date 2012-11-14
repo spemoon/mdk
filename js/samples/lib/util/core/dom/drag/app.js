@@ -75,6 +75,12 @@ define(function (require, exports, module) {
                     return '<div style="border: 1px solid #555;background: #ddd;">自定义内容</div>';
                 }
             });
+            drag.reg({
+                node:$('#drag23'),
+                proxy:function (node, handle) {
+                    return '<div style="border: 1px solid #555;background: #ddd;">自定义内容</div>';
+                }
+            });
         })();
 
         /**--------------------------------------------

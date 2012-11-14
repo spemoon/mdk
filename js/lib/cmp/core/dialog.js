@@ -8,7 +8,7 @@ define(function (require, exports, module) {
     var mask = require('./mask');
     var position = require('../../util/core/dom/position');
     var mVar = require('../../util/core/dom/mVar');
-    var tpl = require('./tpl/dialogtpl');
+    var tpl = require('./tpl/dialog');
 
     var helper = {
         resize:{
@@ -176,7 +176,7 @@ define(function (require, exports, module) {
                 }
                 this.center === true && this.setCenter();
             },
-            icon: function(type, text) {
+            icon:function (type, text) {
                 var html = '';
                 html += '<div class="icon-content">';
                 html += '    <div class="icon ' + type + '"></div>';
@@ -184,7 +184,7 @@ define(function (require, exports, module) {
                 html += '</div>';
                 return html;
             },
-            prompt: function(tip, value) {
+            prompt:function (tip, value) {
                 var html = '';
                 tip = tip || '';
                 value = lang.isUndefined(value) ? '' : value;
@@ -219,7 +219,12 @@ define(function (require, exports, module) {
     var dialog = widget.create({
         params:$.extend({}, config, true),
         tpl:function () { // 模板
-            return tpl.render(this);
+            var html = tpl.render({
+                title:this.title,
+                hide:this.hide,
+                content:this.content
+            });
+            return html;
         },
         firstRender:function () {
             if (this.bar !== false && this.buttons !== false) {
@@ -509,7 +514,7 @@ define(function (require, exports, module) {
                 var okAction = ok.action;
                 ok.focus = true;
                 ok.text = ok.text || '确定';
-                ok.action = function(e, btn) {
+                ok.action = function (e, btn) {
                     okAction.call(this, e, btn, this.element.find('.prompt-val>input').val());
                 };
                 ok = helper.btn.params(ok);

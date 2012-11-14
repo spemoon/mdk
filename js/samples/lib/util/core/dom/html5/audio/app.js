@@ -9,7 +9,9 @@ define(function(require, exports, module) {
          * 实例1：
          * --------------------------------------------*/
         (function() {
-            var a1 = new audio();
+            var a1 = new audio({
+                src: '1.mp3'
+            });
             a1.bind({
                 loadStart: function(e, scope) {
                     for(var i = 0, len = list.length; i < len; i++) {

@@ -93,7 +93,7 @@ define(function (require, exports, module) {
                 url:params.url,
                 fileName:params.fileName || 'upfile',
                 fileType:params.fileType,
-                dragable:false,
+                dragable: true,
                 limit:params.limit,
                 beforeAdd:function (file, files) {
                     var size = file.size;
@@ -217,6 +217,7 @@ define(function (require, exports, module) {
             this.obj = new swfupload({
                 id: params.button,
                 url:params.url,
+                flash: params.flash,
                 type: params.fileType,
                 desc: params.desc ? params.desc : '选择文件',
                 img: params.image,
@@ -252,7 +253,7 @@ define(function (require, exports, module) {
                     params.progress && params.progress.call(_this.obj, file, loaded, total);
                 },
                 success:function (file, data) {
-                    params.success && params.success.call(_this.obj, file, data);
+                    params.success && params.success.call(_this.obj, file, $.parseJSON(data));
                 },
                 error:function (file, code, message) {
                     params.failure && params.failure.call(_this.obj, file, $.parseJSON(message));

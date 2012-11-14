@@ -97,6 +97,7 @@ define(function (require, exports, module) {
         var _this = this;
         params = params || {};
         settings.upload_url = params.url; // 上传地址，必须配置
+        settings.flash_url = params.flash;
         settings.file_post_name = params.fileName;
         settings.post_params = params.data;
         settings.button_placeholder_id = params.id; // 替换的DOM节点id，必须配置

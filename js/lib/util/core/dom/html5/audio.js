@@ -145,7 +145,7 @@ define(function(require, exports, module) {
     var audio = function(params) {
         var _this = this;
         this.status = 0; // 0: 非播放/暂停状态；1: 播放中； 2: 暂停
-        this.src = '';
+        helper.loadParams.call(this, params);
         this._event = $({});
         if(helper.useFlash) {
             this.element = helper.create.flash.call(this, params);
@@ -165,9 +165,6 @@ define(function(require, exports, module) {
                     _this._event.trigger('error', [_this]);
                 });
         }
-        if(params && params.src) {
-            this.load(params);
-        }
     };
 
     if(helper.useFlash) {
@@ -178,9 +175,9 @@ define(function(require, exports, module) {
              * @param params
              */
             load: function(params) {
-                helper.loadParams.call(this, params);
                 this.element.load(this.src); // 调用flash载入mp3
                 this._event.trigger('loadStart', [this]); // 触发开始载入事件
+                console.log(this.autoplay);
                 if(this.autoplay) {
                     this.play();
                 }
@@ -192,9 +189,7 @@ define(function(require, exports, module) {
              */
             loadStarted: function() {
                 this.element.init(this.src);
-                if(this.autoplay) {
-                    this.play();
-                }
+                this.load(this.src);
                 return this;
             },
             /**

@@ -17,6 +17,9 @@
 #drag9, #drag13 {
     left: 400px;
 }
+#drag23 {
+  left: 600px;
+}
 .drag .handle {
     font-size: 14px;
     background: #eee8aa;
