@@ -193,6 +193,23 @@ define(function (require, exports, module) {
                 helper.setBody.call(this);
                 lang.callback(this.afterLoad, {scope:this});
             }
+        },
+        bind: function(input) {
+            var _this = this;
+            this.bindTo = $(input);
+            input = this.bindTo;
+            this.isTextInput = input.eq(0)[0].tagName.toUpperCase() == 'INPUT' && input.attr('type') == 'text';
+            if (!input.attr('data-rendered')) {
+                input.attr('data-rendered', 1);
+                input.bind('click focus', function () {
+                    helper.bind.call(_this, this);
+                    _this.render();
+                    return false;
+                });
+                if (this.isTextInput && this.readonly) {
+                    input.attr('readonly', 'readonly');
+                }
+            }
         }
     }
 
@@ -311,16 +328,8 @@ define(function (require, exports, module) {
         afterInit:function () {
             var _this = this;
             helper.load.call(this);
-            var ipt = $(this.bindTo);
             if (this.bindTo) {
-                this.isTextInput = ipt[0].tagName.toUpperCase() == 'INPUT' && ipt.attr('type') == 'text';
-                ipt.bind('click focus', function () {
-                    _this.render();
-                    return false;
-                });
-                if (this.isTextInput && this.readonly) {
-                    ipt.attr('readonly', 'readonly');
-                }
+                helper.bind.call(this, this.bindTo);
             }
         },
         firstRender:function () {
@@ -343,8 +352,9 @@ define(function (require, exports, module) {
         },
         proto:{
             render:function () {
+                this._render();
                 if (this.bindTo) {
-                    var pos = this.position == 'top';
+                    var pos = this.position.toLowerCase() === 'top';
                     position.pin({
                         element:this.element,
                         x:'left',
@@ -355,7 +365,6 @@ define(function (require, exports, module) {
                         y:pos ? 'top' : 'bottom'
                     })
                 }
-                this._render();
                 return this;
             },
             getDate:function () {
@@ -371,13 +380,17 @@ define(function (require, exports, module) {
                 }
                 helper.load.call(this);
                 if (this.bindTo) {
-                    $(this.bindTo).val(str);
+                    this.bindTo.val(str);
                 }
                 return this;
             },
             disable:function (rule) {
                 this.disabled = rule;
                 helper.load.call(this);
+                return this;
+            },
+            setBindTo: function(node) {
+                helper.bind.call(this, node || this.bindTo);
                 return this;
             }
         },
@@ -389,7 +402,6 @@ define(function (require, exports, module) {
                     var d2 = date.stringToDate(date.format(this.minDate, config.month), config.month);
                     this.date = d;
                     helper.load.call(this);
-                    return false;
                 },
                 premonth:function (e) { // 上一月
                     var d = date.distance(this.date, -1, 'M');
@@ -397,27 +409,23 @@ define(function (require, exports, module) {
                     var d2 = date.stringToDate(date.format(this.minDate, config.month), config.month);
                     this.date = d;
                     helper.load.call(this);
-                    return false;
                 },
                 nextmonth:function (e) { // 下一月
                     var d = date.distance(this.date, 1, 'M');
                     this.date = d;
                     helper.load.call(this);
-                    return false;
                 },
                 nextyear:function (e) { // 下一年
                     var d = date.distance(this.date, 1, 'y');
                     this.date = d;
                     helper.load.call(this);
-                    return false;
                 },
                 clrdate:function (e) { // 清除日期
                     if (this.bindTo) {
-                        $(this.bindTo).val('');
+                        this.bindTo.val('');
                         this.unrender();
                         lang.callback(this.afterClear, {scope:this})
                     }
-                    return false;
                 }
             },
             {
@@ -446,7 +454,7 @@ define(function (require, exports, module) {
                             this.date = helper.getDate.call(this);
                             var v = date.format(this.date, this.format);
                             if (this.bindTo && this.isTextInput) {
-                                $(this.bindTo).val(v);
+                                this.bindTo.val(v);
                                 this.unrender();
                             }
                             lang.callback(this.afterSelect, {
