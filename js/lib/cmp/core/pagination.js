@@ -1,8 +1,3 @@
-/**
- * User: caolvchong@gmail.com
- * Date: 10/12/12
- * Time: 11:42 AM
- */
 define(function (require, exports, module) {
     var $ = require('jquery');
     var lang = require('../../util/core/lang');
