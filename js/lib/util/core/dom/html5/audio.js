@@ -175,9 +175,9 @@ define(function(require, exports, module) {
              * @param params
              */
             load: function(params) {
+                helper.loadParams.call(this, params);
                 this.element.load(this.src); // 调用flash载入mp3
                 this._event.trigger('loadStart', [this]); // 触发开始载入事件
-                console.log(this.autoplay);
                 if(this.autoplay) {
                     this.play();
                 }
