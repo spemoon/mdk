@@ -27,7 +27,7 @@ define(function(require, exports, module) {
                 div.innerHTML = html;
                 return div.firstChild;
             },
-            flash: function(params) {
+            flash: function() {
                 var flash = seajs.pluginSDK.util.dirname(module.uri) + 'audiojs.swf';
                 var id = mVar.id();
                 var t = +new Date + Math.random();
@@ -60,19 +60,25 @@ define(function(require, exports, module) {
                 p.src = params;
                 p.preload = true;
                 p.autoplay = true;
+                p.loop = false;
             } else {
                 params = params || {};
                 p.src = params.src;
                 p.preload = params.preload !== false;
                 p.autoplay = params.autoplay !== false;
+                p.loop = params.loop !== true;
             }
             this.src = p.src;
             this.preload = p.preload;
             this.autoplay = p.autoplay;
+            this.loop = p.loop;
             this.status = 0;
             return p;
         },
         progress: function() {
+            if(!this.preload) {
+                return;
+            }
             if(!this.timer) {
                 this.timer = {
                     start: null, // 准备载入数据的监听器
@@ -82,41 +88,38 @@ define(function(require, exports, module) {
                 clearInterval(this.timer.start);
                 clearInterval(this.timer.progress);
             }
-            if(this.preload) {
-                var _this = this;
-                var scope = $(this);
-                _this.timer.start = setInterval(function() {
-                    if(_this.element.readyState > 1) { // 已经开始接收数据
-                        if(_this.autoplay) { // 自动播放则开始播放
-                            _this.play();
-                        }
-                        clearInterval(_this.timer.start);
+            var _this = this;
+            _this.timer.start = setInterval(function() {
+                if(_this.element.readyState > 1) { // 已经开始接收数据
+                    if(_this.autoplay) { // 自动播放则开始播放
+                        _this.play();
+                    }
+                    clearInterval(_this.timer.start);
 
-                        var prePercent = 0;
-                        var count = 0;
-                        var percent;
-                        _this.timer.progress = setInterval(function() { // 进度条加载
-                            var durationLoaded = _this.element.buffered.end(_this.element.buffered.length - 1); // 载入时长
-                            percent = durationLoaded / _this.element.duration;
-                            if(percent != prePercent) {
-                                prePercent = percent;
-                            } else {
-                                count++;
-                                if(count == 5) { // 缓存检测
-                                    durationLoaded = _this.element.duration;
-                                    _this._event.trigger('loaded', [_this]); // 触发载入完成事件
-                                    clearInterval(_this.timer.progress);
-                                }
-                            }
-                            _this._event.trigger('progress', [durationLoaded, _this.element.duration, _this]); // 触发载入进度事件
-                            if(percent >= 1) { // 大于1表示加载完毕
+                    var prePercent = 0;
+                    var count = 0;
+                    var percent;
+                    _this.timer.progress = setInterval(function() { // 进度条加载
+                        var durationLoaded = _this.element.buffered.end(_this.element.buffered.length - 1); // 载入时长
+                        percent = durationLoaded / _this.element.duration;
+                        if(percent != prePercent) {
+                            prePercent = percent;
+                        } else {
+                            count++;
+                            if(count == 5) { // 缓存检测
+                                durationLoaded = _this.element.duration;
                                 _this._event.trigger('loaded', [_this]); // 触发载入完成事件
                                 clearInterval(_this.timer.progress);
                             }
-                        }, 32);
-                    }
-                }, 10);
-            }
+                        }
+                        _this._event.trigger('progress', [durationLoaded, _this.element.duration, _this]); // 触发载入进度事件
+                        if(percent >= 1) { // 大于1表示加载完毕
+                            _this._event.trigger('loaded', [_this]); // 触发载入完成事件
+                            clearInterval(_this.timer.progress);
+                        }
+                    }, 32);
+                }
+            }, 10);
         }
     };
 
@@ -145,10 +148,10 @@ define(function(require, exports, module) {
     var audio = function(params) {
         var _this = this;
         this.status = 0; // 0: 非播放/暂停状态；1: 播放中； 2: 暂停
-        helper.loadParams.call(this, params);
         this._event = $({});
+        helper.loadParams.call(this, params);
         if(helper.useFlash) {
-            this.element = helper.create.flash.call(this, params);
+            this.element = helper.create.flash.call(this);
             this.prevPercent = 0; // 上一次播放进度，flash会出现接近100%但是无法到达100%的情况
             this.percentCount = 0; // 相同播放进度累积次数
         } else {
@@ -176,10 +179,9 @@ define(function(require, exports, module) {
              */
             load: function(params) {
                 helper.loadParams.call(this, params);
-                this.element.load(this.src); // 调用flash载入mp3
-                this._event.trigger('loadStart', [this]); // 触发开始载入事件
-                if(this.autoplay) {
-                    this.play();
+                if(this._flashLoaded) {
+                    this.element.load(this.src); // 调用flash载入mp3
+                    this._event.trigger('loadStart', [this]); // 触发开始载入事件
                 }
             },
             /**
@@ -188,9 +190,13 @@ define(function(require, exports, module) {
              * @return {*}
              */
             loadStarted: function() {
-                this.element.init(this.src);
-                this.load(this.src);
-                return this;
+                this._flashLoaded = true;
+                if(this.preload) {
+                    this.element.init(this.src);
+                }
+                if(this.autoplay) {
+                    this.play();
+                }
             },
             /**
              * 此方法提供给flash内部调用
@@ -207,7 +213,6 @@ define(function(require, exports, module) {
                 if(percent >= 1) {
                     this._event.trigger('loaded', [this]); // 触发载入完成事件
                 }
-                return this;
             },
             /**
              * 此方法提供给flash内部调用
@@ -226,7 +231,6 @@ define(function(require, exports, module) {
                         this._event.trigger('ended', [this]);
                     }
                 }
-                return this;
             },
             skipTo: function(percent) {
                 percent /= 100;
@@ -234,21 +238,17 @@ define(function(require, exports, module) {
                     this.element.skipTo(percent); // 调用flash跳转到某个进度
                     this._event.trigger('skip', [percent, this]);
                 }
-                return this;
             },
             setVolume: function(num) {
                 this.element.setVolume(num);
-                return this;
             },
             end: function(e) { // 设置结束
                 this.skipTo(0);
                 this.pause();// 跳到初始位置并暂停
                 this._event.trigger('ended', [this]);
-                return this;
             },
             loadError: function() { // 载入异常
                 this._event.trigger('error', [this]);
-                return this;
             }
         };
     } else {
@@ -269,25 +269,21 @@ define(function(require, exports, module) {
                 this.element.load();
                 helper.progress.call(this); // 调用载入进度
                 this._event.trigger('loadStart', [this]); // 触发开始载入事件
-                return this;
             },
             skipTo: function(percent) {
                 try {
                     this.element.currentTime = this.element.duration * percent / 100; // 设置播放位置
                     this._event.trigger('skip', [percent, this]);
                 } catch(e) {}
-                return this;
             },
             end: function() {
                 this.pause();
                 this.skipTo(0);
                 this.status = 0;
                 this._event.trigger('ended', [this]);
-                return this;
             },
             setVolume: function(num) {
                 this.element.volume = num / 100;
-                return this;
             }
         };
     }
@@ -295,10 +291,15 @@ define(function(require, exports, module) {
      * 播放
      */
     audio.prototype.play = function() {
+        if(!this.preload) {
+            this.preload = true;
+            if(helper.useFlash) {
+                this.element.init(this.src);
+            }
+        }
         helper.useFlash ? (this.status != 1 && this.element.pplay()) : this.element.play();
         this.status = 1;
         this._event.trigger('play', [this]); // 触发播放事件，和timeupdate区别是播放中一直触发timeupdate，play仅调用播放时触发一次
-        return this;
     };
     /**
      * 暂停
@@ -309,14 +310,12 @@ define(function(require, exports, module) {
             helper.useFlash ? this.element.ppause() : this.element.pause();
             this._event.trigger('pause', [this]); // 触发暂停事件
         }
-        return this;
     };
     /**
      * 切换播放/暂停
      */
     audio.prototype.toggle = function() {
         this.status == 1 ? this.pause() : this.play();
-        return this;
     };
     audio.prototype.bind = function() {
         var len = arguments.length;
@@ -325,7 +324,6 @@ define(function(require, exports, module) {
         } else if(len == 2) {
             this._event.bind(arguments[0], arguments[1]);
         }
-        return this;
     };
     audio.prototype.unbind = function() {
         var len = arguments.length;
@@ -334,7 +332,6 @@ define(function(require, exports, module) {
         } else if(len == 2) {
             this._event.unbind(arguments[0], arguments[1]);
         }
-        return this;
     };
     return audio;
 });

@@ -13,6 +13,7 @@ define(function(require, exports, module) {
                 maskNode.css({
                     width: doc.width(),
                     height: doc.height(),
+                    display: 'block',
                     zIndex: zIndex
                 });
                 if(this.msg) {
@@ -40,6 +41,7 @@ define(function(require, exports, module) {
                     top: this.renderTo.scrollTop(),
                     width: this.renderTo.width(),
                     height: this.renderTo.height(),
+                    display: 'block',
                     zIndex: zIndex
                 });
                 if(this.msg) {
@@ -47,7 +49,6 @@ define(function(require, exports, module) {
                     msgNode.css({
                         left: (maskNode.width() - msgNode.width()) / 2,
                         top: (this.renderTo.height() - msgNode.height()) / 2 + this.renderTo.scrollTop(),
-                        display: 'block',
                         zIndex: zIndex
                     });
                 } else {
@@ -107,24 +108,46 @@ define(function(require, exports, module) {
                 for(var key in cacheData[pos]) {
                     this[key] = cacheData[pos][key];
                 }
-                return false;
+                return false; // 防止多次new生成HTML
             }
             cache.push(this.renderTo[0]);
             cacheData.push(this);
         },
         proto: {
             render: function(msg) {
-                this.msg = msg || '';
+                var pos = helper.cache.find(this.renderTo[0]);
+                if(pos != -1) { // copy属性
+                    for(var key in cacheData[pos]) {
+                        this[key] = cacheData[pos][key];
+                    }
+                }
                 var zIndex = mVar.zIndex();
+                this.msg = msg || '';
                 if(!this.zIndex) {
                     this.zIndex = [zIndex];
                 } else {
                     this.zIndex.push(zIndex);
                 }
                 this.element.find('.m-mask').css('opacity', this.opacity);
+                this.element.show();
                 this._render();
                 helper.render.call(this, zIndex);
                 return this;
+            },
+            setTip: function(msg) {
+                var zIndex;
+                this.msg = msg || '';
+                if(this.zIndex) {
+                    var len = this.zIndex.length;
+                    if(len) {
+                        zIndex = this.zIndex[len - 1];
+                    }
+                }
+                if(!zIndex) {
+                    zIndex = mVar.zIndex();
+                    this.zIndex = [zIndex];
+                }
+                helper.render.call(this, zIndex);
             },
             unrender: function() {
                 if(this._status == widget.STATUS.RENDERED) {

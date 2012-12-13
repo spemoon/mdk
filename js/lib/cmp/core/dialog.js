@@ -49,12 +49,14 @@ define(function (require, exports, module) {
         },
         mask:{
             reg:function () {
-                this._mask = new mask({
-                    params:{
-                        opacity:this.opacity
-                    }
-                });
-                this._mask.init().render();
+                if (!this._mask) {
+                    this._mask = new mask({
+                        params:{
+                            opacity:this.opacity
+                        }
+                    }).init();
+                }
+                this._mask.render('');
             },
             unreg:function () {
                 this._mask.unrender();
@@ -162,8 +164,8 @@ define(function (require, exports, module) {
                 var node = this.element.find('.content').eq(0);
                 node.width('auto');
 
-                var w = node.width();
-                if (w > this.width) {
+                if(!this.width) {
+                    var w = node.width();
                     this.width = w;
                     node.width(w);
                     if (this.resize === true) {
@@ -269,6 +271,7 @@ define(function (require, exports, module) {
             this.mask === true && helper.mask.unreg.call(this);
             this.resize === true && helper.resize.unreg.call(this);
             this.drag === true && helper.drag.unreg.call(this);
+            this.width = 0;
         },
         events:[
             {
@@ -304,7 +307,6 @@ define(function (require, exports, module) {
                 if (!lang.isUndefined(params.title)) {
                     this.setTitle(params.title);
                 }
-
                 if (!lang.isUndefined(params.width)) {
                     this.width = params.width;
                 }
@@ -490,7 +492,6 @@ define(function (require, exports, module) {
                 params.content = params.icon ? helper.content.icon(params.icon, params.content || '') : (params.content || '');
                 params.width = params.width || 250;
                 params.height = params.height || 80;
-
                 var ok = params.ok || {};
                 ok.text = ok.text || '确定';
                 ok = helper.btn.params(ok);

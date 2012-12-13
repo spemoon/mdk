@@ -3,33 +3,63 @@ define(function(require, exports, module) {
     var lang = require('../../lang');
 
     var config = {
-        fileName: 'X-FILENAME'
+        fileName: 'upfile',
+        fileType: '*',
+        limit: 50,
+        max: 2,
+        maxSize: '5M',
+        multi: true,
+        width: 72,
+        height: 23
     };
+
+    var helper = {
+        unit:function (str) {
+            var s = $.trim(str.replace(/\d+/, '')).toLowerCase();
+            var d = $.trim(str.replace(/\D/g, ''));
+            var a = ['b', 'k', 'm', 'g', 't'];
+            var n = 0;
+            for (var i = 0, len = a.length; i < len; i++) {
+                if (s == a[i]) {
+                    n = i;
+                    break;
+                }
+            }
+            return d * Math.pow(1000, n);
+        }
+    };
+
+    var isSupportHTML5Upload = false;
+
+    (function () {
+        if (typeof XMLHttpRequest != 'undefined') {
+            var xhr = new XMLHttpRequest();
+            isSupportHTML5Upload = !!xhr.upload;
+        }
+    })();
+
     /**
      * HTML5 上传
-     * 对接受容器加入dragenter,dragover, dragleave, drop 事件
      * @param params
      */
     var html5Upload = function(params) {
-        var _this = this;
-        var scope = $(this);
         params = params || {};
+        this.url = params.url || ''; // 上传的url
         this.fileName = params.fileName || config.fileName; // 传给服务端的name
-        this.fileList = [];
+        this.fileList = []; // 等待上传的文件队列
         this.successList = []; // 上传成功文件队列
         this.failureList = []; // 上传失败文件队列
-        this.index = 0;
+        this.xhrList = {}; // 缓存住xhr的队列，用来给abort使用
+        this.index = 0; // 文件索引
         this.status = 0; // 上传整体状态标识 0：未开始上传或上传完成，正数：正在上传的文件数量
         this.type = params.type || 'form'; // 默认form方式上传，还有blob, buffer，非这三个值则认为是DOM上传
-        this.max = parseInt(params.max); // 同时上传数量
-        this.max = this.max ? this.max : 2;
-        this.limit = params.limit || 40; // 最多上传的数量
-        this.container = lang.isUndefined(params.container) ? document.body : $(params.container)[0];
-        this.dragable = lang.isUndefined(params.dragable) ? true : !!params.dragable; // 是否允许拖拽上传，默认允许
-        this.url = params.url || '';
-        this.overLimit = params.overLimit;
-        this.notAllowType = params.notAllowType;
-        this.beforeAdd = params.beforeAdd;
+        this.max = parseInt(params.max) || config.max; // 同时上传数量
+        this.limit = parseInt(params.limit) || config.limit; // 最多上传的数量
+        this.maxSize = helper.unit(params.maxSize ? params.maxSize : config.maxSize); // 单文件最大大小
+        this.overLimit = params.overLimit; // (limit) 超过限制数量的回调
+        this.notAllowType = params.notAllowType; // (file) 出现不允许类型的回调，会触发failure
+        this.zeroSize = params.zeroSize; // (file) 空文件回调，会触发failureAdd事件
+        this.overSize = params.overSize; // (file, size)超过限制大小，会触发failureAdd事件
         // 文件类型，使用扩展名，统配所有所占名用*，统配多个扩展名用半角封号;隔开
         this.fileType = (params.fileType && params.fileType.split(';')) || ['*'];
         (function(arr) {
@@ -37,34 +67,6 @@ define(function(require, exports, module) {
                 arr[i] = $.trim(arr[i].toLowerCase()); // 把扩展名全部转小写
             }
         })(this.fileType);
-
-        if(this.dragable !== false) {
-            this.container.addEventListener('dragenter', function(e) {
-                scope.trigger('dragenter', [e, e.target]);
-                e.stopPropagation();
-                e.preventDefault();
-            }, false);
-
-            this.container.addEventListener('dragover', function(e) {
-                scope.trigger('dragover', [e, e.target]);
-                e.stopPropagation();
-                e.preventDefault();
-            }, false);
-
-            this.container.addEventListener('dragleave', function(e) {
-                scope.trigger('dragleave', [e, e.target]);
-                e.stopPropagation();
-                e.preventDefault();
-            }, false);
-
-            this.container.addEventListener('drop', function(e) {
-                var files = e.target.files || e.dataTransfer.files;
-                _this.add(files);
-                scope.trigger('drop', [e, files, _this.fileList]);
-                e.stopPropagation();
-                e.preventDefault();
-            }, false);
-        }
     };
 
     html5Upload.prototype = {
@@ -86,16 +88,20 @@ define(function(require, exports, module) {
                 var file = _this.fileList.shift(); // 取队列头的文件上传
                 this.status++;
                 if(file) {
-                    var xhr = new XMLHttpRequest();
                     params = params || {};
-                    if(xhr.upload) {
+                    if(isSupportHTML5Upload) {
+                        var xhr = new XMLHttpRequest();
+                        this.xhrList[file.index] = xhr;
+
                         xhr.upload.addEventListener('progress', function(e) {
                             scope.trigger('progress', [e, file, e.loaded, e.total]);
                         }, false);
 
                         var finish = function(file) {
                             _this.status--;
+                            delete _this.xhrList[file.index];
                             if(_this.fileList.length == 0) {
+                                _this.xhrList = {};
                                 scope.trigger('complete', [file]);
                             } else {
                                 _this.upload(params);
@@ -122,11 +128,6 @@ define(function(require, exports, module) {
                         xhr.onerror = function(e) {
                             finish(file);
                         };
-
-                        var uploadUrl = this.url;
-                        if(this.type == 'blob') {
-
-                        }
                         xhr.open('POST', params.url || this.url, true);
 
                         if(this.type == 'form') {
@@ -170,15 +171,6 @@ define(function(require, exports, module) {
         },
         /**
          * 增加文件
-         *     filter(files, fileList): 过滤此次加入的文件列表
-         *         返回false表示加入失败，触发errorAdd事件
-         *         返回数组，表示过滤后
-         *         其他返回值表示不过滤
-         *
-         *     在上面过滤后对每个文件触发beforeAdd切面
-         *     beforeAdd(file, fileList):
-         *         返回false表示不加入上传队列，触发failureAdd事件，file对象加入error属性
-         *         其他触发successAdd事件，加入上传队列
          * @param files
          * @return {*}
          */
@@ -198,32 +190,38 @@ define(function(require, exports, module) {
                             var ext = file.name.split('.');
                             ext = ext[ext.length - 1].toLowerCase();
                             ext = '*.' + ext;
+                            file.index = _this.index++;
                             if($.inArray(ext, extArr) != -1) {
                                 temp.push(file);
                             } else {
                                 if(lang.isFunction(_this.notAllowType)) {
-                                    _this.notAllowType(file);
                                     file.error = true;
                                     scope.trigger('failureAdd', [file, files]);
+                                    _this.notAllowType(file);
                                 }
                             }
-                            file.index = _this.index++;
                         }
                         arr = temp;
                     })(this.fileType, this);
+                } else {
+                    for(var i = 0, file; file = arr[i]; i++) {
+                        file.index = _this.index++;
+                    }
                 }
                 if(arr !== false) {
                     for(var i = 0, file; file = arr[i]; i++) {
-                        if(lang.isFunction(this.beforeAdd)) {
-                            if(lang.callback(this.beforeAdd, {
-                                scope: this,
-                                params: [file, this.fileList]
-                            })) {
-                                this.fileList.push(file);
-                                scope.trigger('successAdd', [file, files]);
-                            } else {
+                        var size = file.size;
+                        if(size == 0) {
+                            if(lang.isFunction(_this.zeroSize)) {
                                 file.error = true;
                                 scope.trigger('failureAdd', [file, files]);
+                                this.zeroSize(file);
+                            }
+                        } else if(size > this.maxSize) {
+                            if(lang.isFunction(_this.overSize)) {
+                                file.error = true;
+                                scope.trigger('failureAdd', [file, files]);
+                                this.overSize(file, this.maxSize);
                             }
                         } else {
                             this.fileList.push(file);
@@ -240,13 +238,50 @@ define(function(require, exports, module) {
          * 重启一次上传，一般用于提交之后
          */
         reset: function(callback) {
-            this.successList = []; // 上传成功文件队列
-            this.failureList = []; // 上传失败文件队列
-            this.status = 0; // 上传整体状态标识 0：未开始上传或上传完成，1：正在上传
+            for(var key in this.xhrList) {
+                var xhr = this.xhrList[key];
+                if(xhr && xhr.abort) {
+                    xhr.abort();
+                }
+            }
+            this.fileList.length = 0;
+            this.successList.length = 0; // 上传成功文件队列
+            this.failureList.length = 0; // 上传失败文件队列
+            this.xhrList = {};
+            this.status = 0; // 上传整体状态标识 0：未开始上传或上传完成，>0：正在上传
             callback && callback.call(this);
             return this;
+        },
+        setUploadUrl: function(url) {
+            this.url = url;
+        },
+        /**
+         * 获取状态，返回值为0上传完成， 1存在未上传完成的文件
+         * @return {Number}
+         */
+        getStatus: function() {
+            var status = this.status;
+            var result = 0; // 0 上传完成， 1 存在未上传完成的文件
+            if(status > 0) { // 正在上传
+                result = 1;
+            } else {
+                if(this.fileList.length > 0) { // 还存在未上传的文件
+                    result = 1;
+                }
+            }
+            return result;
         }
     };
+
+    html5Upload.preview = function(file, callback) {
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function() {
+            callback && callback.call(this, file, this.result)
+        };
+    };
+
+    html5Upload.isSupportHTML5Upload = isSupportHTML5Upload;
 
     return html5Upload;
 });

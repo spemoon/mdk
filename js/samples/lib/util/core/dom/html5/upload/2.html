@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>upload sample</title>
+    <link href="../../../../../../../../themes/global.css" rel="stylesheet" type="text/css"/>
+    <link href="../../../../../../../../themes/default/lib.util.core.dom.upload.css" rel="stylesheet" type="text/css"/>
+    <link href="../../../../../../sample.css" rel="stylesheet" type="text/css"/>
+    <link href="style.css" rel="stylesheet" type="text/css"/>
+    <script src="../../../../../../../../js/lib/sea.js"></script>
+    <script>
+        seajs.use('../../../../../../../../js/lib/sea-config.js', function() {
+            seajs.use('./2.js');
+        });
+    </script>
+</head>
+<body>
+<!------------------------------------------------------------------------------------------------->
+<div class="modual">
+    <h2>upload</h2>
+    <div class="introduce">
+        <em>说明</em>
+        <p>复杂HTML5 拖拽上传</p>
+    </div>
+    <div class="usage">
+        <em>用法</em>
+        <pre class="brush: js;">//code</pre>
+    </div>
+    <div class="example">
+        <em>示例</em>
+        <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+        <div class="demo">
+            <div class="box">
+                <div class="container" id="container1">拖拽到浏览器窗口，除了右侧div，都是上传</div>
+                <div class="bar">
+                    <input type="file" id="select_file1" multiple="true"/>
+                    <input id="reset1" type="button" value="清空"/>
+                </div>
+                <div class="upload-result" id="result1"></div>
+            </div>
+
+            <div class="box" id="box2">
+                <div class="container" id="container2">拖拽到此div，异步获取上传URL后再上传</div>
+                <div class="bar">
+                    <input type="file" id="select_file2" multiple="true"/>
+                    <input id="reset2" type="button" value="清空"/>
+                </div>
+                <div class="upload-result" id="result2"></div>
+            </div>
+
+            <input type="button" value="创建" class="xbtn" id="xbtn"/>
+
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

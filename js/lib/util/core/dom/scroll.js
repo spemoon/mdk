@@ -8,15 +8,14 @@ define(function(require, exports, module) {
             var scrollTop, clientHeight;
             if(node == window || node == document) {
                 scrollTop = $(document).scrollTop();
-                clientHeight = document.documentElement.clientHeight;
-                node = document.body;
+                node = document.documentElement;
             } else {
                 scrollTop = node.scrollTop;
-                clientHeight = node.clientHeight;
             }
+            clientHeight = Math.ceil(node.clientHeight);
             if(scrollTop == 0) {
                 result = 'top';
-            } else if(scrollTop + parseInt(clientHeight) + 1 >= node.scrollHeight) { // 一些情况下会小1
+            } else if(scrollTop + Math.ceil(clientHeight) >= node.scrollHeight) {
                 result = 'bottom';
             }
             return result;
@@ -91,6 +90,7 @@ define(function(require, exports, module) {
                         if(actions.top) {
                             if(result == 'top' && dir == 'up') {
                                 actions.top(e, top, dir, status);
+                                r.to(node, top);
                             }
                         }
                         if(actions.bottom) {

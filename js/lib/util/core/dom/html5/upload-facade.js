@@ -1,20 +1,13 @@
-define(function (require, exports, module) {
+define(function(require, exports, module) {
     /**
      * html5/swfupload上传的兼容模式
      */
     var $ = require('jquery');
     var lang = require('../../lang');
     var html5upload = require('./upload');
+    var dragUpload = require('./drag-upload');
     var swfupload = require('./swfupload-my');
 
-    var isSupportHTML5Upload = false;
-
-    (function () {
-        if (typeof XMLHttpRequest != 'undefined') {
-            var xhr = new XMLHttpRequest();
-            isSupportHTML5Upload = !!xhr.upload;
-        }
-    })();
     var config = {
         fileName: 'upfile',
         fileType: '*',
@@ -25,28 +18,8 @@ define(function (require, exports, module) {
         height: 23
     };
 
-    var helper = {
-        unit:function (str) {
-            var s = $.trim(str.replace(/\d+/, '')).toLowerCase();
-            var d = $.trim(str.replace(/\D/g, ''));
-            var a = ['b', 'k', 'm', 'g', 't'];
-            var n = 0;
-            for (var i = 0, len = a.length; i < len; i++) {
-                if (s == a[i]) {
-                    n = i;
-                    break;
-                }
-            }
-            return d * Math.pow(1000, n);
-        }
-    };
-
-    $('#upload_form1').submit(function () {
-        $('#submit1')[0].disabled = true;
-    });
-
     var upload;
-    if (isSupportHTML5Upload) {
+    if(html5upload.isSupportHTML5Upload) {
         /**
          * @param params
          *     url: 后端响应上传的url
@@ -74,7 +47,7 @@ define(function (require, exports, module) {
          *     notAllowType:
          *     type: 上传方式
          */
-        upload = function (params) {
+        upload = function(params) {
             (function() {
                 for(var key in config) {
                     if(lang.isUndefined(params[key])) {
@@ -82,7 +55,6 @@ define(function (require, exports, module) {
                     }
                 }
             })();
-            var maxSize = helper.unit(params.maxSize);
             var _this = this;
             (function(params, scope) {
                 for(var key in params) {
@@ -90,77 +62,73 @@ define(function (require, exports, module) {
                 }
             })(params, this);
             this.obj = new html5upload({
-                url:params.url,
-                fileName:params.fileName || 'upfile',
-                fileType:params.fileType,
+                url: params.url,
+                fileName: params.fileName,
+                fileType: params.fileType,
                 dragable: true,
-                limit:params.limit,
-                beforeAdd:function (file, files) {
-                    var size = file.size;
-                    var flag = true;
-                    if (size == 0) {
-                        flag = false;
-                        params.zeroSize && params.zeroSize.call(_this.obj, file);
-                    } else if (size > maxSize) {
-                        flag = false;
-                        params.overSize && params.overSize.call(_this.obj, params.maxSize, file);
-                    }
-                    return flag;
+                limit: params.limit,
+                max: params.max, // flash一次只能传一个，但这里无须一样，适当并发上传有益提高效率
+                maxSize: params.maxSize,
+                zeroSize: function(file) {
+                    params.zeroSize && params.zeroSize.call(_this.obj, file);
                 },
-                overLimit:function (n) {
+                overSize: function(file, size) {
+                    params.overSize && params.overSize.call(_this.obj, size, file);
+                },
+                overLimit: function(n) {
                     params.overLimit && params.overLimit.call(_this.obj, n);
                 },
-                notAllowType:function (file) {
+                notAllowType: function(file) {
                     params.notAllowType && params.notAllowType.call(_this.obj, file);
                 }
             });
 
             $(this.obj).bind({
-                successAdd:function (event, file, files) {
+                successAdd: function(event, file, files) {
                     params.successAdd && params.successAdd.call(_this.obj, file);
                     _this.obj.upload(params.data);
                 },
-                failureAdd:function (event, file, files) {
+                failureAdd: function(event, file, files) {
                     params.failureAdd && params.failureAdd.call(_this.obj, file);
                 },
-                progress:function (event, e, file, loaded, total) {
+                progress: function(event, e, file, loaded, total) {
                     params.progress && params.progress.call(_this.obj, file, loaded, total);
                 },
-                success:function (event, file, data) {
+                success: function(event, file, data) {
                     params.success && params.success.call(_this.obj, file, data);
                 },
-                failure:function (event, file, data) {
+                failure: function(event, file, data) {
                     params.failure && params.failure.call(_this.obj, file, data);
                 },
-                error:function (event, file, data) {
+                error: function(event, file, data) {
                     params.failure && params.failure.call(_this.obj, file, data);
                 },
-                finish:function (event, file) {
+                finish: function(event, file) {
                     params.finish && params.finish.call(_this.obj, file);
                 },
-                complete:function (event, file) {
+                complete: function(event, file) {
                     params.complete && params.complete.call(_this.obj, file);
                 }
             });
-            if (params.dragable !== false) {
-                $(_this.obj).bind({
-                    dragenter:function (event, e, files, fileList) {
+            if(params.dragable !== false) {
+                dragUpload.bind({
+                    dragenter: function(event, e, files, fileList) {
                         params.dragenter && params.dragenter.call(_this.obj, files, fileList);
                     },
-                    dragover:function (event, e, files, fileList) {
+                    dragover: function(event, e, files, fileList) {
                         params.dragover && params.dragover.call(_this.obj, files, fileList);
                     },
-                    dragleave:function (event, e, files, fileList) {
+                    dragleave: function(event, e, files, fileList) {
                         params.dragleave && params.dragleave.call(_this.obj, files, fileList);
                     },
-                    drop:function (event, e, files, fileList) {
+                    drop: function(event, e, files, fileList) {
                         params.drop && params.drop.call(_this.obj, files, fileList);
                     }
                 });
             }
 
             $('#' + this.button).replaceWith('<a class="upload-select-btn" href="javascript:;" id="' + this.button + '"><input type="file" ' + (this.multi ? ' multiple="true"' : '') + '/></a>');
-            $('#' + this.button + '>input').change(function () {
+            $('#' + this.button + '>input').change(function() {
                 var files = this.files;
                 _this.obj.add(files);
             });
@@ -172,7 +140,7 @@ define(function (require, exports, module) {
                 this.obj.reset();
                 $('#' + this.button).unbind('change');
                 $('#' + this.button).replaceWith('<a class="upload-select-btn" href="javascript:;" id="' + this.button + '"><input type="file" ' + (this.multi ? ' multiple="true"' : '') + '/></a>');
-                $('#' + this.button + '>input').change(function () {
+                $('#' + this.button + '>input').change(function() {
                     var files = this.files;
                     _this.obj.add(files);
                 });
@@ -199,7 +167,6 @@ define(function (require, exports, module) {
                     }
                 }
             })();
-            var maxSize = params.maxSize + 'B';
             (function(params, scope) {
                 for(var key in params) {
                     scope[key] = params[key];
@@ -213,10 +180,10 @@ define(function (require, exports, module) {
                     params.type = t1 + ';' + t2;
                 }
             })();
-
+            var maxSize = this.maxSize + 'B';
             this.obj = new swfupload({
                 id: params.button,
-                url:params.url,
+                url: params.url,
                 flash: params.flash,
                 type: params.fileType,
                 desc: params.desc ? params.desc : '选择文件',
@@ -228,40 +195,40 @@ define(function (require, exports, module) {
                 width: params.width,
                 height: params.height,
 
-                limit:params.limit,
+                limit: params.limit,
                 size: maxSize,
 
-                overLimit:function (n) {
+                overLimit: function(n) {
                     params.overLimit && params.overLimit.call(_this.obj, n);
                 },
-                zeroSize:function (file) {
+                zeroSize: function(file) {
                     params.zeroSize && params.zeroSize.call(_this.obj, file);
                 },
-                overSize:function (maxSize, file) {
+                overSize: function(maxSize, file) {
                     params.overSize && params.overSize.call(_this.obj, maxSize, file);
                 },
-                notAllowType:function (file) {
+                notAllowType: function(file) {
                     params.notAllowType && params.notAllowType.call(_this.obj, file);
                 },
-                successAdd:function (file) {
+                successAdd: function(file) {
                     params.successAdd && params.successAdd.call(_this.obj, file);
                 },
-                errorAdd:function (file, code, message) {
+                errorAdd: function(file, code, message) {
                     params.failureAdd && params.failureAdd.call(_this.obj, file);
                 },
-                progress:function (file, loaded, total) {
+                progress: function(file, loaded, total) {
                     params.progress && params.progress.call(_this.obj, file, loaded, total);
                 },
-                success:function (file, data) {
+                success: function(file, data) {
                     params.success && params.success.call(_this.obj, file, $.parseJSON(data));
                 },
-                error:function (file, code, message) {
+                error: function(file, code, message) {
                     params.failure && params.failure.call(_this.obj, file, $.parseJSON(message));
                 },
-                finish:function (file) {
+                finish: function(file) {
                     params.finish && params.finish.call(_this.obj, file);
                 },
-                complete:function (file) {
+                complete: function(file) {
                     params.complete && params.complete.call(_this.obj, file);
                 }
             });

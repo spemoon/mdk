@@ -1,3 +1,8 @@
+/**
+ * User: caolvchong@gmail.com
+ * Date: 10/12/12
+ * Time: 11:42 AM
+ */
 define(function (require, exports, module) {
     var $ = require('jquery');
     var lang = require('../../util/core/lang');
@@ -24,7 +29,12 @@ define(function (require, exports, module) {
             var i, end;
             var html = '';
             url += url.indexOf('?') == -1 ? '?' : '&';
-            url += this.sizeName + '=' + this.size + '&' + this.pageName + '=';
+            if (url.indexOf(this.sizeName + '=') == -1) {
+                url += this.sizeName + '=' + this.size + '&';
+            }
+            if (url.indexOf(this.pageName + '=') == -1) {
+                url += this.pageName + '=';
+            }
             if (this.showPN) {
                 if (current == 1 || total == 0) {
                     html += '<a class="page-pre disabled" href="#" >上一页</a>';
@@ -70,7 +80,7 @@ define(function (require, exports, module) {
             }
             return html;
         },
-        ajax: function(page) {
+        ajax:function (page) {
             var sa = ajax.single(this.xhr || 'pagination_' + this.id);
             var _this = this;
             var obj = {
@@ -99,8 +109,12 @@ define(function (require, exports, module) {
                 },
                 data:{}
             };
-            obj.data[this.pageName] = page;
-            obj.data[this.sizeName] = this.size;
+            if (this.url.indexOf(this.pageName + '=') == -1) {
+                obj.data[this.pageName] = page;
+            }
+            if (this.url.indexOf(this.sizeName + '=') == -1) {
+                obj.data[this.sizeName] = this.size;
+            }
             this.reload({
                 current:page
             });
@@ -113,7 +127,7 @@ define(function (require, exports, module) {
             url:'', // 获取数据的url
             data:null, // 提供data数组，则使用静态数据（此需求非常少见，但确实遇到了）
             ajax:true, // 是否使用ajax方式
-            action: null, // 点击分页后的回调
+            action:null, // 点击分页后的回调
             pageName:'page', // 传递给后端的页数参数名
             sizeName:'pagesize', // 传递给后端的每页数量参数名
             totalName:'total', // 后端返回总条数的参数名
@@ -135,12 +149,12 @@ define(function (require, exports, module) {
             if (this.data) {
                 this.ajax = false;
                 this.total = this.data.length;
-            } else if(this.action) {
+            } else if (this.action) {
                 this.ajax = false;
             }
         },
-        firstRender: function() {
-            if(this.ajax) {
+        firstRender:function () {
+            if (this.ajax) {
                 helper.ajax.call(this, 1);
             }
         },
@@ -169,9 +183,9 @@ define(function (require, exports, module) {
                 node[0].innerHTML = helper.html.call(this);
                 return this;
             },
-            load: function(page) {
+            load:function (page) {
                 page = page || this.current;
-                if(this.ajax) {
+                if (this.ajax) {
                     helper.ajax.call(this, page);
                 }
                 return this;
@@ -189,7 +203,7 @@ define(function (require, exports, module) {
                             var start = Math.max((page - 1) * this.size, 0);
                             var end = Math.min(start + this.size, max);
                             var data = this.data.slice(start, end);
-                            if(data.length == 0) {
+                            if (data.length == 0) {
                                 end = max;
                                 start = Math.max(end - this.size, 0);
                                 data = this.data.slice(start, end);
@@ -199,10 +213,10 @@ define(function (require, exports, module) {
                                 current:page
                             });
                             this.success && this.success.call(this, data);
-                        } else if(this.action) {
+                        } else if (this.action) {
                             lang.callback(this.action, {
-                                params: [page],
-                                scope: this
+                                params:[page],
+                                scope:this
                             });
                             this.reload({
                                 current:page

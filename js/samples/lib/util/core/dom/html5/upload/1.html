@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>upload sample</title>
+    <link href="../../../../../../../../themes/global.css" rel="stylesheet" type="text/css"/>
+    <link href="../../../../../../../../themes/default/lib.util.core.dom.upload.css" rel="stylesheet" type="text/css"/>
+    <link href="../../../../../../sample.css" rel="stylesheet" type="text/css"/>
+    <link href="style.css" rel="stylesheet" type="text/css"/>
+    <script src="../../../../../../../../js/lib/sea.js"></script>
+    <script>
+        seajs.use('../../../../../../../../js/lib/sea-config.js', function() {
+            seajs.use('./1.js');
+        });
+    </script>
+</head>
+<body>
+<!------------------------------------------------------------------------------------------------->
+<div class="modual">
+    <h2>upload</h2>
+    <div class="introduce">
+        <em>说明</em>
+        <p>简单HTML5 拖拽上传</p>
+    </div>
+    <div class="usage">
+        <em>用法</em>
+        <pre class="brush: js;">//code</pre>
+    </div>
+    <div class="example">
+        <em>示例</em>
+        <span>(<a href="app.js" target="_blank">点击查看源码</a>)</span>
+        <div class="demo">
+            <div class="upload-box font">把文件拖到浏览器即可上传，只允许上传图片，单文件不超过5M</div>
+            <div class="bar">
+                <input type="file" id="select_file" multiple="true"/>
+                <input type="button" id="reset" value="重新开始"/>
+            </div>
+            <div class="result-box" id="result"></div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

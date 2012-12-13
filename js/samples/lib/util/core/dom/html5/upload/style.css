@@ -1,13 +1,21 @@
 @charset "utf-8";
-.upload-box {
-    width: 600px;
-    height: 400px;
-    border: 1px solid #ddd;
-    text-align: center;
-    line-height: 400px;
-    font-size: 24px;
-    font-weight: bold;
+.link {
+  margin: 20px 10px;
 }
+.upload-box {
+    height: 400px;
+}
+.font {
+  text-align: center;
+  line-height: 400px;
+  font-size: 24px;
+  font-weight: bold;
+}
+.result-box {
+  border: 1px dashed #ddd;
+  min-height: 350px;
+}
+
 
 .upload-box2 {
   height: 400px;
@@ -15,13 +23,14 @@
 }
 
 .bar {
+  text-align: center;
   height: 32px;
   line-height: 32px;
 }
 
 .item {
-  height: 150px;
-  width: 150px;
+  height: 100px;
+  width: 100px;
   float: left;
   margin: 10px;
   border: 1px solid #666;
@@ -41,7 +50,7 @@
 
 .item .tip {
   height: 100%;
-  line-height: 150px;
+  line-height: 100px;
 }
 .item .error {
   color: #ff0000;
@@ -53,6 +62,33 @@
 
 .item .progress {
   height: 100%;
-  line-height: 150px;
+  line-height: 100px;
   color: #374e0c;
+}
+
+.box {
+  float: left;
+  border: 1px solid;
+  min-height: 500px;
+  margin-left: 1%;
+  width: 32%;
+}
+
+.container {
+  height: 250px;
+  border-bottom: 1px dashed;
+  text-align: center;
+  line-height: 250px;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.box .bar {
+  border-bottom: 1px dashed;
+}
+
+.xbtn {
+  position: fixed;
+  top:150px;
+  right: 50px;
 }
