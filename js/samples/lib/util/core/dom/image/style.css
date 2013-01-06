@@ -43,6 +43,10 @@
     height: 600px;
     border: 1px solid #ddd;
 }
+.rotate-img-wrap2 {
+  width: 600px;
+  height: 800px;
+}
 .rotate-img-wrap img {
     position: absolute;
 }

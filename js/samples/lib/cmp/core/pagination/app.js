@@ -1,5 +1,4 @@
 define(function (require, exports, module) {
-    require('../../../../sample.js');
     var $ = require('jquery');
     var pagination = require('../../../../../lib/cmp/core/pagination.js');
 
