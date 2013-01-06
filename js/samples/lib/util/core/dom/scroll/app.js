@@ -42,6 +42,9 @@ define(function(require, exports, module) {
                 },
                 bottom: function(e, scrollTop, dir, status) {
                     console.log('滚到容器底部');
+                    setTimeout(function() {
+                        box4.append('<p>123</p><p>123</p><p>123</p>');
+                    }, 500);
                 },
                 other: function(e, scrollTop, dir, status) {
                     if(scrollTop < 200 && dir == 'up') {

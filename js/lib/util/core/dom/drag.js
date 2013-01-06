@@ -1,8 +1,8 @@
 define(function(require, exports, module) {
     var $ = require('jquery');
-    var lang = require('../lang.js');
-    var array = require('../array.js');
-    var mVar = require('./mVar.js');
+    var lang = require('../lang');
+    var array = require('../array');
+    var mVar = require('./mVar');
 
     var doc = $(document);
     var win = $(window);
@@ -214,10 +214,10 @@ define(function(require, exports, module) {
                                             } else {
                                                 var offsetParent = v.offsetParent();
                                                 var offsetParentPosition = offsetParent.position();
-                                                minX = doc.scrollLeft() - offsetParentPosition.left - parseFloat(offsetParent.css('margin-left')) - parseFloat(v.css('margin-left'));
-                                                maxX = minX + win.width() - targetSize.outerWidth;
-                                                minY = doc.scrollTop() - offsetParentPosition.top - parseFloat(offsetParent.css('margin-top')) - parseFloat(v.css('margin-top'));
-                                                maxY = minY + win.height() - targetSize.outerHeight;
+                                                minX = lang.isUndefined(params.minX) ? (doc.scrollLeft() - offsetParentPosition.left - parseFloat(offsetParent.css('margin-left')) - parseFloat(v.css('margin-left'))) : params.minX;
+                                                maxX = lang.isUndefined(params.maxX) ? (minX + win.width() - targetSize.outerWidth) : params.maxX;
+                                                minY = lang.isUndefined(params.minY) ? (doc.scrollTop() - offsetParentPosition.top - parseFloat(offsetParent.css('margin-top')) - parseFloat(v.css('margin-top'))) : params.minY;
+                                                maxY = lang.isUndefined(params.maxY) ? (minY + win.height() - targetSize.outerHeight) : params.maxY;
                                             }
                                             if(params.axisX) {
                                                 minY = maxY = startPosition[i].y;
@@ -345,10 +345,12 @@ define(function(require, exports, module) {
                     });
                 }
             });
-            return event;
-        },
-        unreg: function(node, handle) {
-            (handle ? node.find(handle) : node).css('cursor', 'default').removeData('draggable').unbind('mousedown.' + eventSpace);
+            return {
+                event: event,
+                unreg: function() {
+                    handle.css('cursor', 'default').removeData('draggable').unbind('mousedown.' + eventSpace)
+                }
+            };
         }
     };
     return r;

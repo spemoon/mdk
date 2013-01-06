@@ -1,11 +1,18 @@
 define(function(require, exports, module) {
     var $ = require('jquery');
-    var lang = require('../util/core/lang.js');
-    var mVar = require('../util/core/dom/mVar.js');
-    var action = require('../util/core/dom/action.js');
+    var lang = require('../util/core/lang');
+    var mVar = require('../util/core/dom/mVar');
+    var action = require('../util/core/dom/action');
     var AOP = ['beforeInit', 'afterInit', 'beforeRender', 'firstRender', 'afterRender', 'beforeUnrender', 'afterUnrender', 'beforeDestory', 'afterDestory'];
 
     var widget = function() {
+    };
+    widget.STATUS = {
+        NOT_INIT: 0,
+        INITED: 1,
+        RENDERED: 2,
+        UNRENDERED: 3,
+        DESTORYED: 4
     };
     widget.prototype = {
         constructor: widget,
@@ -13,7 +20,7 @@ define(function(require, exports, module) {
          * 初始化，负责生成结构，渲染样式，
          */
         init: function() {
-            if(this._status == 0 && this.singleton !== true) { // 未初始化才执行初始化
+            if(this._status == widget.STATUS.NOT_INIT && this.singleton !== true) { // 未初始化才执行初始化
                 if(lang.callback(this._aop.beforeInit, {scope: this})) {
                     var element;
                     if(!this.element) {
@@ -28,12 +35,7 @@ define(function(require, exports, module) {
                         }
                         this.renderTo.append(this.element);
                     }
-                    (function(events, scope) {
-                        for(var i = 0, event; event = events[i]; i++) {
-                            scope.bind(event);
-                        }
-                    })(this._events, this);
-                    this._status = 1;
+                    this._status = widget.STATUS.INITED;
                     lang.callback(this._aop.afterInit, {scope: this});
                     this.element.trigger('inited', [this]);
                 }
@@ -41,13 +43,18 @@ define(function(require, exports, module) {
             return this;
         },
         render: function() {
-            if(this._status == 1 || this._status == 3) { // 已经初始化或者unrender情况下
+            if(this._status == widget.STATUS.INITED || this._status == widget.STATUS.UNRENDERED) { // 已经初始化或者unrender情况下
                 if(lang.callback(this._aop.beforeRender, {scope: this})) {
                     this.element.show();
-                    if(this._status == 1) {
-                        lang.callback(this._aop.firstRender, {scope: this});
+                    (function(events, scope) {
+                        for(var i = 0, event; event = events[i]; i++) {
+                            scope.bind(event);
+                        }
+                    })(this._events, this);
+                    if(this._status == widget.STATUS.INITED) {
+                        lang.callback(this._aop.firstRender, {scope: this}); //
                     }
-                    this._status = 2;
+                    this._status = widget.STATUS.RENDERED;
                     lang.callback(this._aop.afterRender, {scope: this});
                     this.element.trigger('rendered', [this]);
                 }
@@ -55,10 +62,15 @@ define(function(require, exports, module) {
             return this;
         },
         unrender: function() {
-            if(this._status == 2) {
+            if(this._status == widget.STATUS.RENDERED) {
                 if(lang.callback(this._aop.beforeUnrender, {scope: this})) {
                     this.element.hide();
-                    this._status = 3;
+                    this._status = widget.STATUS.UNRENDERED;
+                    (function(events, scope) {
+                        for(var i = 0, event; event = events[i]; i++) {
+                            scope.unbind(event);
+                        }
+                    })(this._events, this);
                     lang.callback(this._aop.afterUnrender, {scope: this});
                     this.element.trigger('unrendered', [this]);
                     if(this.autoDestory === true) {
@@ -69,9 +81,9 @@ define(function(require, exports, module) {
             return this;
         },
         destory: function() {
-            if(!lang.isUndefined(this._status)) {
+            if(this._status > 0) {
                 if(lang.callback(this._aop.beforeDestory, {scope: this})) {
-                    this._status = 4;
+                    this._status = widget.STATUS.DESTORYED;
                     for(var i = 0, len = this._events.length; i < len; i++) {
                         this.unbind(this._events[i]);
                     }
@@ -91,14 +103,23 @@ define(function(require, exports, module) {
             }
             return this;
         },
+        getStatus: function() {
+            return this._status;
+        },
 
         bind: function(event) {
             if(event.action) {
                 var _this = this;
                 event.node = event.node || this.element;
-                event.type = (event.type || 'click') + ('.' + (this._eventId++));
+                event.type = event.type || ('click.es' + this._eventId++); // 绑定了命名空间，方便unbind
+                if(lang.isFunction(event.node)) {
+                    event.node = event.node.call(this);
+                }
+                if(event.type.indexOf('.es') == -1) {
+                    event.type += '.es' + this._eventId++;
+                }
                 event.node.bind(event.type, function(e) {
-                    event.action.call(_this, e);
+                    return event.action.call(_this, e);
                 });
             } else {
                 var obj = {};
@@ -107,7 +128,6 @@ define(function(require, exports, module) {
                         action: event.action || event[key],
                         scope: event.scope || this
                     };
-                    break;
                 }
                 action.listen(obj, this.element);
             }
@@ -115,12 +135,15 @@ define(function(require, exports, module) {
         },
         unbind: function(event) {
             if(event.node) {
+                if(lang.isFunction(event.node)) {
+                    event.node = event.node.call(this);
+                }
                 event.node.unbind(event.type);
             }
             return this;
         },
         trigger: function(name) {
-            this.element.trigger(name, Array.prototype.slice.apply(arguments, 1));
+            this.element.trigger(name, Array.prototype.slice.call(arguments, 1));
             return this;
         },
         inject: function(widgets) {
@@ -137,6 +160,7 @@ define(function(require, exports, module) {
     widget.prototype._destory = widget.prototype.destory;
 
     return {
+        STATUS: widget.STATUS,
         /**
          * widget构造器
          * @param params 由widget组件提供
@@ -185,8 +209,17 @@ define(function(require, exports, module) {
                 }
                 if(params.events) {
                     (function(events, scope) {
+                        /**
+                         * bugfix: 原先直接使用scope._events.push(events[i])而未进行一次拷贝
+                         * 由于后面对事件的对象会直接进行修改，会导致多个实例之间的事件互相访问
+                         * 因此事件对传入的事件每次实例化时进行一次拷贝
+                         */
                         for(var i = 0, len = events.length; i < len; i++) {
-                            scope._events.push(events[i]);
+                            var obj = {};
+                            for(var key in events[i]) {
+                                obj[key] = events[i][key];
+                            }
+                            scope._events.push(obj);
                         }
                     })(params.events, this);
                 }
@@ -206,7 +239,7 @@ define(function(require, exports, module) {
 
                 this.id = mVar.id(); // 给组件生成唯一的id
                 this.renderTo = $(config.renderTo || params.renderTo || document.body); // 渲染节点
-                this._status = 0; // 0：未初始化，1：inited，2：rendered，3：unrendered，4：destoryed
+                this._status = widget.STATUS.NOT_INIT; // 0：未初始化，1：inited，2：rendered，3：unrendered，4：destoryed
                 this.widgets = {}; // 存放外界注入的组件实例，用于组件之间的交互
                 this.autoDestory = config.autoDestory || params.autoDestory;
 

@@ -1,0 +1,42 @@
+.m-progress {
+  position: relative;
+  height: 20px;
+  overflow: hidden;
+  border: 1px solid #277fb3;
+  color: #888;
+  background-color: #fff
+}
+
+.m-progress .m-progress-text {
+  height: 20px;
+  line-height: 20px;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  position: absolute;
+  text-align: center;
+}
+
+.m-progress  .m-progress-bar {
+  position: absolute;
+  background-color: #33A0E1;
+  width: 150px;
+  height: 20px;
+  overflow: hidden;
+}
+
+.m-progress-default .m-progress-bar .m-progress-text {
+  color: #fff
+}
+
+.m-progress-default {
+  width: 300px
+}
+
+.m-progress-default .m-progress-text-back {
+  width: 298px
+}
+
+.m-progress-default .m-progress-bar .m-progress-text {
+  width: 298px;
+}

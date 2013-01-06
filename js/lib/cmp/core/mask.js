@@ -1,8 +1,8 @@
 define(function(require, exports, module) {
     var $ = require('jquery');
-    var browser = require('../../../lib/util/core/bom/browser.js');
-    var widget = require('../widget.js');
-    var mVar = require('../../../lib/util/core/dom/mVar.js');
+    var browser = require('../../util/core/bom/browser');
+    var widget = require('../widget');
+    var mVar = require('../../util/core/dom/mVar');
 
     var helper = {
         render: function(zIndex) {
@@ -13,6 +13,7 @@ define(function(require, exports, module) {
                 maskNode.css({
                     width: doc.width(),
                     height: doc.height(),
+                    display: 'block',
                     zIndex: zIndex
                 });
                 if(this.msg) {
@@ -40,6 +41,7 @@ define(function(require, exports, module) {
                     top: this.renderTo.scrollTop(),
                     width: this.renderTo.width(),
                     height: this.renderTo.height(),
+                    display: 'block',
                     zIndex: zIndex
                 });
                 if(this.msg) {
@@ -47,7 +49,6 @@ define(function(require, exports, module) {
                     msgNode.css({
                         left: (maskNode.width() - msgNode.width()) / 2,
                         top: (this.renderTo.height() - msgNode.height()) / 2 + this.renderTo.scrollTop(),
-                        display: 'block',
                         zIndex: zIndex
                     });
                 } else {
@@ -83,6 +84,11 @@ define(function(require, exports, module) {
     var cache = [];
     var cacheData = [];
     var mask = widget.create({
+        params: {
+            opacity: 0.5, // 遮罩透明度
+            icon: true, // 是否使用图标
+            overflow: true // 默认true隐藏超出遮罩的东西，极少数情况下需要显示超出遮罩的部分，设置为false
+        },
         tpl: function() {
             var html = '';
             html += '<div class="m-mask-box">';
@@ -96,37 +102,55 @@ define(function(require, exports, module) {
             html += '</div>';
             return html;
         },
-        params: {
-            opacity: 0.5, // 遮罩透明度
-            icon: true, // 是否使用图标
-            overflow: true // 默认true隐藏超出遮罩的东西，极少数情况下需要显示超出遮罩的部分，设置为false
-        },
         beforeInit: function() {
             var pos = helper.cache.find(this.renderTo[0]);
             if(pos != -1) {
                 for(var key in cacheData[pos]) {
                     this[key] = cacheData[pos][key];
                 }
-                return false;
+                return false; // 防止多次new生成HTML
             }
             cache.push(this.renderTo[0]);
             cacheData.push(this);
         },
         proto: {
             render: function(msg) {
-                this.msg = msg || '';
+                var pos = helper.cache.find(this.renderTo[0]);
+                if(pos != -1) { // copy属性
+                    for(var key in cacheData[pos]) {
+                        this[key] = cacheData[pos][key];
+                    }
+                }
                 var zIndex = mVar.zIndex();
+                this.msg = msg || '';
                 if(!this.zIndex) {
                     this.zIndex = [zIndex];
                 } else {
                     this.zIndex.push(zIndex);
                 }
+                this.element.find('.m-mask').css('opacity', this.opacity);
+                this.element.show();
                 this._render();
                 helper.render.call(this, zIndex);
                 return this;
             },
+            setTip: function(msg) {
+                var zIndex;
+                this.msg = msg || '';
+                if(this.zIndex) {
+                    var len = this.zIndex.length;
+                    if(len) {
+                        zIndex = this.zIndex[len - 1];
+                    }
+                }
+                if(!zIndex) {
+                    zIndex = mVar.zIndex();
+                    this.zIndex = [zIndex];
+                }
+                helper.render.call(this, zIndex);
+            },
             unrender: function() {
-                if(this._status == 2) {
+                if(this._status == widget.STATUS.RENDERED) {
                     this.zIndex.pop();
                     var len = this.zIndex.length;
                     if(len) {

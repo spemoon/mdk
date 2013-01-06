@@ -1,0 +1,47 @@
+@charset "utf-8";
+.upload-select-btn input{
+  opacity: 0;
+  filter:alpha(opacity=0);
+  cursor: move;
+  display: block;
+  height: 40px;
+  position: absolute;
+  width: 320px;
+
+  font-size: 30px;
+  left: -170px;
+  top: -8px;
+}
+@-moz-document url-prefix() {
+.upload-select-btn input{
+  left: -355px;
+  width: 190px;
+}
+}
+
+.upload-select-btn{
+  background: url(./images/upload/btn.png) no-repeat;
+  width: 73px;
+  height: 26px;
+  display: block;
+  overflow: hidden;
+  margin-bottom: 10px;
+  cursor: pointer;
+  outline: none;
+  position: relative;
+}
+.upload-select-btn:hover{
+  background-position: 0 -28px;
+}
+.upload-select-btn:active{
+  background-position: 0 -56px;
+}
+.upload-select-btn-dis{
+  background-position: 0 -84px;
+}
+.upload-select-btn-dis:hover{
+  background-position: 0 -84px;
+}
+.upload-select-btn-dis:active{
+  background-position: 0 -84px;
+}

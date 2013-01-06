@@ -1,6 +1,6 @@
 define(function(require, exports, module) {
     var $ = require('jquery');
-    var lang = require('../lang.js');
+    var lang = require('../lang');
 
     var cache = []; // 按键累积缓存
     var keydownCache = {}; // keydown按键缓存，避免keydown的持续触发累积

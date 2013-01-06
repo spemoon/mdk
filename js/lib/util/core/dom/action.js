@@ -1,7 +1,7 @@
 define(function(require, exports, module) {
     var $ = require('jquery');
-    var lang = require('../lang.js');
-    var array = require('../array.js');
+    var lang = require('../lang');
+    var array = require('../array');
     
     var cache = {
         dom: [],
@@ -48,26 +48,39 @@ define(function(require, exports, module) {
 
                 node[type](function(e) {
                     var target = $(e.target);
-                    var actionKey = target.data('action') || target.parents('[data-action]').data('action');
+                    var actionKey = target.attr('data-action');
+                    var xnode = target;
+                    if(!actionKey) {
+                        xnode = target.parents('[data-action]');
+                        actionKey = xnode.attr('data-action');
+                    }
                     var flag = true;
                     var fetch = cache.action[index];
                     var fetchAction = fetch[actionKey];
                     if(fetchAction) {
                         if(lang.isFunction(fetchAction)) {
-                            flag = fetchAction.call(target, e) === true;
+                            flag = fetchAction.call(target, e, xnode);
                         } else {
                             if(lang.isFunction(fetchAction.is) || lang.isFunction(fetchAction.action)) {
                                 var fn = fetchAction.is || fetchAction.action;
-                                flag = fn.call(fetchAction.scope || target, e) === true;
+                                flag = fn.call(fetchAction.scope || target, e, xnode);
                             }
                         }
                     }
                     for(var key in fetch) {
                         if(key != actionKey && fetch[key] && fetch[key].not && lang.isFunction(fetch[key].not)) {
-                            fetch[key].not.call(fetch[key].scope || target, e);
+                            fetch[key].not.call(fetch[key].scope || target, e, xnode);
                         }
                     }
-                    return flag;
+                    if(flag === -1) { // 禁用冒泡
+                        e.stopPropagation();
+                    } else if(flag === true) { // 都不禁用
+                        return true;
+                    } else if(flag === false) { // 都禁用
+                        return false;
+                    } else { // 默认无返回值时禁用默认行为，但不禁用冒泡
+                        e.preventDefault();
+                    }
                 });
             } else {
                 var fetch = cache.action[index];

@@ -1,9 +1,9 @@
 define(function(require, exports, module) {
     var $ = require('jquery');
-    var lang = require('../lang.js');
-    var string = require('../string.js');
-    var browser = require('../bom/browser.js');
-    var mVar = require('./mVar.js');
+    var lang = require('../lang');
+    var string = require('../string');
+    var browser = require('../bom/browser');
+    var mVar = require('./mVar');
 
     var isW3C = window.getSelection ? true : false;
     var cursorId = mVar.id();
@@ -33,69 +33,32 @@ define(function(require, exports, module) {
          * @param action 触发的函数
          * @param mode IE678使用可能会触发太多，mode为true时使用keydown方式
          */
-        reg: function(node, action, mode) {
+        reg: function(node, action) {
             node = $(node);
-            if(browser.ie) {
-                // IE9 input事件不支持退格，删除，剪切响应。退格和删除通过keydown事件来响应，剪切通过cut事件响应
-                // IE9 cut事件需要通过addEventListener来绑定才有效
-                // IE6，7，8 通过propertychange来监听内容改变
-                if(browser.ie9) {
-                    node.bind('input focus', function(e) {
-                        var rangeData = r.position.get(this);
-                        var lastInput = this.value.charAt(rangeData.end - 1) || '';
-                        action.call(this, this.value, lastInput, rangeData);
-                    });
-
-                    node.each(function(i, item) {
-                        item.addEventListener('cut', function(e) {
+            var timer;
+            var flag = false;
+            if(!node.reged) {
+                node.reged = true;
+                node.focus(function(e) {
+                    flag = true;
+                    timer = lang.timer({
+                        fn: function() {
                             var rangeData = r.position.get(this);
                             var lastInput = this.value.charAt(rangeData.end - 1) || '';
-                            setTimeout(function() {
-                                action.call(item, item.value, lastInput, rangeData);
-                            }, 0);
-                        }, false);
+                            action.call(this, this.value, lastInput, rangeData);
+                        },
+                        rule: function() {
+                            return flag;
+                        },
+                        step: 32,
+                        scope: this
                     });
-
-                    node.bind('keydown', function(e) {
-                        if(e.keyCode == 8 || e.keyCode == 46) {
-                            var _this = this;
-                            var rangeData = r.position.get(this);
-                            var lastInput = this.value.charAt(rangeData.end - 1) || '';
-                            setTimeout(function() {
-                                action.call(_this, _this.value, lastInput, rangeData);
-                            }, 0);
-                        }
-                    });
-                } else {
-                    node.bind((mode === true ? 'keydown' : 'propertychange') + ' focus', function(e) {
-                        var rangeData = r.position.get(this);
-                        var lastInput = this.value.charAt(rangeData.end - 1) || '';
-                        action.call(this, this.value, lastInput, rangeData);
-                    });
-                }
-            } else {
-                node.bind('input focus', function(e) {
-                    var rangeData = r.position.get(this);
-                    var lastInput = this.value.charAt(rangeData.end - 1) || '';
-                    action.call(this, this.value, lastInput, rangeData);
+                });
+                node.blur(function(e) {
+                    timer.stop();
+                    flag = false;
                 });
             }
-        },
-        /**
-         * 上下按键支持
-         * @param node
-         * @param action
-         */
-        updown: function(node, action) {
-            node = $(node);
-            node.bind('keydown', function(e) {
-                var keyCode = e.keyCode;
-                if(keyCode == 38) { // up
-
-                } else if(keyCode == 40) {// down
-
-                }
-            });
         },
         /**
          * 选择一段文本
@@ -231,9 +194,12 @@ define(function(require, exports, module) {
                     }
                     var val = node.val();
                     var nodeOffset = node.offset();
+                    if(val) {
+                        val = val.slice(0, r.position.get(node).end);
+                    }
                     val = string.code(val);
                     val = val.replace(/\n/g, '<br/>').replace(/ /g, '&nbsp;');
-                    val = val + '<span> </span>';
+                    val = val + '<span>&nbsp;</span>';
                     cursorDiv.innerHTML = val;
                     $(cursorDiv).css({
                         top: nodeOffset.top,

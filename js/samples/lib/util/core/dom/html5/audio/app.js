@@ -9,7 +9,56 @@ define(function(require, exports, module) {
          * 实例1：
          * --------------------------------------------*/
         (function() {
+            var btn1 = $('#btn1');
+            var btn2 = $('#btn2');
+            var btn3 = $('#btn3');
+            var btn4 = $('#btn4');
+            var btn5 = $('#btn5');
+
+            var btn6 = $('#btn6');
+            var btn7 = $('#btn7');
+            var btn8 = $('#btn8');
+            var btn9 = $('#btn9');
+            var btn10 = $('#btn10');
+            var btn11 = $('#btn11');
+
+            var btn12 = $('#btn12');
+            var btn13 = $('#btn13');
+
+            var songName = $('#song_name');
+            var songTime = $('#song_time');
+            var songLoaded = $('#song_loaded');
+            var songNow = $('#song_now');
+            var songPercent = $('#song_percent');
+            var songStatus = $('#song_status');
+
+            var helper = {
+                view: function() {
+
+                }
+            };
+
+            var list = [
+                {
+                    src: '1.mp3',
+                    name: '可惜不是你'
+                },
+                {
+                    src: '2.mp3',
+                    name: '光辉岁月'
+                },
+                {
+                    src: 'http://kolber.github.com/audiojs/demos/mp3/juicy.mp3?t=' + new Date(),
+                    name: '远程歌曲'
+                },
+                {
+                    src: 'http://api.jieyu.momo.im/v1/audio/file/192_Medical_Experts_Debate_Value_of_Alcohol_Use.Mp3?t=' + new Date(),
+                    name: 'the wrong hole'
+                }
+            ];
+
             var a1 = new audio();
+            a1.load(list[0]);
             a1.bind({
                 loadStart: function(e, scope) {
                     for(var i = 0, len = list.length; i < len; i++) {
@@ -60,57 +109,10 @@ define(function(require, exports, module) {
                 }
             });
 
-            var btn1 = $('#btn1');
-            var btn2 = $('#btn2');
-            var btn3 = $('#btn3');
-            var btn4 = $('#btn4');
-            var btn5 = $('#btn5');
-
-            var btn6 = $('#btn6');
-            var btn7 = $('#btn7');
-            var btn8 = $('#btn8');
-            var btn9 = $('#btn9');
-            var btn10 = $('#btn10');
-            var btn11 = $('#btn11');
-
-            var btn12 = $('#btn12');
-            var btn13 = $('#btn13');
-
-            var songName = $('#song_name');
-            var songTime = $('#song_time');
-            var songLoaded = $('#song_loaded');
-            var songNow = $('#song_now');
-            var songPercent = $('#song_percent');
-            var songStatus = $('#song_status');
-
-            var helper = {
-                view: function() {
-
-                }
-            };
-
-            var list = [
-                {
-                    src: '1.mp3',
-                    name: '可惜不是你'
-                },
-                {
-                    src: '2.mp3',
-                    name: '光辉岁月'
-                },
-                {
-                    src: 'http://kolber.github.com/audiojs/demos/mp3/juicy.mp3?t=' + new Date(),
-                    name: '远程歌曲'
-                },
-                {
-                    src: '3.mp3',
-                    name: 'the wrong hole'
-                }
-            ];
-
             // 载入并播放
             btn1.click(function() {
-                a1.load(list[0].src);
+                a1.load(list[0]);
+                a1.play();
             });
             // 暂停
             btn2.click(function() {
@@ -183,6 +185,7 @@ define(function(require, exports, module) {
                 playList.index++;
                 playList.index %= 4;
                 a1.load(list[playList.index]);
+                a1.play();
             };
             // 播放列表
             btn12.click(function() {

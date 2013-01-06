@@ -1,0 +1,10 @@
+@charset "utf-8";
+.box {
+    text-align: center;
+    border-bottom: 1px dashed #aaa;
+    margin-top: 20px;
+}
+.bar {
+    width: 800px;
+    margin: 20px auto;
+}
