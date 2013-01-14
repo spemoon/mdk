@@ -213,18 +213,18 @@ define(function(require, exports, module) {
             var btn9 = $('#btn9');
             var rotateImgWrap1 = $('#rotate_img_wrap1');
             var rotateImgWrap2 = $('#rotate_img_wrap2');
-            var url1 = 'http://ww1.sinaimg.cn/bmiddle/7fbd5c93gw1dv4bwg47y2j.jpg';
+            var url = 'http://ww1.sinaimg.cn/bmiddle/7fbd5c93gw1dv4bwg47y2j.jpg';
             var url2 = 'http://img208.poco.cn/mypoco/myphoto/20110116/21/54860814201101162117203744039468315_035.jpg';
 
 
             image.load({
-                url: url1,
+                url: url,
                 ready: function() {
                     image.zoom({
                         node: this,
-                        max: Math.min(rotateImgWrap1.width(), rotateImgWrap1.height()),
+                        max: Math.max(rotateImgWrap1.width(), rotateImgWrap1.height()),
                         callback: function(width, height) {
-                            rotateImgWrap1.html('<img src="' + url1 + '" width="' + width + '" height="' + height + '"/>');
+                            rotateImgWrap1.html('<img src="' + url + '" width="' + width + '" height="' + height + '"/>');
                         }
                     });
 
@@ -270,25 +270,11 @@ define(function(require, exports, module) {
                             });
                         }
                     });
-
                     var img = rotateImgWrap2.find('img').eq(0);
                     btn8.click(function() {
                         image.rotate({
                             node: img,
-                            dir: true,
-                            callback: function(top, left) {
-                                image.center({
-                                    node: this,
-                                    width: rotateImgWrap2.width(),
-                                    height: rotateImgWrap2.height(),
-                                    callback: function(top, left) {
-                                        $(this).css({
-                                            top: top,
-                                            left: left
-                                        });
-                                    }
-                                });
-                            }
+                            dir: true
                         });
                     });
 

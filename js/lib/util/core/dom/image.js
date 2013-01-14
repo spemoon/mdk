@@ -1,16 +1,17 @@
 define(function(require, exports, module) {
     var $ = require('jquery');
+    var lang = require('../lang');
 
     var helper = {
         getCssPrefix: (function() {
             var prefix = false; // 前缀类型,false表示不支持
             return function() {
                 var node = document.createElement('div');
-                if(typeof node.style.MozTransform !== 'undefined') {
+                if(!lang.isUndefined(node.style.MozTransform)) {
                     prefix = 'Moz';
-                } else if(typeof node.style.webkitTransform !== 'undefined') {
+                } else if(!lang.isUndefined(node.style.webkitTransform)) {
                     prefix = 'webkit';
-                } else if(typeof node.style.OTransform !== 'undefined') {
+                } else if(!lang.isUndefined(node.style.OTransform)) {
                     prefix = 'O';
                 } else {
                     prefix = '';
@@ -21,7 +22,7 @@ define(function(require, exports, module) {
         isSupportCanvas: (function() {
             var supportCanvas; // 是否支持canvas
             return function() {
-                if(typeof supportCanvas == 'undefined') { // 确保只检测一次
+                if(lang.isUndefined(supportCanvas)) { // 确保只检测一次
                     supportCanvas = !!document.createElement('canvas').getContext;
                 }
                 return supportCanvas;
@@ -179,79 +180,53 @@ define(function(require, exports, module) {
                 left: left
             };
         },
-
+        /**
+         * 前端中心旋转，注意：中心旋转前请使用zoom和center确保原先居中，且旋转后不越界
+         * @param params
+         *     node: image
+         *     dir: true 逆时针； false 顺时针
+         *     animate: 是否过度效果，默认有
+         *     center: 是否居中，默认居中
+         */
         rotate: function(params) {
             var image = params.node[0] || params.node;
-            var node = $(image);
             var dir = params.dir;
-            var degree;
             var prefix = helper.getCssPrefix();
-            if(typeof image.degree == 'undefined') {
+            if(lang.isUndefined(image.degree)) {
                 image.degree = 0;
-                if(params.animate !== false) {
-                    if(prefix !== false) {
-                        if(prefix) {
-                            image.style[prefix + 'Transition'] = '-' + prefix.toLowerCase() + '-transform .2s ease-in';
-                        } else {
-                            image.style.transition = 'transform .2s ease-in';
-                        }
+                if(prefix !== false && params.animate !== false) {
+                    if(prefix) {
+                        image.style[prefix + 'Transition'] = '-' + prefix.toLowerCase() + '-transform .2s ease-in';
+                    } else {
+                        image.style.transition = 'transform .2s ease-in';
                     }
                 }
             }
-            degree = image.degree;
             if(dir === true) { // 逆时针
-                degree -= 90;
+                image.degree -= 90;
             } else { // 顺时针
-                degree += 90;
+                image.degree += 90;
             }
-            image.degree = degree;
-
-            if(prefix !== false || helper.isSupportCanvas()) {
-                if(params.center !== false) {
-                    var str = 'rotate(' + degree + 'deg)';
-                    if(prefix) {
-                        image.style[prefix + 'Transform'] = str;
-                    } else {
-                        image.style.transform = str;
-                    }
+            if(prefix) {
+                var str = 'rotate(' + image.degree + 'deg)';
+                if(prefix) {
+                    image.style[prefix + 'Transform'] = str;
                 } else {
-                    var canvas = node.next('canvas').eq(0)[0];
-                    if(!canvas) {
-                        canvas = document.createElement('canvas');
-                        canvas.style.position = image.style.position;
-                        $(image).after(canvas);
-                    }
-                    var ctx = canvas.getContext('2d');
-                    var width = image.width;
-                    var height = image.height;
-                    var x = 0;
-                    var y = 0;
-                    var temp = degree % 360 + 360;
-                    switch(temp) {
-                        case 90:
-                            width = image.height;
-                            height = image.width;
-                            y = image.height * (-1);
-                            break;
-                        case 180:
-                            x = image.width * (-1);
-                            y = image.height * (-1);
-                            break;
-                        case 270:
-                            width = image.height;
-                            height = image.width;
-                            x = image.width * (-1);
-                            break;
-                    }
-                    canvas.setAttribute('width', width);
-                    canvas.setAttribute('height', height);
-                    ctx.rotate(degree * Math.PI / 180);
-                    ctx.drawImage(image, x, y);
-                    image.style.display = 'none';
+                    image.style.transform = str;
                 }
                 params.callback && params.callback.call(image);
             } else {
-                image.style.filter = 'progid:DXImageTransform.Microsoft.BasicImage(rotation=' + degree / 90 + ')';
+                var obj = $(image);
+                var deg2radians = Math.PI / 180;
+                var rad = image.degree * deg2radians;
+                var sin = Math.sin(rad);
+                var cos = Math.cos(rad);
+                var pos = obj.position();
+                obj.css({
+                    filter:'progid:DXImageTransform.Microsoft.Matrix(M11="' + cos +  '", M12="' + -sin + '", M21=' + sin + ', M22="' + cos + '", sizingMethod="auto expand")',
+                    left: pos.left + (obj.width() - obj.height()) / 2,
+                    top: pos.top - (obj.width() - obj.height()) / 2
+                });
                 params.callback && params.callback.call(image);
             }
         }

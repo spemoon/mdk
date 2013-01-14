@@ -76,7 +76,6 @@ define(function(require, exports, module) {
                     }
                 }, false);
             }
-
         },
         listen: function(node, actions, prevent) {
             var status = {};

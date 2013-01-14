@@ -37,7 +37,7 @@ define(function (require, exports, module) {
             }
             if (this.showPN) {
                 if (current == 1 || total == 0) {
-                    html += '<a class="page-pre disabled" href="#" >上一页</a>';
+                    html += '<a class="page-pre disabled" href="javascript:;" >上一页</a>';
                 } else {
                     html += '<a class="page-pre" href="' + (url + (current - 1)) + '" data-page="' + (current - 1) + '" data-action="page">上一页</a>';
                 }
@@ -57,7 +57,7 @@ define(function (require, exports, module) {
                 t1 = end;
             }
             t2 = x - t1 - 1;
-            html += '<a class="active" href="#">' + current + '</a>';
+            html += '<a class="active" href="javascript:;">' + current + '</a>';
             if (current < total - y - t2 - 1) {
                 for (i = current + 1, end = current + t2; i <= end; i++) {
                     html += '<a href="' + (url + i) + '" data-page="' + i + '" data-action="page">' + i + '</a>';
@@ -73,7 +73,7 @@ define(function (require, exports, module) {
             }
             if (this.showPN) {
                 if (current == total || total == 0) {
-                    html += '<a class="page-pre disabled" href="#" >下一页</a>';
+                    html += '<a class="page-pre disabled" href="javascript:;" >下一页</a>';
                 } else {
                     html += '<a class="page-next" href="' + (url + (current + 1)) + '" data-page="' + (current + 1) + '" data-action="page">下一页</a>';
                 }
